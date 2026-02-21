@@ -9,14 +9,19 @@ export default {
             colors: {
                 // Primary Colors
                 primary: "#FF4A3D",        // Tomato AI Red
-                secondary: "#FFA62B",      // Warm Orange
-                accent: "#FFC857",         // Golden Node
+                accent: "#FFA62B",         // Warm Orange
+                secondary: "#FFC857",      // Golden Node
 
                 // Background Colors
+                "background-light": "#FFF6E8", // Soft Cream
+                "background-card": "#FFE8CC",  // Light Warm
+                "background-dark": "#23100F",  // Deep Brown (user snippet value)
+
+                // Legacy bg mapping
                 bg: {
-                    DEFAULT: "#FFF6E8",    // Soft Cream
-                    card: "#FFE8CC",       // Light Warm
-                    dark: "#1F1A17",       // Deep Brown
+                    DEFAULT: "#FFF6E8",
+                    card: "#FFE8CC",
+                    dark: "#1F1A17",
                 },
 
                 // Text Colors

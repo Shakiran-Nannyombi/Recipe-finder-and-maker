@@ -1,5 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Recipe } from '../../types/recipe';
+import {
+    X,
+    Sparkles,
+    Clock,
+    BarChart,
+    Utensils,
+    Leaf,
+    Brain,
+    ShoppingBasket,
+    ChefHat,
+    Share2,
+    Printer
+} from 'lucide-react';
 
 interface AiRecipeModalProps {
     isOpen: boolean;
@@ -60,10 +73,10 @@ export default function AiRecipeModal({ isOpen, onClose, recipe }: AiRecipeModal
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 z-[60] bg-black/20 hover:bg-black/40 backdrop-blur-md text-white rounded-full p-2 transition-all duration-200 hover:scale-110 active:scale-95"
+                    className="absolute top-4 right-4 z-[60] bg-black/20 hover:bg-black/40 backdrop-blur-md text-white rounded-full p-2.5 transition-all duration-200 hover:scale-110 active:scale-95"
                     aria-label="Close modal"
                 >
-                    <span className="material-symbols-outlined block text-2xl">close</span>
+                    <X className="w-6 h-6" />
                 </button>
 
                 {/* Scrollable Content Area */}
@@ -78,8 +91,8 @@ export default function AiRecipeModal({ isOpen, onClose, recipe }: AiRecipeModal
                         />
                         <div className="absolute bottom-0 left-0 p-6 md:p-10 w-full z-10 animate-fadeIn" style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
                             <div className="flex flex-wrap gap-2 mb-4">
-                                <span className="bg-primary text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-1 shadow-lg shadow-primary/30">
-                                    <span className="material-symbols-outlined text-sm">auto_awesome</span>
+                                <span className="bg-primary text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-1.5 shadow-lg shadow-primary/30">
+                                    <Sparkles className="w-3.5 h-3.5" />
                                     AI Generated
                                 </span>
                                 {recipe.cuisine_type && (
@@ -97,42 +110,42 @@ export default function AiRecipeModal({ isOpen, onClose, recipe }: AiRecipeModal
                     {/* Recipe Content Grid */}
                     <div className="p-6 md:p-10 bg-gradient-to-b from-bg to-bg-card">
                         {/* Metadata Bar */}
-                        <div className="flex flex-wrap gap-4 pb-8 border-b border-gray-200/50 animate-fadeIn" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
-                            <div className="flex items-center gap-3 bg-white/60 backdrop-blur-sm border border-gray-200/50 px-5 py-3 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                        <div className="flex flex-wrap gap-4 pb-8 border-b border-slate-200/50 animate-fadeIn" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
+                            <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm border border-slate-200/50 px-5 py-3 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                                 <div className="bg-primary/10 p-2 rounded-lg text-primary">
-                                    <span className="material-symbols-outlined text-xl">schedule</span>
+                                    <Clock className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] uppercase text-text-secondary font-bold tracking-wider">Time</p>
-                                    <p className="text-text-primary font-bold text-sm">{recipe.cooking_time_minutes} Mins</p>
+                                    <p className="text-[10px] uppercase text-slate-500 font-bold tracking-wider">Time</p>
+                                    <p className="text-slate-900 font-bold text-sm">{recipe.cooking_time_minutes} Mins</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3 bg-white/60 backdrop-blur-sm border border-gray-200/50 px-5 py-3 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                            <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm border border-slate-200/50 px-5 py-3 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                                 <div className="bg-secondary/10 p-2 rounded-lg text-secondary">
-                                    <span className="material-symbols-outlined text-xl">equalizer</span>
+                                    <BarChart className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] uppercase text-text-secondary font-bold tracking-wider">Difficulty</p>
-                                    <p className="text-text-primary font-bold text-sm">{difficultyText}</p>
+                                    <p className="text-[10px] uppercase text-slate-500 font-bold tracking-wider">Difficulty</p>
+                                    <p className="text-slate-900 font-bold text-sm">{difficultyText}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3 bg-white/60 backdrop-blur-sm border border-gray-200/50 px-5 py-3 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                            <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm border border-slate-200/50 px-5 py-3 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                                 <div className="bg-accent/20 p-2 rounded-lg text-orange-500">
-                                    <span className="material-symbols-outlined text-xl">restaurant</span>
+                                    <Utensils className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] uppercase text-text-secondary font-bold tracking-wider">Servings</p>
-                                    <p className="text-text-primary font-bold text-sm">{recipe.servings} People</p>
+                                    <p className="text-[10px] uppercase text-slate-500 font-bold tracking-wider">Servings</p>
+                                    <p className="text-slate-900 font-bold text-sm">{recipe.servings} People</p>
                                 </div>
                             </div>
                             {recipe.dietary_tags.length > 0 && (
-                                <div className="flex items-center gap-3 bg-white/60 backdrop-blur-sm border border-gray-200/50 px-5 py-3 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                                <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm border border-slate-200/50 px-5 py-3 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                                     <div className="bg-green-500/10 p-2 rounded-lg text-green-600">
-                                        <span className="material-symbols-outlined text-xl">eco</span>
+                                        <Leaf className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <p className="text-[10px] uppercase text-text-secondary font-bold tracking-wider">Dietary</p>
-                                        <p className="text-text-primary font-bold text-sm truncate max-w-[120px]">
+                                        <p className="text-[10px] uppercase text-slate-500 font-bold tracking-wider">Dietary</p>
+                                        <p className="text-slate-900 font-bold text-sm truncate max-w-[120px]">
                                             {recipe.dietary_tags[0].split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                                             {recipe.dietary_tags.length > 1 && ` +${recipe.dietary_tags.length - 1}`}
                                         </p>
@@ -144,8 +157,8 @@ export default function AiRecipeModal({ isOpen, onClose, recipe }: AiRecipeModal
                         {/* AI Reasoning Box */}
                         <div className="mt-8 bg-gradient-to-r from-primary/5 to-transparent border border-primary/20 p-6 rounded-2xl animate-fadeIn hover:border-primary/40 transition-colors duration-300" style={{ animationDelay: '0.3s', animationFillMode: 'both' }}>
                             <div className="flex items-start gap-5">
-                                <div className="bg-gradient-primary text-white p-3 rounded-xl shadow-md shadow-primary/20 flex-shrink-0">
-                                    <span className="material-symbols-outlined block text-2xl">psychology</span>
+                                <div className="bg-gradient-to-r from-primary to-accent text-white p-3 rounded-xl shadow-md shadow-primary/20 flex-shrink-0">
+                                    <Brain className="w-6 h-6" />
                                 </div>
                                 <div>
                                     <h3 className="text-primary font-bold text-xl mb-2 flex items-center gap-2">
@@ -163,9 +176,9 @@ export default function AiRecipeModal({ isOpen, onClose, recipe }: AiRecipeModal
                             {/* Left: Ingredients */}
                             <div className="xl:col-span-1 animate-fadeIn" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>
                                 <div className="sticky top-6">
-                                    <h3 className="text-text-primary text-2xl font-bold mb-6 flex items-center gap-3">
+                                    <h3 className="text-slate-900 text-2xl font-bold mb-6 flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
-                                            <span className="material-symbols-outlined">shopping_basket</span>
+                                            <ShoppingBasket className="w-5 h-5" />
                                         </div>
                                         Ingredients
                                     </h3>
@@ -175,11 +188,11 @@ export default function AiRecipeModal({ isOpen, onClose, recipe }: AiRecipeModal
                                                 key={index}
                                                 className="flex items-center gap-4 p-3 rounded-xl border border-transparent hover:border-primary/20 hover:bg-white hover:shadow-sm transition-all cursor-pointer group relative z-10"
                                             >
-                                                <div className="w-10 h-10 bg-bg group-hover:bg-primary/10 rounded-full border-2 border-white flex items-center justify-center flex-shrink-0 transition-colors z-10">
-                                                    <div className="w-2.5 h-2.5 rounded-full bg-gray-300 group-hover:bg-primary transition-colors"></div>
+                                                <div className="w-10 h-10 bg-slate-50 group-hover:bg-primary/10 rounded-full border-2 border-white flex items-center justify-center flex-shrink-0 transition-colors z-10">
+                                                    <div className="w-2.5 h-2.5 rounded-full bg-slate-300 group-hover:bg-primary transition-colors"></div>
                                                 </div>
-                                                <span className="text-text-secondary text-base group-hover:text-text-primary transition-colors">
-                                                    <strong className="text-text-primary mr-1">
+                                                <span className="text-slate-600 text-base group-hover:text-slate-900 transition-colors">
+                                                    <strong className="text-slate-900 mr-1">
                                                         {ingredient.quantity} {ingredient.unit}
                                                     </strong>
                                                     <span className="capitalize">{ingredient.name}</span>
@@ -192,9 +205,9 @@ export default function AiRecipeModal({ isOpen, onClose, recipe }: AiRecipeModal
 
                             {/* Right: Instructions */}
                             <div className="xl:col-span-2 animate-fadeIn" style={{ animationDelay: '0.5s', animationFillMode: 'both' }}>
-                                <h3 className="text-text-primary text-2xl font-bold mb-8 flex items-center gap-3">
+                                <h3 className="text-slate-900 text-2xl font-bold mb-8 flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                                        <span className="material-symbols-outlined">cooking</span>
+                                        <ChefHat className="w-5 h-5" />
                                     </div>
                                     Instructions
                                 </h3>
@@ -210,8 +223,8 @@ export default function AiRecipeModal({ isOpen, onClose, recipe }: AiRecipeModal
                                                 )}
                                             </div>
                                             <div className="pb-8 group-hover:-translate-y-1 transition-transform duration-300">
-                                                <h4 className="text-text-primary font-bold text-lg mb-2">Step {index + 1}</h4>
-                                                <p className="text-text-secondary leading-relaxed text-base">
+                                                <h4 className="text-slate-900 font-bold text-lg mb-2">Step {index + 1}</h4>
+                                                <p className="text-slate-600 leading-relaxed text-base">
                                                     {instruction}
                                                 </p>
                                             </div>
@@ -226,22 +239,22 @@ export default function AiRecipeModal({ isOpen, onClose, recipe }: AiRecipeModal
                 {/* Sticky Footer Action Bar */}
                 <div className="p-6 bg-white border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)] z-20">
                     <div className="flex items-center gap-6">
-                        <button className="flex items-center gap-2 text-text-secondary hover:text-primary transition-colors duration-200 group">
-                            <span className="material-symbols-outlined group-hover:scale-110 transition-transform">share</span>
+                        <button className="flex items-center gap-2 text-slate-500 hover:text-primary transition-colors duration-200 group">
+                            <Share2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
                             <span className="text-sm font-bold">Share</span>
                         </button>
-                        <button className="flex items-center gap-2 text-text-secondary hover:text-primary transition-colors duration-200 group">
-                            <span className="material-symbols-outlined group-hover:scale-110 transition-transform">print</span>
+                        <button className="flex items-center gap-2 text-slate-500 hover:text-primary transition-colors duration-200 group">
+                            <Printer className="w-5 h-5 group-hover:scale-110 transition-transform" />
                             <span className="text-sm font-bold">Print Recipe</span>
                         </button>
                     </div>
                     <div className="flex items-center gap-3 w-full sm:w-auto">
                         <button
-                            className="flex-1 sm:flex-none px-8 py-3.5 bg-gradient-primary text-white font-bold rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 overflow-hidden relative group"
+                            className="flex-1 sm:flex-none px-8 py-3.5 bg-gradient-to-r from-primary to-accent text-white font-bold rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 overflow-hidden relative group"
                             onClick={onClose}
                         >
                             <span className="absolute inset-0 w-full h-full bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-500 ease-out"></span>
-                            <span className="material-symbols-outlined relative z-10">kitchen</span>
+                            <Utensils className="w-5 h-5 relative z-10" />
                             <span className="relative z-10">Let's Cook This</span>
                         </button>
                     </div>
