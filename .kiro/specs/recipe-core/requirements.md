@@ -19,10 +19,10 @@
 **So that** I can cook meals with what I have
 
 **Acceptance Criteria:**
-- System calls Amazon Bedrock (Claude 3) with ingredient list
+- System uses Hugging Face models via LlamaIndex with ingredient list
 - Generated recipe includes: title, description, ingredients with quantities, step-by-step instructions, cooking time, servings
 - Response time is under 10 seconds
-- Error handling for Bedrock API failures with user-friendly messages
+- Error handling for LLM API failures with user-friendly messages
 - Generated recipes are stored in DynamoDB for future reference
 
 ### 1.3 Recipe Customization

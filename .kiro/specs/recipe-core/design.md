@@ -31,8 +31,8 @@
              │                 │                     │
              │                 │                     │
     ┌────────▼────────┐  ┌─────▼──────┐    ┌───────▼────────┐
-    │  Amazon Bedrock │  │  Vector DB │    │   DynamoDB     │
-    │  (Claude 3)     │  │  (Embedded)│    │   + S3         │
+    │  Hugging Face   │  │  Vector DB │    │   DynamoDB     │
+    │  via LlamaIndex │  │  (Embedded)│    │   + S3         │
     └─────────────────┘  └────────────┘    └────────────────┘
 ```
 
@@ -139,12 +139,12 @@ Response: { "data": { "exact_matches": List[Recipe], "partial_matches": List[Rec
 
 ## Service Layer Design
 
-### Bedrock Service
+### LLM Service
 ```python
-class BedrockService:
-    def __init__(self, model_id: str, region: str):
-        self.client = boto3.client('bedrock-runtime', region_name=region)
-        self.model_id = model_id
+class LLMService:
+    def __init__(self, model_name: str = "meta-llama/Llama-2-7b-chat-hf"):
+        from llama_index.llms.huggingface import HuggingFaceLLM
+        self.llm = HuggingFaceLLM(model_name=model_name)
     
     async def generate_recipe(
         self, 
@@ -153,17 +153,17 @@ class BedrockService:
         cuisine_type: Optional[str] = None,
         difficulty: Optional[str] = None
     ) -> Recipe:
-        """Generate recipe using Claude 3 via Bedrock"""
+        """Generate recipe using Hugging Face model via LlamaIndex"""
         prompt = self._build_prompt(ingredients, dietary_restrictions, cuisine_type, difficulty)
         response = await self._invoke_model(prompt)
         return self._parse_recipe_response(response)
     
     def _build_prompt(self, ...) -> str:
-        """Build structured prompt for Claude"""
+        """Build structured prompt for LLM"""
         pass
     
     async def _invoke_model(self, prompt: str) -> dict:
-        """Call Bedrock API"""
+        """Call Hugging Face model via LlamaIndex"""
         pass
 ```
 
@@ -286,7 +286,6 @@ async def api_error_handler(request: Request, exc: APIError):
 ```yaml
 # App Runner IAM Role
 Policies:
-  - BedrockInvokeModel
   - DynamoDBReadWrite
   - S3ReadWrite
 ```
@@ -327,7 +326,7 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ### Backend Testing
 - Unit tests with pytest and FastAPI TestClient
-- Mock Bedrock API calls using moto or custom mocks
+- Mock Hugging Face/LlamaIndex calls using custom mocks
 - Integration tests for DynamoDB operations
 - API contract tests
 

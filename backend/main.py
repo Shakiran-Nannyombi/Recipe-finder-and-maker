@@ -7,11 +7,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timezone
 
+from routes.recipes import router as recipes_router
+
 app = FastAPI(
     title="FlavorForge AI",
     description="AI-powered recipe generation and search API",
     version="1.0.0"
 )
+
+# Register routers
+app.include_router(recipes_router)
 
 # Configure CORS middleware
 # In production, this should be restricted to the frontend domain only

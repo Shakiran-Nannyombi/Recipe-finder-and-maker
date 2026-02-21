@@ -16,29 +16,29 @@
   - [x] 1.2.4 Configure API client with axios or fetch
   - [x] 1.2.5 Set up environment variables for API URL
 
-## 2. Backend - Bedrock Service
+## 2. Backend - LLM Service
 
-- [ ] 2.1 Create Bedrock service wrapper
-  - [ ] 2.1.1 Implement BedrockService class with boto3 client
-  - [ ] 2.1.2 Create prompt builder for recipe generation
-  - [ ] 2.1.3 Implement model invocation with error handling
-  - [ ] 2.1.4 Parse Claude 3 response into Recipe model 
-  - [ ] 2.1.5 Add retry logic for transient failures
+- [x] 2.1 Create LLM service wrapper
+  - [x] 2.1.1 Implement LLMService class with LlamaIndex and Hugging Face
+  - [x] 2.1.2 Create prompt builder for recipe generation
+  - [x] 2.1.3 Implement model invocation with error handling
+  - [x] 2.1.4 Parse LLM response into Recipe model 
+  - [x] 2.1.5 Add retry logic for transient failures
 
-- [ ] 2.2 Create recipe generation endpoint
-  - [ ] 2.2.1 Define RecipeGenerationRequest Pydantic model
-  - [ ] 2.2.2 Create POST /api/recipes/generate route
-  - [ ] 2.2.3 Validate input with Pydantic
-  - [ ] 2.2.4 Call BedrockService to generate recipe
-  - [ ] 2.2.5 Return standardized response format
+- [x] 2.2 Create recipe generation endpoint
+  - [x] 2.2.1 Define RecipeGenerationRequest Pydantic model
+  - [x] 2.2.2 Create POST /api/recipes/generate route
+  - [x] 2.2.3 Validate input with Pydantic
+  - [x] 2.2.4 Call LLMService to generate recipe
+  - [x] 2.2.5 Return standardized response format
 
-- [ ] 2.3 Write tests for Bedrock service
-  - [ ] 2.3.1 Mock Bedrock API calls
-  - [ ] 2.3.2 Test prompt generation
-  - [ ] 2.3.3 Test response parsing
-  - [ ] 2.3.4 Test error handling
+- [x] 2.3 Write tests for LLM service
+  - [x] 2.3.1 Mock Hugging Face/LlamaIndex calls
+  - [x] 2.3.2 Test prompt generation
+  - [x] 2.3.3 Test response parsing
+  - [x] 2.3.4 Test error handling
 
-## 3. Backend - DynamoDB Integration
+## 3. Backend - Use Superbase for my storage change tasks
 
 - [ ] 3.1 Create DynamoDB service
   - [ ] 3.1.1 Implement DynamoDBService class
@@ -206,7 +206,7 @@
   - [ ] 9.1.1 Write tests for all service classes
   - [ ] 9.1.2 Write tests for all API endpoints
   - [ ] 9.1.3 Achieve 80%+ code coverage
-  - [ ] 9.1.4 Mock all AWS service calls
+  - [ ] 9.1.4 Mock all LLM service calls
 
 - [ ] 9.2 Frontend unit tests
   - [ ] 9.2.1 Write tests for all components
@@ -229,8 +229,8 @@
 
 - [ ] 10.2 Prepare for AWS App Runner
   - [ ] 10.2.1 Create apprunner.yaml configuration
-  - [ ] 10.2.2 Configure IAM roles for Bedrock, DynamoDB, S3
-  - [ ] 10.2.3 Set up environment variables
+  - [ ] 10.2.2 Configure IAM roles for DynamoDB, S3
+  - [ ] 10.2.3 Set up environment variables (Hugging Face API token if needed)
   - [ ] 10.2.4 Configure auto-scaling settings
 
 - [ ] 10.3 Set up DynamoDB tables
