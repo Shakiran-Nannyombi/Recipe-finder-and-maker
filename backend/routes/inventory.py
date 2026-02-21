@@ -8,6 +8,8 @@ from datetime import datetime, timezone
 
 from services.supabase_service import SupabaseService
 from models.inventory import UserInventory, InventoryItem
+from models.auth import User
+from routes.auth import get_current_user
 
 router = APIRouter(prefix="/api/inventory", tags=["inventory"])
 
@@ -25,19 +27,13 @@ class AddItemRequest(BaseModel):
 
 @router.get("")
 async def get_inventory(
-    user_id: str = "default_user",
+    current_user: User = Depends(get_current_user),
     supabase_service: SupabaseService = Depends(get_supabase_service)
 ):
     """
-    Get user's inventory.
-    
-    Args:
-        user_id: User identifier (defaults to 'default_user')
-        supabase_service: Supabase service instance (injected)
-        
-    Returns:
-        User's inventory with standardized response format
+    Get authenticated user's inventory.
     """
+    user_id = current_user.id
     try:
         inventory = await supabase_service.get_inventory(user_id)
         
@@ -62,20 +58,13 @@ async def get_inventory(
 @router.post("/items")
 async def add_inventory_item(
     request: AddItemRequest,
-    user_id: str = "default_user",
+    current_user: User = Depends(get_current_user),
     supabase_service: SupabaseService = Depends(get_supabase_service)
 ):
     """
-    Add an item to user's inventory.
-    
-    Args:
-        request: AddItemRequest with ingredient_name and optional quantity
-        user_id: User identifier (defaults to 'default_user')
-        supabase_service: Supabase service instance (injected)
-        
-    Returns:
-        Added item with standardized response format
+    Add an item to authenticated user's inventory.
     """
+    user_id = current_user.id
     try:
         inventory = await supabase_service.add_item(
             user_id=user_id,
@@ -103,20 +92,13 @@ async def add_inventory_item(
 @router.delete("/items/{ingredient_name}")
 async def remove_inventory_item(
     ingredient_name: str,
-    user_id: str = "default_user",
+    current_user: User = Depends(get_current_user),
     supabase_service: SupabaseService = Depends(get_supabase_service)
 ):
     """
-    Remove an item from user's inventory.
-    
-    Args:
-        ingredient_name: Name of the ingredient to remove
-        user_id: User identifier (defaults to 'default_user')
-        supabase_service: Supabase service instance (injected)
-        
-    Returns:
-        Deletion confirmation with standardized response format
+    Remove an item from authenticated user's inventory.
     """
+    user_id = current_user.id
     try:
         await supabase_service.remove_item(user_id=user_id, ingredient_name=ingredient_name)
         
@@ -137,19 +119,13 @@ async def remove_inventory_item(
 
 @router.post("/match-recipes")
 async def match_recipes_with_inventory(
-    user_id: str = "default_user",
+    current_user: User = Depends(get_current_user),
     supabase_service: SupabaseService = Depends(get_supabase_service)
 ):
     """
-    Match recipes with user's current inventory.
-    
-    Args:
-        user_id: User identifier (defaults to 'default_user')
-        supabase_service: Supabase service instance (injected)
-        
-    Returns:
-        Exact and partial recipe matches with standardized response format
+    Match recipes with authenticated user's current inventory.
     """
+    user_id = current_user.id
     try:
         matches = await supabase_service.match_recipes_with_inventory(user_id)
         

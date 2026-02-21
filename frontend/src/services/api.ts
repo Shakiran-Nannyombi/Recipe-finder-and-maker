@@ -139,6 +139,12 @@ class APIClient {
             ...fetchConfig.headers,
         };
 
+        // Add auth token if available
+        const token = localStorage.getItem('recipe_ai_token');
+        if (token) {
+            (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+        }
+
         try {
             const response = await fetch(url, {
                 ...fetchConfig,

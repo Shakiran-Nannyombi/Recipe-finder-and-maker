@@ -35,7 +35,7 @@ export const inventoryApi = {
      * Get recipe matches based on current inventory
      */
     async matchRecipes(): Promise<ApiResponse<RecipeMatches>> {
-        return apiClient.post<RecipeMatches>('/api/recipes/match-inventory', {});
+        return apiClient.post<RecipeMatches>('/api/inventory/match-recipes', {});
     },
 };
 
