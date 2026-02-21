@@ -1,5 +1,5 @@
 """
-Tests for Pydantic models in FlavorForge AI.
+Tests for Pydantic models in Recipe AI.
 """
 import pytest
 from pydantic import ValidationError

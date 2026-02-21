@@ -22,7 +22,7 @@ def test_root_endpoint(client):
     assert "data" in data
     assert "meta" in data
     assert "timestamp" in data["meta"]
-    assert data["data"]["message"] == "Welcome to FlavorForge AI API"
+    assert data["data"]["message"] == "Welcome to Recipe AI API"
     assert data["data"]["version"] == "1.0.0"
 
 
@@ -92,7 +92,7 @@ def test_health_check_endpoint(client):
     assert "meta" in data
     assert "timestamp" in data["meta"]
     assert data["data"]["status"] == "healthy"
-    assert data["data"]["service"] == "FlavorForge AI"
+    assert data["data"]["service"] == "Recipe AI"
 
 
 def test_health_check_response_structure(client):

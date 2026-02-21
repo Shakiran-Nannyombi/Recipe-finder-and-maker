@@ -1,5 +1,5 @@
 /**
- * API Client for FlavorForge AI
+ * API Client for Recipe AI
  * Handles all HTTP requests to the FastAPI backend
  */
 

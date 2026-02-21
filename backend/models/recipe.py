@@ -1,5 +1,5 @@
 """
-Recipe data models for FlavorForge AI.
+Recipe data models for Recipe AI.
 """
 from pydantic import BaseModel, Field
 from typing import List, Optional

@@ -1,5 +1,5 @@
 """
-Recipe generation and management routes for FlavorForge AI.
+Recipe generation and management routes for Recipe AI.
 """
 from fastapi import APIRouter, HTTPException, Depends, Query
 from datetime import datetime, timezone

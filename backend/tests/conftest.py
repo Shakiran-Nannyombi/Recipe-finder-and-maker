@@ -1,5 +1,5 @@
 """
-Pytest configuration and shared fixtures for FlavorForge AI tests.
+Pytest configuration and shared fixtures for Recipe AI tests.
 """
 import sys
 from pathlib import Path

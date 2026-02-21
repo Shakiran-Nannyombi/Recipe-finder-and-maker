@@ -1,1 +1,1 @@
-"""Tests for FlavorForge AI backend."""
+"""Tests for Recipe AI backend."""

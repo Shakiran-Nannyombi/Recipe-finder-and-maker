@@ -1,5 +1,5 @@
 """
-Inventory data models for FlavorForge AI.
+Inventory data models for Recipe AI.
 """
 from pydantic import BaseModel
 from typing import List, Optional

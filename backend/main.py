@@ -1,5 +1,5 @@
 """
-FlavorForge AI - FastAPI Backend
+Recipe AI - FastAPI Backend
 Main application entry point
 """
 import os
@@ -11,7 +11,7 @@ from routes.recipes import router as recipes_router
 from routes.inventory import router as inventory_router
 
 app = FastAPI(
-    title="FlavorForge AI",
+    title="Recipe AI",
     description="AI-powered recipe generation and search API",
     version="1.0.0"
 )
@@ -38,7 +38,7 @@ async def root():
     """Root endpoint"""
     return {
         "data": {
-            "message": "Welcome to FlavorForge AI API",
+            "message": "Welcome to Recipe AI API",
             "version": "1.0.0"
         },
         "meta": {
@@ -53,7 +53,7 @@ async def health_check():
     return {
         "data": {
             "status": "healthy",
-            "service": "FlavorForge AI"
+            "service": "Recipe AI"
         },
         "meta": {
             "timestamp": datetime.now(timezone.utc).isoformat()

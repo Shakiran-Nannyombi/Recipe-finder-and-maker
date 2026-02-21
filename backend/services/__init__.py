@@ -1,5 +1,5 @@
 """
-Service layer for FlavorForge AI.
+Service layer for Recipe AI.
 
 This package contains business logic and external service integrations
 including LLM, DynamoDB, and vector search services.

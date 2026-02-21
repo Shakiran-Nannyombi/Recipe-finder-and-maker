@@ -1,5 +1,5 @@
 """
-API routes for FlavorForge AI.
+API routes for Recipe AI.
 
 This package contains all API route handlers organized by feature.
 """

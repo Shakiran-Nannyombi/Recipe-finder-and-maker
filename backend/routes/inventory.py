@@ -1,5 +1,5 @@
 """
-Inventory management routes for FlavorForge AI.
+Inventory management routes for Recipe AI.
 """
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
