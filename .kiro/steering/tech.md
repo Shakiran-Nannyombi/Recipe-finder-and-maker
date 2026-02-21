@@ -1,8 +1,8 @@
-# Technology Stack: FlavorForge AI
+# Technology Stack: Recipe AI
 
-- **Frontend**: React, Tailwind CSS, Vite
+- **Frontend**: React 18 with TypeScript, Tailwind CSS, Vite
 - **Backend**: FastAPI, Pydantic v2
 - **AI/ML**: Hugging Face (via LlamaIndex)
 - **Database**: Supabase (PostgreSQL)
 - **Vector Search**: Pinecone
-- **Infrastructure**: AWS App Runner
+- **Deployment**: Vercel (frontend), Render (backend)

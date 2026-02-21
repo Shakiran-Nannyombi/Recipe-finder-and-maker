@@ -1,8 +1,8 @@
-# Recipe AI 🍳
+# Recipe AI 
 
 A high-performance AI-powered recipe discovery and generation application. Uses semantic search to find recipes and Hugging Face models to generate custom recipes based on available ingredients.
 
-## ✨ Features
+## Features
 
 * **Smart Recipe Search**: Natural language search using Pinecone vector embeddings
 * **AI Recipe Generator**: Create custom recipes using Hugging Face models via LlamaIndex
@@ -11,7 +11,7 @@ A high-performance AI-powered recipe discovery and generation application. Uses 
 * **React Frontend**: Responsive, modern UI for meal planning
 * **Supabase Storage**: Persistent recipe and inventory storage
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Backend Setup
 
@@ -27,7 +27,7 @@ uvicorn main:app --reload
 
 Visit http://localhost:8000/docs for API documentation.
 
-**📖 Detailed backend setup guide**: [backend/README.md](backend/README.md)
+**Detailed backend setup guide**: [backend/README.md](backend/README.md)
 
 ### Frontend Setup
 
@@ -41,7 +41,7 @@ npm run dev
 
 Visit http://localhost:5173 for the application.
 
-## 🔑 Required Services
+## Required Services
 
 You'll need API keys from:
 1. **Supabase** - Database and storage (https://supabase.com)
@@ -50,7 +50,7 @@ You'll need API keys from:
 
 See [backend/README.md](backend/README.md) for detailed setup instructions.
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 RecipeAI/
@@ -73,7 +73,7 @@ RecipeAI/
     └── specs/            # Feature specifications
 ```
 
-## 🧪 Testing
+## Testing
 
 ### Backend Tests
 ```bash
@@ -89,7 +89,7 @@ npm test
 npm run test:coverage
 ```
 
-## 🚀 Deployment
+## Deployment
 
 ### Backend (Render)
 The backend is deployed on Render. See `render.yaml` for configuration.
@@ -109,13 +109,13 @@ vercel --prod
 
 See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
 
-## 📚 API Documentation
+## API Documentation
 
 Once the backend is running, interactive API documentation is available at:
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -123,11 +123,11 @@ Once the backend is running, interactive API documentation is available at:
 4. Run tests
 5. Submit a pull request
 
-## 📄 License
+## License
 
 MIT License - see LICENSE file for details
 
-## 🏗️ Architecture
+## Architecture
 
 Recipe AI follows a modern full-stack architecture:
 
@@ -137,14 +137,14 @@ Recipe AI follows a modern full-stack architecture:
 - **Database**: Supabase (PostgreSQL) for recipe and inventory storage
 - **Vector Search**: Pinecone for semantic recipe search
 
-## 📖 Documentation
+## Documentation
 
 - [Setup Guide](SETUP_GUIDE.md) - Detailed setup instructions
 - [Deployment Guide](DEPLOYMENT.md) - Production deployment guide
 - [Implementation Summary](IMPLEMENTATION_SUMMARY.md) - Technical implementation details
 - [Guidelines](GUIDELINES.md) - Development guidelines and best practices
 
-## 🛠️ Development Guidelines
+## Development Guidelines
 
 See [GUIDELINES.md](GUIDELINES.md) for:
 - Code standards and conventions
