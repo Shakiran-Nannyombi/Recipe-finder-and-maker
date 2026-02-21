@@ -140,6 +140,97 @@ describe('APIClient', () => {
             }
         });
 
+        it('should handle FastAPI validation errors with string detail', async () => {
+            const errorResponse = {
+                detail: 'Invalid request format',
+            };
+
+            (global.fetch as any).mockResolvedValueOnce({
+                ok: false,
+                status: 422,
+                headers: new Headers({ 'content-type': 'application/json' }),
+                json: async () => errorResponse,
+            });
+
+            try {
+                await apiClient.post('/api/recipes/generate', {});
+                expect.fail('Should have thrown an error');
+            } catch (error) {
+                expect(error).toBeInstanceOf(APIClientError);
+                expect((error as APIClientError).statusCode).toBe(422);
+                expect((error as APIClientError).message).toBe('Invalid request format');
+            }
+        });
+
+        it('should handle FastAPI validation errors with array detail', async () => {
+            const errorResponse = {
+                detail: [
+                    { msg: 'Field required', type: 'value_error.missing' },
+                    { msg: 'Invalid type', type: 'type_error' },
+                ],
+            };
+
+            (global.fetch as any).mockResolvedValueOnce({
+                ok: false,
+                status: 422,
+                headers: new Headers({ 'content-type': 'application/json' }),
+                json: async () => errorResponse,
+            });
+
+            try {
+                await apiClient.post('/api/recipes/generate', {});
+                expect.fail('Should have thrown an error');
+            } catch (error) {
+                expect(error).toBeInstanceOf(APIClientError);
+                expect((error as APIClientError).statusCode).toBe(422);
+                expect((error as APIClientError).message).toBe('Field required, Invalid type');
+            }
+        });
+
+        it('should handle generic message field errors', async () => {
+            const errorResponse = {
+                message: 'Something went wrong',
+            };
+
+            (global.fetch as any).mockResolvedValueOnce({
+                ok: false,
+                status: 500,
+                headers: new Headers({ 'content-type': 'application/json' }),
+                json: async () => errorResponse,
+            });
+
+            try {
+                await apiClient.get('/api/recipes');
+                expect.fail('Should have thrown an error');
+            } catch (error) {
+                expect(error).toBeInstanceOf(APIClientError);
+                expect((error as APIClientError).statusCode).toBe(500);
+                expect((error as APIClientError).message).toBe('Something went wrong');
+            }
+        });
+
+        it('should use default error message when no recognizable format', async () => {
+            const errorResponse = {
+                unknown: 'format',
+            };
+
+            (global.fetch as any).mockResolvedValueOnce({
+                ok: false,
+                status: 500,
+                headers: new Headers({ 'content-type': 'application/json' }),
+                json: async () => errorResponse,
+            });
+
+            try {
+                await apiClient.get('/api/recipes');
+                expect.fail('Should have thrown an error');
+            } catch (error) {
+                expect(error).toBeInstanceOf(APIClientError);
+                expect((error as APIClientError).statusCode).toBe(500);
+                expect((error as APIClientError).message).toBe('An error occurred');
+            }
+        });
+
         it('should handle network errors', async () => {
             (global.fetch as any).mockRejectedValueOnce(new Error('Network error'));
 
