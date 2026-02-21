@@ -21,9 +21,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
     return (
         <aside className="w-24 md:w-64 flex-shrink-0 bg-white border-r border-primary/10 flex flex-col transition-all duration-300 z-30">
             <div className="p-6 flex items-center gap-3">
-                <div className="bg-primary rounded-xl p-0.5 flex items-center justify-center shadow-lg shadow-primary/20 overflow-hidden">
-                    <img src="/RecipeAI.png" alt="Recipe AI Logo" className="w-10 h-10 object-cover" />
-                </div>
+                <img src="/RecipeAI.png" alt="Recipe AI Logo" className="w-10 h-10 object-contain" />
                 <div className="hidden md:block">
                     <h1 className="text-xl font-bold tracking-tight text-slate-900">Recipe AI</h1>
                     <p className="text-xs text-primary font-medium uppercase tracking-widest">Food-Tech</p>

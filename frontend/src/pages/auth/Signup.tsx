@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../hooks/useAuth';
-import { User, Mail, Lock, ArrowRight, Github, Chrome } from 'lucide-react';
+import { User, Mail, Lock, ArrowRight, Github, Chrome, Sparkles } from 'lucide-react';
 
 export default function Signup() {
     const [name, setName] = useState('');
@@ -33,96 +33,142 @@ export default function Signup() {
     };
 
     return (
-        <div className="min-h-screen bg-background-light flex items-center justify-center p-6 font-body">
-            <div className="max-w-md w-full animate-fadeIn">
-                <div className="text-center mb-10 space-y-4">
-                    <div className="inline-flex items-center justify-center bg-primary rounded-2xl p-2 shadow-lg shadow-primary/20 mb-2">
-                        <img src="/RecipeAI.png" alt="Logo" className="w-10 h-10 object-cover" />
+        <div className="min-h-screen bg-white flex font-body overflow-hidden">
+            {/* Left Side: Visual/Branding */}
+            <div className="hidden lg:flex lg:w-1/2 relative bg-slate-900 items-center justify-center p-12 overflow-hidden">
+                <img
+                    src="https://images.unsplash.com/photo-1506368249639-73a05d6f6488?auto=format&fit=crop&q=80&w=1600"
+                    alt="Healthy Ingredients"
+                    className="absolute inset-0 w-full h-full object-cover opacity-60 scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-slate-900/90" />
+
+                <div className="relative z-10 max-w-lg space-y-8 animate-fadeIn">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white font-bold text-xs uppercase tracking-widest backdrop-blur-md">
+                        <Sparkles className="w-4 h-4 text-primary" />
+                        Next-Gen Culinary AI
                     </div>
-                    <h1 className="text-4xl font-bold text-slate-900 tracking-tight">Create Account</h1>
-                    <p className="text-slate-500">Join the world's most intelligent kitchen community.</p>
+                    <h2 className="text-4xl font-bold text-white leading-tight">
+                        Join the World's Most <span className="text-primary italic">Intelligent</span> Kitchen Community.
+                    </h2>
+                    <ul className="space-y-4 text-slate-300">
+                        <li className="flex items-center gap-3">
+                            <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                                <ArrowRight className="w-3 h-3" />
+                            </div>
+                            Turn ingredients into gourmet recipes instantly
+                        </li>
+                        <li className="flex items-center gap-3">
+                            <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                                <ArrowRight className="w-3 h-3" />
+                            </div>
+                            Smart pantry management with AI insights
+                        </li>
+                        <li className="flex items-center gap-3">
+                            <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+                                <ArrowRight className="w-3 h-3" />
+                            </div>
+                            Collaborate and share with a global community
+                        </li>
+                    </ul>
                 </div>
 
-                <div className="bg-white p-10 rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100">
-                    {error && (
-                        <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-bold animate-shake">
-                            {error}
-                        </div>
-                    )}
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Full Name</label>
-                            <div className="relative group">
-                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
-                                <input
-                                    type="text"
-                                    required
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    className="w-full bg-slate-50 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none rounded-2xl py-4 pl-12 pr-4 transition-all"
-                                    placeholder="Julian Chef"
-                                />
-                            </div>
-                        </div>
+                {/* Decorative Elements */}
+                <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+            </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Email Address</label>
-                            <div className="relative group">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
-                                <input
-                                    type="email"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full bg-slate-50 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none rounded-2xl py-4 pl-12 pr-4 transition-all"
-                                    placeholder="chef@recipeai.com"
-                                />
-                            </div>
+            {/* Right Side: Form */}
+            <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 md:p-16 lg:p-24 bg-background-light/30 overflow-y-auto">
+                <div className="w-full max-w-md space-y-8 animate-fadeIn py-8">
+                    <div className="flex flex-col items-center lg:items-start space-y-4">
+                        <img src="/RecipeAI.png" alt="Logo" className="w-12 h-12 object-contain" />
+                        <div className="text-center lg:text-left">
+                            <h1 className="text-4xl font-bold text-slate-900 tracking-tight">Create Account</h1>
+                            <p className="text-slate-500 mt-2">Join the world's most intelligent kitchen community.</p>
                         </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 ml-1">Password</label>
-                            <div className="relative group">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
-                                <input
-                                    type="password"
-                                    required
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full bg-slate-50 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none rounded-2xl py-4 pl-12 pr-4 transition-all"
-                                    placeholder="••••••••"
-                                />
-                            </div>
-                        </div>
-
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className={`w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-primary/30 flex items-center justify-center gap-3 group mt-4 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
-                        >
-                            {isLoading ? 'Crafting Account...' : 'Get Started'}
-                            {!isLoading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
-                        </button>
-                    </form>
-
-                    <div className="mt-8 relative text-center">
-                        <span className="relative z-10 bg-white px-4 text-xs font-bold uppercase tracking-widest text-slate-400">Or join with</span>
-                        <div className="absolute top-1/2 -translate-y-1/2 left-0 w-full h-px bg-slate-100"></div>
                     </div>
 
-                    <div className="mt-8 grid grid-cols-2 gap-4">
-                        <button className="flex items-center justify-center gap-2 py-3 px-4 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:shadow-md transition-all font-bold text-slate-600">
-                            <Chrome className="w-5 h-5" /> Google
-                        </button>
-                        <button className="flex items-center justify-center gap-2 py-3 px-4 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:shadow-md transition-all font-bold text-slate-600">
-                            <Github className="w-5 h-5" /> GitHub
-                        </button>
+                    <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-slate-200/40 border border-slate-100">
+                        {error && (
+                            <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-bold animate-shake">
+                                {error}
+                            </div>
+                        )}
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Full Name</label>
+                                <div className="relative group">
+                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+                                    <input
+                                        type="text"
+                                        required
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        className="w-full bg-slate-50 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none rounded-2xl py-4 pl-12 pr-4 transition-all"
+                                        placeholder="Julian Chef"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Email Address</label>
+                                <div className="relative group">
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+                                    <input
+                                        type="email"
+                                        required
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="w-full bg-slate-50 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none rounded-2xl py-4 pl-12 pr-4 transition-all"
+                                        placeholder="chef@recipeai.com"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Password</label>
+                                <div className="relative group">
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+                                    <input
+                                        type="password"
+                                        required
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="w-full bg-slate-50 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none rounded-2xl py-4 pl-12 pr-4 transition-all"
+                                        placeholder="••••••••"
+                                    />
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className={`w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-primary/30 flex items-center justify-center gap-3 group mt-4 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                            >
+                                {isLoading ? 'Crafting Account...' : 'Get Started'}
+                                {!isLoading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
+                            </button>
+                        </form>
+
+                        <div className="mt-8 relative text-center">
+                            <span className="relative z-10 bg-white px-4 text-xs font-bold uppercase tracking-widest text-slate-400">Or join with</span>
+                            <div className="absolute top-1/2 -translate-y-1/2 left-0 w-full h-px bg-slate-100"></div>
+                        </div>
+
+                        <div className="mt-8 grid grid-cols-2 gap-4">
+                            <button className="flex items-center justify-center gap-2 py-3 px-4 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:shadow-md transition-all font-bold text-slate-600">
+                                <Chrome className="w-5 h-5" /> Google
+                            </button>
+                            <button className="flex items-center justify-center gap-2 py-3 px-4 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:shadow-md transition-all font-bold text-slate-600">
+                                <Github className="w-5 h-5" /> GitHub
+                            </button>
+                        </div>
                     </div>
+
+                    <p className="text-center text-slate-500 font-medium pb-8">
+                        Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Log in here</Link>
+                    </p>
                 </div>
-
-                <p className="mt-10 text-center text-slate-500 font-medium">
-                    Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Log in here</Link>
-                </p>
             </div>
         </div>
     );
