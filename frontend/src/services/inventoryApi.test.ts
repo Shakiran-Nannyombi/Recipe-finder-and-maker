@@ -109,7 +109,7 @@ describe('inventoryApi', () => {
 
             const result = await inventoryApi.matchRecipes();
 
-            expect(apiClient.post).toHaveBeenCalledWith('/api/recipes/match-inventory', {});
+            expect(apiClient.post).toHaveBeenCalledWith('/api/inventory/match-recipes', {});
             expect(result.data).toEqual(mockMatches);
         });
     });

@@ -46,11 +46,27 @@ def mock_supabase_service():
     return service
 
 
+@pytest.fixture
+def mock_get_current_user():
+    """Fixture that mocks the get_current_user dependency."""
+    from models.auth import User
+    async def _mock_get_current_user():
+        return User(
+            id="test_user",
+            email="test@example.com",
+            name="Test User",
+            created_at=datetime(2024, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+        )
+    return _mock_get_current_user
+
+
 @pytest.fixture(autouse=True)
-def setup_dependency_override(mock_supabase_service):
+def setup_dependency_override(mock_supabase_service, mock_get_current_user):
     """Automatically override dependencies for all tests."""
     from routes.inventory import get_supabase_service
+    from routes.auth import get_current_user
     app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+    app.dependency_overrides[get_current_user] = mock_get_current_user
     yield
     app.dependency_overrides.clear()
 
@@ -62,7 +78,7 @@ class TestGetInventory:
         """Test successful inventory retrieval."""
         mock_supabase_service.get_inventory.return_value = mock_inventory
         
-        response = client.get("/api/inventory?user_id=test_user")
+        response = client.get("/api/inventory")
         
         assert response.status_code == 200
         data = response.json()
@@ -83,30 +99,30 @@ class TestGetInventory:
         mock_supabase_service.get_inventory.assert_called_once_with("test_user")
     
     def test_get_inventory_default_user(self, mock_supabase_service, mock_inventory):
-        """Test inventory retrieval with default user."""
-        mock_inventory.user_id = "default_user"
+        """Test inventory retrieval with authenticated user."""
+        mock_inventory.user_id = "test_user"
         mock_supabase_service.get_inventory.return_value = mock_inventory
         
         response = client.get("/api/inventory")
         
         assert response.status_code == 200
         data = response.json()
-        assert data["data"]["user_id"] == "default_user"
+        assert data["data"]["user_id"] == "test_user"
         
-        # Verify default user was used
-        mock_supabase_service.get_inventory.assert_called_once_with("default_user")
+        # Verify authenticated user was used
+        mock_supabase_service.get_inventory.assert_called_once_with("test_user")
     
     def test_get_inventory_not_found_returns_empty(self, mock_supabase_service):
         """Test that non-existent inventory returns empty inventory."""
         mock_supabase_service.get_inventory.return_value = None
         
-        response = client.get("/api/inventory?user_id=new_user")
+        response = client.get("/api/inventory")
         
         assert response.status_code == 200
         data = response.json()
         
         # Verify empty inventory is returned
-        assert data["data"]["user_id"] == "new_user"
+        assert data["data"]["user_id"] == "test_user"
         assert data["data"]["items"] == []
         assert "updated_at" in data["data"]
     
@@ -119,7 +135,7 @@ class TestGetInventory:
         )
         mock_supabase_service.get_inventory.return_value = empty_inventory
         
-        response = client.get("/api/inventory?user_id=test_user")
+        response = client.get("/api/inventory")
         
         assert response.status_code == 200
         data = response.json()
@@ -130,7 +146,7 @@ class TestGetInventory:
         """Test handling of server errors during inventory retrieval."""
         mock_supabase_service.get_inventory.side_effect = Exception("Database connection failed")
         
-        response = client.get("/api/inventory?user_id=test_user")
+        response = client.get("/api/inventory")
         
         assert response.status_code == 500
         data = response.json()
@@ -140,7 +156,7 @@ class TestGetInventory:
         """Test that response follows API standards format."""
         mock_supabase_service.get_inventory.return_value = mock_inventory
         
-        response = client.get("/api/inventory?user_id=test_user")
+        response = client.get("/api/inventory")
         
         assert response.status_code == 200
         data = response.json()
@@ -163,7 +179,7 @@ class TestAddInventoryItem:
         mock_supabase_service.add_item.return_value = mock_inventory
         
         response = client.post(
-            "/api/inventory/items?user_id=test_user",
+            "/api/inventory/items",
             json={
                 "ingredient_name": "tomatoes",
                 "quantity": "5"
@@ -206,7 +222,7 @@ class TestAddInventoryItem:
         mock_supabase_service.add_item.return_value = inventory
         
         response = client.post(
-            "/api/inventory/items?user_id=test_user",
+            "/api/inventory/items",
             json={
                 "ingredient_name": "salt"
             }
@@ -225,8 +241,8 @@ class TestAddInventoryItem:
         )
     
     def test_add_item_default_user(self, mock_supabase_service, mock_inventory):
-        """Test adding item with default user."""
-        mock_inventory.user_id = "default_user"
+        """Test adding item with authenticated user."""
+        mock_inventory.user_id = "test_user"
         mock_supabase_service.add_item.return_value = mock_inventory
         
         response = client.post(
@@ -239,9 +255,9 @@ class TestAddInventoryItem:
         
         assert response.status_code == 200
         
-        # Verify default user was used
+        # Verify authenticated user was used
         mock_supabase_service.add_item.assert_called_once_with(
-            user_id="default_user",
+            user_id="test_user",
             ingredient_name="pepper",
             quantity="1"
         )
@@ -249,7 +265,7 @@ class TestAddInventoryItem:
     def test_add_item_missing_ingredient_name(self, mock_supabase_service):
         """Test that request fails when ingredient_name is missing."""
         response = client.post(
-            "/api/inventory/items?user_id=test_user",
+            "/api/inventory/items",
             json={
                 "quantity": "5"
             }
@@ -260,7 +276,7 @@ class TestAddInventoryItem:
     def test_add_item_empty_ingredient_name(self, mock_supabase_service):
         """Test that request fails with empty ingredient_name."""
         response = client.post(
-            "/api/inventory/items?user_id=test_user",
+            "/api/inventory/items",
             json={
                 "ingredient_name": "",
                 "quantity": "5"
@@ -287,7 +303,7 @@ class TestAddInventoryItem:
         mock_supabase_service.add_item.return_value = inventory
         
         response = client.post(
-            "/api/inventory/items?user_id=test_user",
+            "/api/inventory/items",
             json={
                 "ingredient_name": "tomatoes",
                 "quantity": "10"
@@ -304,7 +320,7 @@ class TestAddInventoryItem:
         mock_supabase_service.add_item.side_effect = Exception("Database error")
         
         response = client.post(
-            "/api/inventory/items?user_id=test_user",
+            "/api/inventory/items",
             json={
                 "ingredient_name": "tomatoes",
                 "quantity": "5"
@@ -320,7 +336,7 @@ class TestAddInventoryItem:
         mock_supabase_service.add_item.return_value = mock_inventory
         
         response = client.post(
-            "/api/inventory/items?user_id=test_user",
+            "/api/inventory/items",
             json={
                 "ingredient_name": "tomatoes",
                 "quantity": "5"
@@ -350,7 +366,7 @@ class TestRemoveInventoryItem:
             updated_at=datetime.now(timezone.utc)
         )
         
-        response = client.delete("/api/inventory/items/tomatoes?user_id=test_user")
+        response = client.delete("/api/inventory/items/tomatoes")
         
         assert response.status_code == 200
         data = response.json()
@@ -371,9 +387,9 @@ class TestRemoveInventoryItem:
         )
     
     def test_remove_item_default_user(self, mock_supabase_service):
-        """Test removing item with default user."""
+        """Test removing item with authenticated user."""
         mock_supabase_service.remove_item.return_value = UserInventory(
-            user_id="default_user",
+            user_id="test_user",
             items=[],
             updated_at=datetime.now(timezone.utc)
         )
@@ -384,9 +400,9 @@ class TestRemoveInventoryItem:
         data = response.json()
         assert data["data"]["deleted"] is True
         
-        # Verify default user was used
+        # Verify authenticated user was used
         mock_supabase_service.remove_item.assert_called_once_with(
-            user_id="default_user",
+            user_id="test_user",
             ingredient_name="pepper"
         )
     
@@ -396,7 +412,7 @@ class TestRemoveInventoryItem:
             "Ingredient 'nonexistent' not found in inventory"
         )
         
-        response = client.delete("/api/inventory/items/nonexistent?user_id=test_user")
+        response = client.delete("/api/inventory/items/nonexistent")
         
         assert response.status_code == 404
         data = response.json()
@@ -408,7 +424,7 @@ class TestRemoveInventoryItem:
             "Inventory not found for user test_user"
         )
         
-        response = client.delete("/api/inventory/items/tomatoes?user_id=test_user")
+        response = client.delete("/api/inventory/items/tomatoes")
         
         assert response.status_code == 404
         data = response.json()
@@ -423,7 +439,7 @@ class TestRemoveInventoryItem:
         )
         
         # URL encoding will handle spaces
-        response = client.delete("/api/inventory/items/cherry%20tomatoes?user_id=test_user")
+        response = client.delete("/api/inventory/items/cherry%20tomatoes")
         
         assert response.status_code == 200
         data = response.json()
@@ -438,7 +454,7 @@ class TestRemoveInventoryItem:
             updated_at=datetime.now(timezone.utc)
         )
         
-        response = client.delete("/api/inventory/items/Tomatoes?user_id=test_user")
+        response = client.delete("/api/inventory/items/Tomatoes")
         
         assert response.status_code == 200
         
@@ -452,7 +468,7 @@ class TestRemoveInventoryItem:
         """Test handling of server errors during item removal."""
         mock_supabase_service.remove_item.side_effect = Exception("Database connection failed")
         
-        response = client.delete("/api/inventory/items/tomatoes?user_id=test_user")
+        response = client.delete("/api/inventory/items/tomatoes")
         
         assert response.status_code == 500
         data = response.json()
@@ -466,7 +482,7 @@ class TestRemoveInventoryItem:
             updated_at=datetime.now(timezone.utc)
         )
         
-        response = client.delete("/api/inventory/items/tomatoes?user_id=test_user")
+        response = client.delete("/api/inventory/items/tomatoes")
         
         assert response.status_code == 200
         data = response.json()
@@ -534,7 +550,7 @@ class TestMatchRecipesWithInventory:
             "partial_matches": [partial_match]
         }
         
-        response = client.post("/api/inventory/match-recipes?user_id=test_user")
+        response = client.post("/api/inventory/match-recipes")
         
         assert response.status_code == 200
         data = response.json()
@@ -561,7 +577,7 @@ class TestMatchRecipesWithInventory:
         mock_supabase_service.match_recipes_with_inventory.assert_called_once_with("test_user")
     
     def test_match_recipes_default_user(self, mock_supabase_service):
-        """Test recipe matching with default user."""
+        """Test recipe matching with authenticated user."""
         mock_supabase_service.match_recipes_with_inventory.return_value = {
             "exact_matches": [],
             "partial_matches": []
@@ -571,8 +587,8 @@ class TestMatchRecipesWithInventory:
         
         assert response.status_code == 200
         
-        # Verify default user was used
-        mock_supabase_service.match_recipes_with_inventory.assert_called_once_with("default_user")
+        # Verify authenticated user was used
+        mock_supabase_service.match_recipes_with_inventory.assert_called_once_with("test_user")
     
     def test_match_recipes_no_matches(self, mock_supabase_service):
         """Test recipe matching when no recipes match."""
@@ -581,7 +597,7 @@ class TestMatchRecipesWithInventory:
             "partial_matches": []
         }
         
-        response = client.post("/api/inventory/match-recipes?user_id=test_user")
+        response = client.post("/api/inventory/match-recipes")
         
         assert response.status_code == 200
         data = response.json()
@@ -613,7 +629,7 @@ class TestMatchRecipesWithInventory:
             "partial_matches": []
         }
         
-        response = client.post("/api/inventory/match-recipes?user_id=test_user")
+        response = client.post("/api/inventory/match-recipes")
         
         assert response.status_code == 200
         data = response.json()
@@ -651,7 +667,7 @@ class TestMatchRecipesWithInventory:
             "partial_matches": [partial_match]
         }
         
-        response = client.post("/api/inventory/match-recipes?user_id=test_user")
+        response = client.post("/api/inventory/match-recipes")
         
         assert response.status_code == 200
         data = response.json()
@@ -664,7 +680,7 @@ class TestMatchRecipesWithInventory:
             "Database query failed"
         )
         
-        response = client.post("/api/inventory/match-recipes?user_id=test_user")
+        response = client.post("/api/inventory/match-recipes")
         
         assert response.status_code == 500
         data = response.json()
@@ -677,7 +693,7 @@ class TestMatchRecipesWithInventory:
             "partial_matches": []
         }
         
-        response = client.post("/api/inventory/match-recipes?user_id=test_user")
+        response = client.post("/api/inventory/match-recipes")
         
         assert response.status_code == 200
         data = response.json()
@@ -717,7 +733,7 @@ class TestMatchRecipesWithInventory:
             "partial_matches": []
         }
         
-        response = client.post("/api/inventory/match-recipes?user_id=test_user")
+        response = client.post("/api/inventory/match-recipes")
         
         assert response.status_code == 200
         data = response.json()
