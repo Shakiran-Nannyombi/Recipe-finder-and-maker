@@ -4,11 +4,8 @@ uvicorn[standard]==0.27.0
 pydantic==2.5.3
 pydantic-settings==2.1.0
 
-# Groq API (fast and reliable LLM)
-groq>=0.4.0
-
 # Supabase
-supabase==2.10.0
+supabase>=2.3.0,<3.0.0
 
 # Pinecone
 pinecone-client==3.0.0
@@ -20,7 +17,7 @@ sentence-transformers==2.3.1
 pytest==7.4.4
 pytest-asyncio==0.23.3
 pytest-cov==4.1.0
-httpx>=0.24.0,<0.26.0
+httpx>=0.24.0
 
 # Additional utilities
 python-dotenv==1.0.0
