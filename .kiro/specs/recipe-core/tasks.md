@@ -68,8 +68,8 @@
   - [x] 4.1.4 Implement Pinecone similarity search
   - [x] 4.1.5 Add caching for embeddings
 
-- [-] 4.2 Create search endpoint
-  - [-] 4.2.1 Define SearchRequest Pydantic model
+- [x] 4.2 Create search endpoint
+  - [x] 4.2.1 Define SearchRequest Pydantic model
   - [x] 4.2.2 Create POST /api/recipes/search route
   - [x] 4.2.3 Validate input with Pydantic
   - [x] 4.2.4 Call VectorSearchService with Pinecone
@@ -137,113 +137,113 @@
 
 ## 7. Frontend - Recipe Search UI
 
-- [ ] 7.1 Create search bar component
-  - [ ] 7.1.1 Build SearchBar.tsx with input field
-  - [ ] 7.1.2 Add search button and keyboard shortcuts
-  - [ ] 7.1.3 Add ingredient filter chips
-  - [ ] 7.1.4 Style with Tailwind CSS
+- [x] 7.1 Create search bar component
+  - [x] 7.1.1 Build SearchBar.tsx with input field
+  - [x] 7.1.2 Add search button and keyboard shortcuts
+  - [x] 7.1.3 Add ingredient filter chips
+  - [x] 7.1.4 Style with Tailwind CSS
 
-- [ ] 7.2 Create recipe card component
-  - [ ] 7.2.1 Build RecipeCard.tsx for search results
-  - [ ] 7.2.2 Display recipe image, title, description
-  - [ ] 7.2.3 Show cooking time and difficulty
-  - [ ] 7.2.4 Add click handler to view full recipe
-  - [ ] 7.2.5 Style with Tailwind CSS
+- [x] 7.2 Create recipe card component
+  - [x] 7.2.1 Build RecipeCard.tsx for search results
+  - [x] 7.2.2 Display recipe image, title, description
+  - [x] 7.2.3 Show cooking time and difficulty
+  - [x] 7.2.4 Add click handler to view full recipe
+  - [x] 7.2.5 Style with Tailwind CSS
 
-- [ ] 7.3 Create recipe grid component
-  - [ ] 7.3.1 Build RecipeGrid.tsx for displaying results
-  - [ ] 7.3.2 Implement responsive grid layout
-  - [ ] 7.3.3 Add pagination controls
-  - [ ] 7.3.4 Handle empty state
+- [x] 7.3 Create recipe grid component
+  - [x] 7.3.1 Build RecipeGrid.tsx for displaying results
+  - [x] 7.3.2 Implement responsive grid layout
+  - [x] 7.3.3 Add pagination controls
+  - [x] 7.3.4 Handle empty state
 
-- [ ] 7.4 Create search hook
-  - [ ] 7.4.1 Build useRecipeSearch.ts hook
-  - [ ] 7.4.2 Handle API calls to /api/recipes/search
-  - [ ] 7.4.3 Manage search state and results
-  - [ ] 7.4.4 Add debouncing for search input
+- [x] 7.4 Create search hook
+  - [x] 7.4.1 Build useRecipeSearch.ts hook
+  - [x] 7.4.2 Handle API calls to /api/recipes/search
+  - [x] 7.4.3 Manage search state and results
+  - [x] 7.4.4 Add debouncing for search input
 
-- [ ] 7.5 Create search page
-  - [ ] 7.5.1 Build Search.tsx page
-  - [ ] 7.5.2 Integrate search components
-  - [ ] 7.5.3 Add responsive layout
-  - [ ] 7.5.4 Add loading and error states
+- [x] 7.5 Create search page
+  - [x] 7.5.1 Build Search.tsx page
+  - [x] 7.5.2 Integrate search components
+  - [x] 7.5.3 Add responsive layout
+  - [x] 7.5.4 Add loading and error states
 
 ## 8. Frontend - Inventory Management UI
 
-- [ ] 8.1 Create inventory list component
-  - [ ] 8.1.1 Build InventoryList.tsx to display items
-  - [ ] 8.1.2 Add remove item functionality
-  - [ ] 8.1.3 Show item quantities
-  - [ ] 8.1.4 Style with Tailwind CSS
+- [~] 8.1 Create inventory list component
+  - [~] 8.1.1 Build InventoryList.tsx to display items
+  - [~] 8.1.2 Add remove item functionality
+  - [~] 8.1.3 Show item quantities
+  - [~] 8.1.4 Style with Tailwind CSS
 
-- [ ] 8.2 Create add ingredient component
-  - [ ] 8.2.1 Build AddIngredient.tsx with input form
-  - [ ] 8.2.2 Add quantity input (optional)
-  - [ ] 8.2.3 Add validation
-  - [ ] 8.2.4 Style with Tailwind CSS
+- [~] 8.2 Create add ingredient component
+  - [~] 8.2.1 Build AddIngredient.tsx with input form
+  - [~] 8.2.2 Add quantity input (optional)
+  - [~] 8.2.3 Add validation
+  - [~] 8.2.4 Style with Tailwind CSS
 
-- [ ] 8.3 Create recipe matches component
-  - [ ] 8.3.1 Build RecipeMatches.tsx to show matching recipes
-  - [ ] 8.3.2 Display exact matches section
-  - [ ] 8.3.3 Display partial matches with missing ingredients
-  - [ ] 8.3.4 Style with Tailwind CSS
+- [~] 8.3 Create recipe matches component
+  - [~] 8.3.1 Build RecipeMatches.tsx to show matching recipes
+  - [~] 8.3.2 Display exact matches section
+  - [~] 8.3.3 Display partial matches with missing ingredients
+  - [~] 8.3.4 Style with Tailwind CSS
 
-- [ ] 8.4 Create inventory hook
-  - [ ] 8.4.1 Build useInventory.ts hook
-  - [ ] 8.4.2 Handle API calls for inventory operations
-  - [ ] 8.4.3 Manage inventory state
-  - [ ] 8.4.4 Add optimistic updates
+- [~] 8.4 Create inventory hook
+  - [~] 8.4.1 Build useInventory.ts hook
+  - [~] 8.4.2 Handle API calls for inventory operations
+  - [~] 8.4.3 Manage inventory state
+  - [~] 8.4.4 Add optimistic updates
 
-- [ ] 8.5 Create inventory page
-  - [ ] 8.5.1 Build Inventory.tsx page
-  - [ ] 8.5.2 Integrate inventory components
-  - [ ] 8.5.3 Add responsive layout
-  - [ ] 8.5.4 Add loading and error states
+- [~] 8.5 Create inventory page
+  - [~] 8.5.1 Build Inventory.tsx page
+  - [~] 8.5.2 Integrate inventory components
+  - [~] 8.5.3 Add responsive layout
+  - [~] 8.5.4 Add loading and error states
 
 ## 9. Testing
 
-- [ ] 9.1 Backend unit tests
-  - [ ] 9.1.1 Write tests for all service classes
-  - [ ] 9.1.2 Write tests for all API endpoints
-  - [ ] 9.1.3 Achieve 80%+ code coverage
-  - [ ] 9.1.4 Mock all LLM, Supabase, and Pinecone calls
+- [~] 9.1 Backend unit tests
+  - [~] 9.1.1 Write tests for all service classes
+  - [~] 9.1.2 Write tests for all API endpoints
+  - [~] 9.1.3 Achieve 80%+ code coverage
+  - [~] 9.1.4 Mock all LLM, Supabase, and Pinecone calls
 
-- [ ] 9.2 Frontend unit tests
-  - [ ] 9.2.1 Write tests for all components
-  - [ ] 9.2.2 Write tests for all hooks
-  - [ ] 9.2.3 Mock API calls
-  - [ ] 9.2.4 Achieve 70%+ code coverage
+- [~] 9.2 Frontend unit tests
+  - [~] 9.2.1 Write tests for all components
+  - [~] 9.2.2 Write tests for all hooks
+  - [~] 9.2.3 Mock API calls
+  - [~] 9.2.4 Achieve 70%+ code coverage
 
-- [ ] 9.3 Integration tests
-  - [ ] 9.3.1 Test end-to-end recipe generation flow
-  - [ ] 9.3.2 Test end-to-end search flow
-  - [ ] 9.3.3 Test end-to-end inventory flow
+- [~] 9.3 Integration tests
+  - [~] 9.3.1 Test end-to-end recipe generation flow
+  - [~] 9.3.2 Test end-to-end search flow
+  - [~] 9.3.3 Test end-to-end inventory flow
 
 ## 10. Deployment
 
-- [ ] 10.1 Create Dockerfiles
-  - [ ] 10.1.1 Create backend/Dockerfile
-  - [ ] 10.1.2 Create frontend/Dockerfile
-  - [ ] 10.1.3 Optimize image sizes
-  - [ ] 10.1.4 Add health checks
+- [~] 10.1 Create Dockerfiles
+  - [~] 10.1.1 Create backend/Dockerfile
+  - [~] 10.1.2 Create frontend/Dockerfile
+  - [~] 10.1.3 Optimize image sizes
+  - [~] 10.1.4 Add health checks
 
-- [ ] 10.2 Prepare for AWS App Runner
-  - [ ] 10.2.1 Create apprunner.yaml configuration
-  - [ ] 10.2.2 Set up environment variables (Supabase, Pinecone, Hugging Face)
-  - [ ] 10.2.3 Configure auto-scaling settings
-  - [ ] 10.2.4 Set up health checks
+- [~] 10.2 Prepare for AWS App Runner
+  - [~] 10.2.1 Create apprunner.yaml configuration
+  - [~] 10.2.2 Set up environment variables (Supabase, Pinecone, Hugging Face)
+  - [~] 10.2.3 Configure auto-scaling settings
+  - [~] 10.2.4 Set up health checks
 
-- [ ] 10.3 Set up Supabase database
-  - [ ] 10.3.1 Create recipes table with indexes
-  - [ ] 10.3.2 Create inventory table
-  - [ ] 10.3.3 Configure Row Level Security (RLS)
-  - [ ] 10.3.4 Set up database backups
+- [~] 10.3 Set up Supabase database
+  - [~] 10.3.1 Create recipes table with indexes
+  - [~] 10.3.2 Create inventory table
+  - [~] 10.3.3 Configure Row Level Security (RLS)
+  - [~] 10.3.4 Set up database backups
 
-- [ ] 10.4 Set up Pinecone index
-  - [ ] 10.4.1 Create Pinecone index for recipe embeddings
-  - [ ] 10.4.2 Configure index dimensions and metric
-  - [ ] 10.4.3 Set up index metadata filtering
-  - [ ] 10.4.4 Test index performance
+- [~] 10.4 Set up Pinecone index
+  - [~] 10.4.1 Create Pinecone index for recipe embeddings
+  - [~] 10.4.2 Configure index dimensions and metric
+  - [~] 10.4.3 Set up index metadata filtering
+  - [~] 10.4.4 Test index performance
 
 - [ ] 10.5 Deploy to App Runner
   - [ ] 10.5.1 Deploy backend service

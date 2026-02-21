@@ -6,3 +6,7 @@ export type { RecipePreferences } from './RecipeGenerator/PreferencesForm';
 
 
 
+// Recipe Search Components
+export { default as SearchBar } from './RecipeSearch/SearchBar';
+export { default as RecipeCard } from './RecipeSearch/RecipeCard';
+export { default as RecipeGrid } from './RecipeSearch/RecipeGrid';
