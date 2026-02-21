@@ -5,9 +5,10 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from datetime import datetime, timezone
 from typing import Dict, Any
 
-from models.recipe import Recipe, RecipeGenerationRequest
+from models.recipe import Recipe, RecipeGenerationRequest, SearchRequest
 from services.llm_service import LLMService
 from services.supabase_service import SupabaseService
+from services.vector_search_service import VectorSearchService
 
 # Create router for recipe endpoints
 router = APIRouter(prefix="/api/recipes", tags=["recipes"])
@@ -21,6 +22,11 @@ def get_llm_service() -> LLMService:
 def get_supabase_service() -> SupabaseService:
     """Dependency to get Supabase service instance."""
     return SupabaseService()
+
+
+def get_vector_search_service() -> VectorSearchService:
+    """Dependency to get Vector Search service instance."""
+    return VectorSearchService()
 
 
 @router.post("/generate")
@@ -182,4 +188,71 @@ async def list_recipes(
         raise HTTPException(
             status_code=500,
             detail=f"Error listing recipes: {str(e)}"
+        )
+
+
+@router.post("/search")
+async def search_recipes(
+    request: SearchRequest,
+    vector_search_service: VectorSearchService = Depends(get_vector_search_service),
+    supabase_service: SupabaseService = Depends(get_supabase_service)
+) -> Dict[str, Any]:
+    """
+    Search for recipes using semantic similarity.
+    
+    Args:
+        request: Search request with query, optional ingredients filter, and limit
+        vector_search_service: Vector search service instance (injected)
+        supabase_service: Supabase service instance (injected)
+        
+    Returns:
+        Standardized response with ranked recipe results and metadata
+        
+    Raises:
+        HTTPException: 400 for invalid input, 500 for server errors
+    """
+    try:
+        # Perform semantic search using Pinecone
+        search_results = await vector_search_service.search_recipes(
+            query=request.query,
+            limit=request.limit
+        )
+        
+        # Retrieve full recipe details from Supabase for each result
+        recipes = []
+        for result in search_results:
+            recipe_id = result.get("id")
+            if recipe_id:
+                recipe = await supabase_service.get_recipe(recipe_id)
+                if recipe:
+                    recipes.append(recipe.model_dump())
+        
+        # Return standardized response format
+        return {
+            "data": recipes,
+            "meta": {
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "count": len(recipes)
+            }
+        }
+    
+    except ValueError as e:
+        # Handle validation errors
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid search request: {str(e)}"
+        )
+    
+    except RuntimeError as e:
+        # Handle service errors
+        raise HTTPException(
+            status_code=500,
+            detail=f"Search operation failed: {str(e)}"
+        )
+    
+    except Exception as e:
+        # Catch-all for unexpected errors
+        raise HTTPException(
+            status_code=500,
+            detail=f"Unexpected error during search: {str(e)}"
         )

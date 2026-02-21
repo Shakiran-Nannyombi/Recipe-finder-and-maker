@@ -61,25 +61,25 @@
 
 ## 4. Backend - Pinecone Vector Search
 
-- [-] 4.1 Implement Pinecone vector search service
+- [x] 4.1 Implement Pinecone vector search service
   - [x] 4.1.1 Create VectorSearchService class with Pinecone
   - [x] 4.1.2 Integrate sentence-transformers for embeddings
   - [x] 4.1.3 Implement embedding generation
   - [x] 4.1.4 Implement Pinecone similarity search
   - [x] 4.1.5 Add caching for embeddings
 
-- [~] 4.2 Create search endpoint
-  - [~] 4.2.1 Define SearchRequest Pydantic model
-  - [~] 4.2.2 Create POST /api/recipes/search route
-  - [~] 4.2.3 Validate input with Pydantic
-  - [~] 4.2.4 Call VectorSearchService with Pinecone
-  - [~] 4.2.5 Return ranked results with standardized format
+- [-] 4.2 Create search endpoint
+  - [x] 4.2.1 Define SearchRequest Pydantic model
+  - [x] 4.2.2 Create POST /api/recipes/search route
+  - [x] 4.2.3 Validate input with Pydantic
+  - [x] 4.2.4 Call VectorSearchService with Pinecone
+  - [x] 4.2.5 Return ranked results with standardized format
 
-- [~] 4.3 Write tests for Pinecone vector search
-  - [~] 4.3.1 Mock Pinecone client operations
-  - [~] 4.3.2 Test embedding generation
-  - [~] 4.3.3 Test Pinecone search queries
-  - [~] 4.3.4 Test edge cases (empty query, no results)
+- [x] 4.3 Write tests for Pinecone vector search
+  - [x] 4.3.1 Mock Pinecone client operations
+  - [x] 4.3.2 Test embedding generation
+  - [x] 4.3.3 Test Pinecone search queries
+  - [x] 4.3.4 Test edge cases (empty query, no results)
 
 ## 5. Backend - Inventory Management
 

@@ -36,3 +36,10 @@ class RecipeGenerationRequest(BaseModel):
     dietary_restrictions: List[str] = Field(default_factory=list, description="Dietary restrictions (e.g., vegetarian, vegan, gluten-free)")
     cuisine_type: Optional[str] = Field(None, description="Preferred cuisine type (e.g., Italian, Mexican, Asian)")
     difficulty: Optional[str] = Field(None, pattern="^(easy|medium|hard)$", description="Recipe difficulty level")
+
+
+class SearchRequest(BaseModel):
+    """Model for recipe search request with semantic query and filters."""
+    query: str = Field(..., min_length=1, description="Natural language search query")
+    available_ingredients: Optional[List[str]] = Field(None, description="Optional list of available ingredients for filtering")
+    limit: int = Field(10, ge=1, le=50, description="Maximum number of results to return (1-50)")
