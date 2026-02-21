@@ -1,6 +1,20 @@
-# Recipe AI 
+# Recipe AI
 
-A high-performance AI-powered recipe discovery and generation application. Uses semantic search to find recipes and Hugging Face models to generate custom recipes based on available ingredients.
+> A high-performance AI-powered recipe discovery and generation application. Uses semantic search to find recipes and Hugging Face models to generate custom recipes based on available ingredients.
+
+---
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [README](README.md) | Project overview and quick start guide (you are here) |
+| [Setup Guide](docs/SETUP_GUIDE.md) | Detailed setup instructions for local development |
+| [Deployment Guide](docs/DEPLOYMENT.md) | Production deployment instructions for Vercel & Render |
+| [Guidelines](docs/GUIDELINES.md) | Development standards, testing, and best practices |
+| [Documentation Hub](docs/DOCS.md) | Central hub for all documentation |
+
+---
 
 ## Features
 
@@ -107,7 +121,7 @@ The frontend is deployed on Vercel. See `vercel.json` for configuration.
 vercel --prod
 ```
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed deployment instructions.
 
 ## API Documentation
 
@@ -139,14 +153,14 @@ Recipe AI follows a modern full-stack architecture:
 
 ## Documentation
 
-- [Setup Guide](SETUP_GUIDE.md) - Detailed setup instructions
-- [Deployment Guide](DEPLOYMENT.md) - Production deployment guide
-- [Implementation Summary](IMPLEMENTATION_SUMMARY.md) - Technical implementation details
-- [Guidelines](GUIDELINES.md) - Development guidelines and best practices
+- [Setup Guide](docs/SETUP_GUIDE.md) - Detailed setup instructions
+- [Deployment Guide](docs/DEPLOYMENT.md) - Production deployment guide
+- [Guidelines](docs/GUIDELINES.md) - Development guidelines and best practices
+- [Documentation Hub](docs/DOCS.md) - Central hub for all documentation
 
 ## Development Guidelines
 
-See [GUIDELINES.md](GUIDELINES.md) for:
+See [docs/GUIDELINES.md](docs/GUIDELINES.md) for:
 - Code standards and conventions
 - Testing requirements
 - Security policies
