@@ -2,7 +2,7 @@
 
 This document outlines the development standards, best practices, and conventions for the Recipe AI project.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Product Overview](#product-overview)
 - [Technology Stack](#technology-stack)
@@ -15,7 +15,7 @@ This document outlines the development standards, best practices, and convention
 
 ---
 
-## 🎯 Product Overview
+## Product Overview
 
 ### Purpose
 Recipe AI bridges the gap between available ingredients and culinary inspiration. It leverages generative AI to ensure users never waste food and always have access to personalized recipes.
@@ -33,7 +33,7 @@ Recipe AI bridges the gap between available ingredients and culinary inspiration
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Frontend
 - **Framework**: React 18 with TypeScript
@@ -59,7 +59,7 @@ Recipe AI bridges the gap between available ingredients and culinary inspiration
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 RecipeAI/
@@ -140,7 +140,7 @@ RecipeAI/
 
 ---
 
-## 🔌 API Standards
+## API Standards
 
 ### Router Organization
 - Use FastAPI `APIRouter` for modularity
@@ -186,7 +186,7 @@ All API responses must follow this structure:
 
 ---
 
-## 🧪 Testing Standards
+## Testing Standards
 
 ### Backend Testing (Pytest)
 
@@ -251,7 +251,7 @@ describe('IngredientInput', () => {
 
 ---
 
-## 🔒 Security Policies
+## Security Policies
 
 ### Environment Variables
 - Never commit `.env` files
@@ -285,7 +285,7 @@ describe('IngredientInput', () => {
 
 ---
 
-## 💻 Code Conventions
+## Code Conventions
 
 ### Python (Backend)
 
@@ -378,7 +378,7 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
 
 ---
 
-## 🔄 Git Workflow
+## Git Workflow
 
 ### Branch Strategy
 - `main`: Production-ready code
@@ -436,7 +436,7 @@ Return appropriate error message to user.
 
 ---
 
-## 📚 Additional Resources
+## Additional Resources
 
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
 - [React Documentation](https://react.dev/)
@@ -447,7 +447,7 @@ Return appropriate error message to user.
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 When contributing to Recipe AI:
 

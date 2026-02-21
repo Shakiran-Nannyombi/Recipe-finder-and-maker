@@ -1,5 +1,10 @@
 # Recipe AI Deployment Guide
 
+## Live URLs
+
+- **Frontend**: https://recipeaiug.vercel.app/
+- **Backend**: https://recipe-ai-og2y.onrender.com
+
 ## Overview
 This guide covers deploying Recipe AI with:
 - Backend: Render

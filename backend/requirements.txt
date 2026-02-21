@@ -8,7 +8,7 @@ pydantic-settings==2.1.0
 llama-index==0.10.68
 llama-index-llms-huggingface==0.3.5
 transformers==4.36.2
-torch==2.1.2
+torch==2.9.0
 accelerate==0.25.0
 
 # Supabase
