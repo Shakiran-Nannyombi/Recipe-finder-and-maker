@@ -10,3 +10,6 @@ export type { RecipePreferences } from './RecipeGenerator/PreferencesForm';
 export { default as SearchBar } from './RecipeSearch/SearchBar';
 export { default as RecipeCard } from './RecipeSearch/RecipeCard';
 export { default as RecipeGrid } from './RecipeSearch/RecipeGrid';
+
+// Inventory Components
+export { InventoryList, AddIngredient, RecipeMatches } from './Inventory';

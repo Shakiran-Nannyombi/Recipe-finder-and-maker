@@ -18,3 +18,20 @@ export interface Recipe {
     image_url?: string;
     created_at: string;
 }
+
+export interface InventoryItem {
+    ingredient_name: string;
+    quantity?: string;
+    added_at: string;
+}
+
+export interface UserInventory {
+    user_id: string;
+    items: InventoryItem[];
+    updated_at: string;
+}
+
+export interface RecipeMatches {
+    exact_matches: Recipe[];
+    partial_matches: Recipe[];
+}

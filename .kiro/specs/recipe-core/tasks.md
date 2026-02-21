@@ -170,35 +170,35 @@
 
 ## 8. Frontend - Inventory Management UI
 
-- [~] 8.1 Create inventory list component
-  - [~] 8.1.1 Build InventoryList.tsx to display items
-  - [~] 8.1.2 Add remove item functionality
-  - [~] 8.1.3 Show item quantities
-  - [~] 8.1.4 Style with Tailwind CSS
+- [x] 8.1 Create inventory list component
+  - [x] 8.1.1 Build InventoryList.tsx to display items
+  - [x] 8.1.2 Add remove item functionality
+  - [x] 8.1.3 Show item quantities
+  - [x] 8.1.4 Style with Tailwind CSS
 
-- [~] 8.2 Create add ingredient component
-  - [~] 8.2.1 Build AddIngredient.tsx with input form
-  - [~] 8.2.2 Add quantity input (optional)
-  - [~] 8.2.3 Add validation
-  - [~] 8.2.4 Style with Tailwind CSS
+- [x] 8.2 Create add ingredient component
+  - [x] 8.2.1 Build AddIngredient.tsx with input form
+  - [x] 8.2.2 Add quantity input (optional)
+  - [x] 8.2.3 Add validation
+  - [x] 8.2.4 Style with Tailwind CSS
 
-- [~] 8.3 Create recipe matches component
-  - [~] 8.3.1 Build RecipeMatches.tsx to show matching recipes
-  - [~] 8.3.2 Display exact matches section
-  - [~] 8.3.3 Display partial matches with missing ingredients
-  - [~] 8.3.4 Style with Tailwind CSS
+- [x] 8.3 Create recipe matches component
+  - [x] 8.3.1 Build RecipeMatches.tsx to show matching recipes
+  - [x] 8.3.2 Display exact matches section
+  - [x] 8.3.3 Display partial matches with missing ingredients
+  - [x] 8.3.4 Style with Tailwind CSS
 
-- [~] 8.4 Create inventory hook
-  - [~] 8.4.1 Build useInventory.ts hook
-  - [~] 8.4.2 Handle API calls for inventory operations
-  - [~] 8.4.3 Manage inventory state
-  - [~] 8.4.4 Add optimistic updates
+- [x] 8.4 Create inventory hook
+  - [x] 8.4.1 Build useInventory.ts hook
+  - [x] 8.4.2 Handle API calls for inventory operations
+  - [x] 8.4.3 Manage inventory state
+  - [x] 8.4.4 Add optimistic updates
 
-- [~] 8.5 Create inventory page
-  - [~] 8.5.1 Build Inventory.tsx page
-  - [~] 8.5.2 Integrate inventory components
-  - [~] 8.5.3 Add responsive layout
-  - [~] 8.5.4 Add loading and error states
+- [x] 8.5 Create inventory page
+  - [x] 8.5.1 Build Inventory.tsx page
+  - [x] 8.5.2 Integrate inventory components
+  - [x] 8.5.3 Add responsive layout
+  - [x] 8.5.4 Add loading and error states
 
 ## 9. Testing
 
@@ -227,7 +227,7 @@
   - [~] 10.1.3 Optimize image sizes
   - [~] 10.1.4 Add health checks
 
-- [~] 10.2 Prepare for AWS App Runner
+- [~] 10.2 Prepare for Render and Vercel
   - [~] 10.2.1 Create apprunner.yaml configuration
   - [~] 10.2.2 Set up environment variables (Supabase, Pinecone, Hugging Face)
   - [~] 10.2.3 Configure auto-scaling settings
