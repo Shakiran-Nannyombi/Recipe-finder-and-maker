@@ -1,5 +1,5 @@
 """
-LLM Service for AI-powered recipe generation using Hugging Face Inference API.
+LLM Service for AI-powered recipe generation using Groq API.
 """
 import json
 import os
@@ -8,44 +8,44 @@ import asyncio
 from typing import List, Optional
 from datetime import datetime
 from pydantic import ValidationError
-from huggingface_hub import InferenceClient
+from groq import Groq
 
 from models.recipe import Recipe, Ingredient
 
 
 class LLMService:
-    """Service for interacting with Hugging Face models via Inference API to generate recipes."""
+    """Service for interacting with Groq API to generate recipes."""
     
     def __init__(
         self, 
         model_name: Optional[str] = None,
-        api_token: Optional[str] = None,
+        api_key: Optional[str] = None,
         max_retries: int = 3,
         initial_retry_delay: float = 1.0
     ):
         """
-        Initialize LLM service with Hugging Face Inference API.
+        Initialize LLM service with Groq API.
         
         Args:
-            model_name: Hugging Face model name (defaults to mistralai/Mistral-7B-Instruct-v0.2)
-            api_token: Hugging Face API token (required)
+            model_name: Groq model name (defaults to llama-3.3-70b-versatile)
+            api_key: Groq API key (required)
             max_retries: Maximum number of retry attempts for transient failures (default: 3)
             initial_retry_delay: Initial delay in seconds for exponential backoff (default: 1.0)
         """
         self.model_name = model_name or os.getenv(
-            "HF_MODEL_NAME", 
-            "mistralai/Mistral-7B-Instruct-v0.2"
+            "GROQ_MODEL_NAME", 
+            "llama-3.3-70b-versatile"
         )
-        self.api_token = api_token or os.getenv("HF_API_TOKEN")
+        self.api_key = api_key or os.getenv("GROQ_API_KEY")
         
-        if not self.api_token:
-            raise ValueError("HF_API_TOKEN is required for Hugging Face Inference API")
+        if not self.api_key:
+            raise ValueError("GROQ_API_KEY is required for Groq API")
         
         self.max_retries = max_retries
         self.initial_retry_delay = initial_retry_delay
         
-        # Initialize Hugging Face Inference Client
-        self.client = InferenceClient(token=self.api_token)
+        # Initialize Groq client
+        self.client = Groq(api_key=self.api_key)
     
     def _build_prompt(
         self,
@@ -201,7 +201,7 @@ class LLMService:
         timeout: int = 10
     ) -> str:
         """
-        Invoke Hugging Face model via Inference API with error handling.
+        Invoke Groq API with error handling.
         
         Args:
             prompt: The prompt to send to the model
@@ -229,16 +229,20 @@ class LLMService:
             raise ValueError(f"max_tokens must be positive, got {max_tokens}")
         
         try:
-            # Invoke model via Hugging Face Inference API
-            response = self.client.text_generation(
-                prompt,
+            # Invoke model via Groq API
+            chat_completion = self.client.chat.completions.create(
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt,
+                    }
+                ],
                 model=self.model_name,
-                max_new_tokens=max_tokens,
+                max_tokens=max_tokens,
                 temperature=temperature,
-                return_full_text=False
             )
             
-            return response
+            return chat_completion.choices[0].message.content
             
         except Exception as e:
             error_msg = str(e).lower()
@@ -250,15 +254,15 @@ class LLMService:
                 ) from e
             elif "connection" in error_msg or "network" in error_msg:
                 raise ConnectionError(
-                    f"Network error connecting to Hugging Face: {str(e)}"
+                    f"Network error connecting to Groq: {str(e)}"
                 ) from e
             elif "rate limit" in error_msg or "throttl" in error_msg:
                 raise RuntimeError(
-                    f"Hugging Face API rate limit exceeded: {str(e)}"
+                    f"Groq API rate limit exceeded: {str(e)}"
                 ) from e
             elif "authentication" in error_msg or "unauthorized" in error_msg or "401" in error_msg:
                 raise RuntimeError(
-                    f"Hugging Face authentication failed: {str(e)}"
+                    f"Groq authentication failed: {str(e)}"
                 ) from e
             else:
                 raise RuntimeError(

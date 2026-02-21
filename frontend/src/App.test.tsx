@@ -1,50 +1,40 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import App from './App';
 
 describe('App', () => {
     it('renders the main heading', () => {
         render(<App />);
-        const heading = screen.getByRole('heading', { name: /vite \+ react/i });
+        const heading = screen.getByRole('heading', { name: /ai recipe generator/i });
         expect(heading).toBeInTheDocument();
     });
 
-    it('renders both logo links', () => {
+    it('renders the ingredient input section', () => {
         render(<App />);
-        const viteLink = screen.getByRole('link', { name: /vite logo/i });
-        const reactLink = screen.getByRole('link', { name: /react logo/i });
-
-        expect(viteLink).toBeInTheDocument();
-        expect(reactLink).toBeInTheDocument();
-        expect(viteLink).toHaveAttribute('href', 'https://vite.dev');
-        expect(reactLink).toHaveAttribute('href', 'https://react.dev');
+        expect(screen.getByLabelText(/ingredient input/i)).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /add ingredient/i })).toBeInTheDocument();
     });
 
-    it('displays initial count of 0', () => {
+    it('renders the generate recipe button', () => {
         render(<App />);
-        const button = screen.getByRole('button', { name: /count is 0/i });
-        expect(button).toBeInTheDocument();
+        const generateButton = screen.getByRole('button', { name: /generate recipe/i });
+        expect(generateButton).toBeInTheDocument();
+        expect(generateButton).toBeDisabled(); // Should be disabled when no ingredients
     });
 
-    it('increments count when button is clicked', () => {
+    it('displays empty state message', () => {
         render(<App />);
-        const button = screen.getByRole('button', { name: /count is 0/i });
-
-        fireEvent.click(button);
-        expect(screen.getByRole('button', { name: /count is 1/i })).toBeInTheDocument();
-
-        fireEvent.click(button);
-        expect(screen.getByRole('button', { name: /count is 2/i })).toBeInTheDocument();
+        expect(screen.getByText(/no ingredients added yet/i)).toBeInTheDocument();
     });
 
-    it('renders HMR instruction text', () => {
+    it('renders recipe preferences section', () => {
         render(<App />);
-        expect(screen.getByText(/edit/i)).toBeInTheDocument();
-        expect(screen.getByText(/src\/App\.tsx/i)).toBeInTheDocument();
+        expect(screen.getByText(/recipe preferences/i)).toBeInTheDocument();
     });
 
-    it('renders the documentation prompt', () => {
+    it('displays the ready to cook message', () => {
         render(<App />);
-        expect(screen.getByText(/click on the vite and react logos to learn more/i)).toBeInTheDocument();
+        expect(screen.getByText(/ready to cook/i)).toBeInTheDocument();
+        expect(screen.getByText(/add your ingredients and click "generate recipe" to get started!/i)).toBeInTheDocument();
     });
 });

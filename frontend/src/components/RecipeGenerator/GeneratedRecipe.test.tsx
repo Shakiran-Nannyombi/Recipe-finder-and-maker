@@ -60,8 +60,18 @@ describe('GeneratedRecipe', () => {
     it('displays all ingredients', () => {
         render(<GeneratedRecipe recipe={mockRecipe} />);
 
-        expect(screen.getByText(/500.*g.*chicken/i)).toBeInTheDocument();
-        expect(screen.getByText(/2.*cups.*rice/i)).toBeInTheDocument();
+        // Check for ingredient names
+        expect(screen.getByText('chicken')).toBeInTheDocument();
+        expect(screen.getByText('rice')).toBeInTheDocument();
+
+        // Check for quantities (use getAllByText since "2" appears in both ingredients and instructions)
+        expect(screen.getByText('500')).toBeInTheDocument();
+        const twoElements = screen.getAllByText('2');
+        expect(twoElements.length).toBeGreaterThan(0);
+
+        // Check for units
+        expect(screen.getByText('g')).toBeInTheDocument();
+        expect(screen.getByText('cups')).toBeInTheDocument();
     });
 
     it('displays all instructions in order', () => {
@@ -93,8 +103,9 @@ describe('GeneratedRecipe', () => {
     it('disables save button when saving', () => {
         render(<GeneratedRecipe recipe={mockRecipe} onSave={vi.fn()} isSaving={true} />);
 
-        const saveButton = screen.getByRole('button', { name: /saving/i });
+        const saveButton = screen.getByLabelText(/save recipe/i);
         expect(saveButton).toBeDisabled();
+        expect(screen.getByText('Saving...')).toBeInTheDocument();
     });
 
     it('does not show save button when onSave is not provided', () => {

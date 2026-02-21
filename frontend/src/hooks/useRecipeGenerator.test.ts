@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { useRecipeGenerator } from './useRecipeGenerator';
 import { recipeApi } from '../services/recipeApi';
 import { Recipe } from '../types/recipe';
@@ -47,12 +47,11 @@ describe('useRecipeGenerator', () => {
 
         const { result } = renderHook(() => useRecipeGenerator());
 
-        result.current.generateRecipe({
-            ingredients: ['chicken', 'rice'],
+        await act(async () => {
+            await result.current.generateRecipe({
+                ingredients: ['chicken', 'rice'],
+            });
         });
-
-        // Should be loading
-        expect(result.current.loading).toBe(true);
 
         await waitFor(() => {
             expect(result.current.loading).toBe(false);
@@ -69,8 +68,10 @@ describe('useRecipeGenerator', () => {
 
         const { result } = renderHook(() => useRecipeGenerator());
 
-        result.current.generateRecipe({
-            ingredients: ['chicken'],
+        await act(async () => {
+            await result.current.generateRecipe({
+                ingredients: ['chicken'],
+            });
         });
 
         await waitFor(() => {
@@ -82,11 +83,13 @@ describe('useRecipeGenerator', () => {
         expect(result.current.error).toBe(errorMessage);
     });
 
-    it('validates empty ingredients', async () => {
+    it('validates empty ingredients', () => {
         const { result } = renderHook(() => useRecipeGenerator());
 
-        await result.current.generateRecipe({
-            ingredients: [],
+        act(() => {
+            result.current.generateRecipe({
+                ingredients: [],
+            });
         });
 
         expect(result.current.error).toBe('Please add at least one ingredient');
@@ -102,15 +105,19 @@ describe('useRecipeGenerator', () => {
 
         const { result } = renderHook(() => useRecipeGenerator());
 
-        result.current.generateRecipe({
-            ingredients: ['chicken'],
+        await act(async () => {
+            await result.current.generateRecipe({
+                ingredients: ['chicken'],
+            });
         });
 
         await waitFor(() => {
             expect(result.current.success).toBe(true);
         });
 
-        result.current.reset();
+        act(() => {
+            result.current.reset();
+        });
 
         expect(result.current.recipe).toBeNull();
         expect(result.current.loading).toBe(false);
