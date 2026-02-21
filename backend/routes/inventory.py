@@ -1,7 +1,7 @@
 """
 Inventory management routes for FlavorForge AI.
 """
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timezone
@@ -11,8 +11,10 @@ from models.inventory import UserInventory, InventoryItem
 
 router = APIRouter(prefix="/api/inventory", tags=["inventory"])
 
-# Initialize Supabase service
-supabase_service = SupabaseService()
+
+def get_supabase_service() -> SupabaseService:
+    """Dependency to get Supabase service instance."""
+    return SupabaseService()
 
 
 class AddItemRequest(BaseModel):
@@ -22,12 +24,16 @@ class AddItemRequest(BaseModel):
 
 
 @router.get("")
-async def get_inventory(user_id: str = "default_user"):
+async def get_inventory(
+    user_id: str = "default_user",
+    supabase_service: SupabaseService = Depends(get_supabase_service)
+):
     """
     Get user's inventory.
     
     Args:
         user_id: User identifier (defaults to 'default_user')
+        supabase_service: Supabase service instance (injected)
         
     Returns:
         User's inventory with standardized response format
@@ -54,13 +60,18 @@ async def get_inventory(user_id: str = "default_user"):
 
 
 @router.post("/items")
-async def add_inventory_item(request: AddItemRequest, user_id: str = "default_user"):
+async def add_inventory_item(
+    request: AddItemRequest,
+    user_id: str = "default_user",
+    supabase_service: SupabaseService = Depends(get_supabase_service)
+):
     """
     Add an item to user's inventory.
     
     Args:
         request: AddItemRequest with ingredient_name and optional quantity
         user_id: User identifier (defaults to 'default_user')
+        supabase_service: Supabase service instance (injected)
         
     Returns:
         Added item with standardized response format
@@ -90,13 +101,18 @@ async def add_inventory_item(request: AddItemRequest, user_id: str = "default_us
 
 
 @router.delete("/items/{ingredient_name}")
-async def remove_inventory_item(ingredient_name: str, user_id: str = "default_user"):
+async def remove_inventory_item(
+    ingredient_name: str,
+    user_id: str = "default_user",
+    supabase_service: SupabaseService = Depends(get_supabase_service)
+):
     """
     Remove an item from user's inventory.
     
     Args:
         ingredient_name: Name of the ingredient to remove
         user_id: User identifier (defaults to 'default_user')
+        supabase_service: Supabase service instance (injected)
         
     Returns:
         Deletion confirmation with standardized response format
@@ -120,12 +136,16 @@ async def remove_inventory_item(ingredient_name: str, user_id: str = "default_us
 
 
 @router.post("/match-recipes")
-async def match_recipes_with_inventory(user_id: str = "default_user"):
+async def match_recipes_with_inventory(
+    user_id: str = "default_user",
+    supabase_service: SupabaseService = Depends(get_supabase_service)
+):
     """
     Match recipes with user's current inventory.
     
     Args:
         user_id: User identifier (defaults to 'default_user')
+        supabase_service: Supabase service instance (injected)
         
     Returns:
         Exact and partial recipe matches with standardized response format

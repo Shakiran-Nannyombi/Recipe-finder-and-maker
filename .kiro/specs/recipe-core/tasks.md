@@ -202,33 +202,33 @@
 
 ## 9. Testing
 
-- [~] 9.1 Backend unit tests
-  - [~] 9.1.1 Write tests for all service classes
-  - [~] 9.1.2 Write tests for all API endpoints
-  - [~] 9.1.3 Achieve 80%+ code coverage
-  - [~] 9.1.4 Mock all LLM, Supabase, and Pinecone calls
+- [x] 9.1 Backend unit tests
+  - [x] 9.1.1 Write tests for all service classes
+  - [x] 9.1.2 Write tests for all API endpoints
+  - [x] 9.1.3 Achieve 80%+ code coverage
+  - [x] 9.1.4 Mock all LLM, Supabase, and Pinecone calls
 
-- [~] 9.2 Frontend unit tests
-  - [~] 9.2.1 Write tests for all components
-  - [~] 9.2.2 Write tests for all hooks
-  - [~] 9.2.3 Mock API calls
-  - [~] 9.2.4 Achieve 70%+ code coverage
+- [x] 9.2 Frontend unit tests
+  - [x] 9.2.1 Write tests for all components
+  - [x] 9.2.2 Write tests for all hooks
+  - [x] 9.2.3 Mock API calls
+  - [x] 9.2.4 Achieve 70%+ code coverage
 
-- [~] 9.3 Integration tests
-  - [~] 9.3.1 Test end-to-end recipe generation flow
-  - [~] 9.3.2 Test end-to-end search flow
-  - [~] 9.3.3 Test end-to-end inventory flow
+- [x] 9.3 Integration tests
+  - [x] 9.3.1 Test end-to-end recipe generation flow
+  - [x] 9.3.2 Test end-to-end search flow
+  - [x] 9.3.3 Test end-to-end inventory flow
 
 ## 10. Deployment
 
 - [~] 10.1 Create Dockerfiles
-  - [~] 10.1.1 Create backend/Dockerfile
+  - [-] 10.1.1 Create backend/Dockerfile
   - [~] 10.1.2 Create frontend/Dockerfile
   - [~] 10.1.3 Optimize image sizes
   - [~] 10.1.4 Add health checks
 
-- [~] 10.2 Prepare for Render and Vercel
-  - [~] 10.2.1 Create apprunner.yaml configuration
+- [~] 10.2 Prepare for Render backend and Vercel frontend
+  - [~] 10.2.1 Create configuration files
   - [~] 10.2.2 Set up environment variables (Supabase, Pinecone, Hugging Face)
   - [~] 10.2.3 Configure auto-scaling settings
   - [~] 10.2.4 Set up health checks

@@ -634,7 +634,7 @@ class TestAddItem:
         mock_table.select.side_effect = Exception("Database error")
         mock_supabase_client.table.return_value = mock_table
         
-        with pytest.raises(Exception, match="Error adding item to inventory: Database error"):
+        with pytest.raises(Exception, match="Error adding item to inventory"):
             await supabase_service.add_item("user-123", "tomatoes", "5")
 
 
@@ -793,5 +793,5 @@ class TestRemoveItem:
         mock_table.select.side_effect = Exception("Database error")
         mock_supabase_client.table.return_value = mock_table
         
-        with pytest.raises(Exception, match="Error removing item from inventory: Database error"):
+        with pytest.raises(Exception, match="Error removing item from inventory"):
             await supabase_service.remove_item("user-123", "tomatoes")

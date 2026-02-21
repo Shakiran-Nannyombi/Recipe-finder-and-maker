@@ -15,7 +15,7 @@ accelerate==0.25.0
 supabase==2.3.4
 
 # Pinecone
-pinecone-client==3.0.2
+pinecone==5.0.0
 
 # Embeddings
 sentence-transformers==2.3.1
@@ -23,6 +23,7 @@ sentence-transformers==2.3.1
 # Testing
 pytest==7.4.4
 pytest-asyncio==0.23.3
+pytest-cov==4.1.0
 httpx==0.26.0
 
 # Additional utilities
