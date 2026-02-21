@@ -3,7 +3,7 @@ Supabase service for recipe storage and retrieval.
 """
 import os
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from supabase import create_client, Client
 from models.recipe import Recipe, Ingredient
 from models.inventory import UserInventory, InventoryItem
@@ -237,3 +237,155 @@ class SupabaseService:
             
         except Exception as e:
             raise Exception(f"Error retrieving inventory from Supabase: {str(e)}")
+    
+    async def add_item(self, user_id: str, ingredient_name: str, quantity: Optional[str] = None) -> UserInventory:
+        """
+        Add an item to user inventory.
+        
+        Args:
+            user_id: Unique user identifier
+            ingredient_name: Name of the ingredient to add
+            quantity: Optional quantity of the ingredient
+            
+        Returns:
+            Updated UserInventory object
+            
+        Raises:
+            Exception: If add operation fails
+        """
+        try:
+            # Get existing inventory or create new one
+            inventory = await self.get_inventory(user_id)
+            
+            if inventory is None:
+                # Create new inventory
+                inventory = UserInventory(
+                    user_id=user_id,
+                    items=[],
+                    updated_at=datetime.now(timezone.utc)
+                )
+            
+            # Check if item already exists
+            existing_item = next(
+                (item for item in inventory.items if item.ingredient_name.lower() == ingredient_name.lower()),
+                None
+            )
+            
+            if existing_item:
+                # Update existing item
+                existing_item.quantity = quantity
+                existing_item.added_at = datetime.now(timezone.utc)
+            else:
+                # Add new item
+                new_item = InventoryItem(
+                    ingredient_name=ingredient_name,
+                    quantity=quantity,
+                    added_at=datetime.now(timezone.utc)
+                )
+                inventory.items.append(new_item)
+            
+            # Update timestamp
+            inventory.updated_at = datetime.now(timezone.utc)
+            
+            # Save to Supabase
+            return await self.save_inventory(inventory)
+            
+        except Exception as e:
+            raise Exception(f"Error adding item to inventory: {str(e)}")
+    
+    async def remove_item(self, user_id: str, ingredient_name: str) -> UserInventory:
+        """
+        Remove an item from user inventory.
+        
+        Args:
+            user_id: Unique user identifier
+            ingredient_name: Name of the ingredient to remove
+            
+        Returns:
+            Updated UserInventory object
+            
+        Raises:
+            Exception: If remove operation fails or inventory not found
+        """
+        try:
+            # Get existing inventory
+            inventory = await self.get_inventory(user_id)
+            
+            if inventory is None:
+                raise Exception(f"Inventory not found for user {user_id}")
+            
+            # Find and remove the item
+            original_length = len(inventory.items)
+            inventory.items = [
+                item for item in inventory.items 
+                if item.ingredient_name.lower() != ingredient_name.lower()
+            ]
+            
+            if len(inventory.items) == original_length:
+                raise Exception(f"Ingredient '{ingredient_name}' not found in inventory")
+            
+            # Update timestamp
+            inventory.updated_at = datetime.now(timezone.utc)
+            
+            # Save to Supabase
+            return await self.save_inventory(inventory)
+            
+        except Exception as e:
+            raise Exception(f"Error removing item from inventory: {str(e)}")
+    
+    async def match_recipes_with_inventory(self, user_id: str) -> dict:
+        """
+        Match recipes with user's inventory.
+        
+        Args:
+            user_id: Unique user identifier
+            
+        Returns:
+            Dictionary with exact_matches and partial_matches lists
+            
+        Raises:
+            Exception: If matching operation fails
+        """
+        try:
+            # Get user inventory
+            inventory = await self.get_inventory(user_id)
+            
+            if inventory is None or len(inventory.items) == 0:
+                return {"exact_matches": [], "partial_matches": []}
+            
+            # Get inventory ingredient names (lowercase for comparison)
+            inventory_ingredients = {item.ingredient_name.lower() for item in inventory.items}
+            
+            # Get all recipes
+            all_recipes = await self.list_recipes(limit=100)  # Adjust limit as needed
+            
+            exact_matches = []
+            partial_matches = []
+            
+            for recipe in all_recipes:
+                # Get recipe ingredient names (lowercase for comparison)
+                recipe_ingredients = {ing.name.lower() for ing in recipe.ingredients}
+                
+                # Calculate match percentage
+                matching_ingredients = inventory_ingredients.intersection(recipe_ingredients)
+                match_percentage = len(matching_ingredients) / len(recipe_ingredients) if recipe_ingredients else 0
+                
+                if match_percentage == 1.0:
+                    # 100% match - all ingredients available
+                    exact_matches.append(recipe)
+                elif match_percentage >= 0.8:
+                    # 80%+ match - partial match
+                    missing_ingredients = recipe_ingredients - inventory_ingredients
+                    # Add missing ingredients info to recipe (as a temporary attribute)
+                    recipe_dict = recipe.model_dump()
+                    recipe_dict["missing_ingredients"] = list(missing_ingredients)
+                    recipe_dict["match_percentage"] = match_percentage
+                    partial_matches.append(recipe_dict)
+            
+            return {
+                "exact_matches": exact_matches,
+                "partial_matches": partial_matches
+            }
+            
+        except Exception as e:
+            raise Exception(f"Error matching recipes with inventory: {str(e)}")

@@ -735,3 +735,609 @@ class TestRecipeList:
             mock_supabase_service.list_recipes.assert_called_once_with(limit=50, offset=0)
         finally:
             app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def mock_vector_search_service():
+    """Fixture providing a mocked Vector Search service."""
+    service = MagicMock()
+    service.search_recipes = AsyncMock()
+    return service
+
+
+class TestRecipeSearch:
+    """Test suite for POST /api/recipes/search endpoint."""
+    
+    def test_search_recipes_success(self, mock_vector_search_service, mock_supabase_service, mock_recipe):
+        """Test successful recipe search with valid query."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        # Mock vector search results
+        search_results = [
+            {"id": "recipe-1", "score": 0.95, "metadata": {}},
+            {"id": "recipe-2", "score": 0.87, "metadata": {}}
+        ]
+        mock_vector_search_service.search_recipes.return_value = search_results
+        
+        # Mock Supabase to return recipes
+        recipe1 = Recipe(**{**mock_recipe.model_dump(), "id": "recipe-1", "title": "Pasta Carbonara"})
+        recipe2 = Recipe(**{**mock_recipe.model_dump(), "id": "recipe-2", "title": "Spaghetti Bolognese"})
+        mock_supabase_service.get_recipe.side_effect = [recipe1, recipe2]
+        
+        # Override dependencies
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "query": "pasta recipes",
+                    "limit": 10
+                }
+            )
+            
+            # Assert response
+            assert response.status_code == 200
+            data = response.json()
+            
+            # Verify response structure
+            assert "data" in data
+            assert "meta" in data
+            assert "timestamp" in data["meta"]
+            assert "count" in data["meta"]
+            
+            # Verify recipe data
+            assert len(data["data"]) == 2
+            assert data["data"][0]["id"] == "recipe-1"
+            assert data["data"][0]["title"] == "Pasta Carbonara"
+            assert data["data"][1]["id"] == "recipe-2"
+            assert data["data"][1]["title"] == "Spaghetti Bolognese"
+            assert data["meta"]["count"] == 2
+            
+            # Verify services were called correctly
+            mock_vector_search_service.search_recipes.assert_called_once_with(
+                query="pasta recipes",
+                limit=10
+            )
+            assert mock_supabase_service.get_recipe.call_count == 2
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_search_recipes_with_ingredients_filter(self, mock_vector_search_service, mock_supabase_service, mock_recipe):
+        """Test recipe search with available ingredients filter."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        # Mock vector search results
+        search_results = [{"id": "recipe-1", "score": 0.92, "metadata": {}}]
+        mock_vector_search_service.search_recipes.return_value = search_results
+        
+        # Mock Supabase to return recipe
+        recipe1 = Recipe(**{**mock_recipe.model_dump(), "id": "recipe-1", "title": "Chicken Stir Fry"})
+        mock_supabase_service.get_recipe.return_value = recipe1
+        
+        # Override dependencies
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request with ingredients filter
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "query": "quick dinner",
+                    "available_ingredients": ["chicken", "vegetables", "rice"],
+                    "limit": 5
+                }
+            )
+            
+            # Assert response
+            assert response.status_code == 200
+            data = response.json()
+            
+            # Verify response
+            assert len(data["data"]) == 1
+            assert data["data"][0]["id"] == "recipe-1"
+            
+            # Verify vector search was called
+            mock_vector_search_service.search_recipes.assert_called_once_with(
+                query="quick dinner",
+                limit=5
+            )
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_search_recipes_custom_limit(self, mock_vector_search_service, mock_supabase_service, mock_recipe):
+        """Test recipe search with custom limit parameter."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        # Mock vector search results with 3 recipes
+        search_results = [
+            {"id": f"recipe-{i}", "score": 0.9 - (i * 0.1), "metadata": {}}
+            for i in range(3)
+        ]
+        mock_vector_search_service.search_recipes.return_value = search_results
+        
+        # Mock Supabase to return recipes
+        recipes = [
+            Recipe(**{**mock_recipe.model_dump(), "id": f"recipe-{i}", "title": f"Recipe {i}"})
+            for i in range(3)
+        ]
+        mock_supabase_service.get_recipe.side_effect = recipes
+        
+        # Override dependencies
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request with custom limit
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "query": "dessert",
+                    "limit": 3
+                }
+            )
+            
+            # Assert response
+            assert response.status_code == 200
+            data = response.json()
+            
+            # Verify limit was respected
+            assert len(data["data"]) == 3
+            assert data["meta"]["count"] == 3
+            
+            # Verify vector search was called with correct limit
+            mock_vector_search_service.search_recipes.assert_called_once_with(
+                query="dessert",
+                limit=3
+            )
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_search_recipes_empty_query(self, mock_vector_search_service, mock_supabase_service):
+        """Test that search fails with empty query."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request with empty query
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "query": "",
+                    "limit": 10
+                }
+            )
+            
+            # Assert validation error
+            assert response.status_code == 422
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_search_recipes_missing_query(self, mock_vector_search_service, mock_supabase_service):
+        """Test that search fails when query is missing."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request without query
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "limit": 10
+                }
+            )
+            
+            # Assert validation error
+            assert response.status_code == 422
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_search_recipes_invalid_limit_too_low(self, mock_vector_search_service, mock_supabase_service):
+        """Test that search fails with limit below minimum (1)."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request with limit = 0
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "query": "pasta",
+                    "limit": 0
+                }
+            )
+            
+            # Assert validation error
+            assert response.status_code == 422
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_search_recipes_invalid_limit_too_high(self, mock_vector_search_service, mock_supabase_service):
+        """Test that search fails with limit above maximum (50)."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request with limit = 100
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "query": "pasta",
+                    "limit": 100
+                }
+            )
+            
+            # Assert validation error
+            assert response.status_code == 422
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_search_recipes_default_limit(self, mock_vector_search_service, mock_supabase_service, mock_recipe):
+        """Test that search uses default limit of 10 when not specified."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        # Mock vector search results
+        search_results = [{"id": "recipe-1", "score": 0.95, "metadata": {}}]
+        mock_vector_search_service.search_recipes.return_value = search_results
+        
+        # Mock Supabase to return recipe
+        mock_supabase_service.get_recipe.return_value = mock_recipe
+        
+        # Override dependencies
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request without limit (should use default)
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "query": "pasta"
+                }
+            )
+            
+            # Assert response
+            assert response.status_code == 200
+            
+            # Verify default limit was used
+            mock_vector_search_service.search_recipes.assert_called_once_with(
+                query="pasta",
+                limit=10
+            )
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_search_recipes_no_results(self, mock_vector_search_service, mock_supabase_service):
+        """Test search when no recipes match the query."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        # Mock empty search results
+        mock_vector_search_service.search_recipes.return_value = []
+        
+        # Override dependencies
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "query": "nonexistent recipe",
+                    "limit": 10
+                }
+            )
+            
+            # Assert response
+            assert response.status_code == 200
+            data = response.json()
+            
+            # Verify empty results
+            assert data["data"] == []
+            assert data["meta"]["count"] == 0
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_search_recipes_partial_supabase_results(self, mock_vector_search_service, mock_supabase_service, mock_recipe):
+        """Test search when some recipes are not found in Supabase."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        # Mock vector search results with 3 recipes
+        search_results = [
+            {"id": "recipe-1", "score": 0.95, "metadata": {}},
+            {"id": "recipe-2", "score": 0.87, "metadata": {}},
+            {"id": "recipe-3", "score": 0.75, "metadata": {}}
+        ]
+        mock_vector_search_service.search_recipes.return_value = search_results
+        
+        # Mock Supabase to return only 2 recipes (recipe-2 not found)
+        recipe1 = Recipe(**{**mock_recipe.model_dump(), "id": "recipe-1", "title": "Recipe 1"})
+        recipe3 = Recipe(**{**mock_recipe.model_dump(), "id": "recipe-3", "title": "Recipe 3"})
+        mock_supabase_service.get_recipe.side_effect = [recipe1, None, recipe3]
+        
+        # Override dependencies
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "query": "test query",
+                    "limit": 10
+                }
+            )
+            
+            # Assert response
+            assert response.status_code == 200
+            data = response.json()
+            
+            # Verify only found recipes are returned
+            assert len(data["data"]) == 2
+            assert data["data"][0]["id"] == "recipe-1"
+            assert data["data"][1]["id"] == "recipe-3"
+            assert data["meta"]["count"] == 2
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_search_recipes_value_error(self, mock_vector_search_service, mock_supabase_service):
+        """Test handling of ValueError from vector search service."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        # Mock vector search to raise ValueError
+        mock_vector_search_service.search_recipes.side_effect = ValueError("Invalid query format")
+        
+        # Override dependencies
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "query": "test",
+                    "limit": 10
+                }
+            )
+            
+            # Assert error response
+            assert response.status_code == 400
+            data = response.json()
+            assert "Invalid search request" in data["detail"]
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_search_recipes_runtime_error(self, mock_vector_search_service, mock_supabase_service):
+        """Test handling of RuntimeError from vector search service."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        # Mock vector search to raise RuntimeError
+        mock_vector_search_service.search_recipes.side_effect = RuntimeError("Pinecone connection failed")
+        
+        # Override dependencies
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "query": "test",
+                    "limit": 10
+                }
+            )
+            
+            # Assert error response
+            assert response.status_code == 500
+            data = response.json()
+            assert "Search operation failed" in data["detail"]
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_search_recipes_unexpected_error(self, mock_vector_search_service, mock_supabase_service):
+        """Test handling of unexpected errors during search."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        # Mock vector search to raise unexpected exception
+        mock_vector_search_service.search_recipes.side_effect = Exception("Unexpected error")
+        
+        # Override dependencies
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "query": "test",
+                    "limit": 10
+                }
+            )
+            
+            # Assert error response
+            assert response.status_code == 500
+            data = response.json()
+            assert "Unexpected error during search" in data["detail"]
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_search_recipes_response_format(self, mock_vector_search_service, mock_supabase_service, mock_recipe):
+        """Test that search response follows API standards format."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        # Mock vector search results
+        search_results = [{"id": "recipe-1", "score": 0.95, "metadata": {}}]
+        mock_vector_search_service.search_recipes.return_value = search_results
+        
+        # Mock Supabase to return recipe
+        mock_supabase_service.get_recipe.return_value = mock_recipe
+        
+        # Override dependencies
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "query": "pasta",
+                    "limit": 10
+                }
+            )
+            
+            # Assert response
+            assert response.status_code == 200
+            data = response.json()
+            
+            # Verify standardized response format
+            assert set(data.keys()) == {"data", "meta"}
+            assert "timestamp" in data["meta"]
+            assert "count" in data["meta"]
+            
+            # Verify timestamp is ISO-8601 format
+            timestamp = data["meta"]["timestamp"]
+            assert "T" in timestamp
+            assert timestamp.endswith("Z") or "+" in timestamp or "-" in timestamp[-6:]
+            
+            # Verify data is a list
+            assert isinstance(data["data"], list)
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_search_recipes_supabase_error(self, mock_vector_search_service, mock_supabase_service):
+        """Test handling of Supabase errors during recipe retrieval."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        # Mock vector search results
+        search_results = [{"id": "recipe-1", "score": 0.95, "metadata": {}}]
+        mock_vector_search_service.search_recipes.return_value = search_results
+        
+        # Mock Supabase to raise exception
+        mock_supabase_service.get_recipe.side_effect = Exception("Database connection failed")
+        
+        # Override dependencies
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "query": "pasta",
+                    "limit": 10
+                }
+            )
+            
+            # Assert error response
+            assert response.status_code == 500
+            data = response.json()
+            assert "Unexpected error during search" in data["detail"]
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_search_recipes_max_limit(self, mock_vector_search_service, mock_supabase_service, mock_recipe):
+        """Test search with maximum allowed limit (50)."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        # Mock vector search results
+        search_results = [
+            {"id": f"recipe-{i}", "score": 0.9 - (i * 0.01), "metadata": {}}
+            for i in range(50)
+        ]
+        mock_vector_search_service.search_recipes.return_value = search_results
+        
+        # Mock Supabase to return recipes
+        recipes = [
+            Recipe(**{**mock_recipe.model_dump(), "id": f"recipe-{i}", "title": f"Recipe {i}"})
+            for i in range(50)
+        ]
+        mock_supabase_service.get_recipe.side_effect = recipes
+        
+        # Override dependencies
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request with max limit
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "query": "recipes",
+                    "limit": 50
+                }
+            )
+            
+            # Assert response
+            assert response.status_code == 200
+            data = response.json()
+            
+            # Verify max limit was respected
+            assert len(data["data"]) == 50
+            assert data["meta"]["count"] == 50
+            
+            # Verify vector search was called with max limit
+            mock_vector_search_service.search_recipes.assert_called_once_with(
+                query="recipes",
+                limit=50
+            )
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_search_recipes_with_all_optional_fields(self, mock_vector_search_service, mock_supabase_service, mock_recipe):
+        """Test search with all optional fields provided."""
+        from routes.recipes import get_vector_search_service, get_supabase_service
+        
+        # Mock vector search results
+        search_results = [{"id": "recipe-1", "score": 0.95, "metadata": {}}]
+        mock_vector_search_service.search_recipes.return_value = search_results
+        
+        # Mock Supabase to return recipe
+        mock_supabase_service.get_recipe.return_value = mock_recipe
+        
+        # Override dependencies
+        app.dependency_overrides[get_vector_search_service] = lambda: mock_vector_search_service
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request with all fields
+            response = client.post(
+                "/api/recipes/search",
+                json={
+                    "query": "Italian pasta",
+                    "available_ingredients": ["pasta", "tomatoes", "basil"],
+                    "limit": 20
+                }
+            )
+            
+            # Assert response
+            assert response.status_code == 200
+            data = response.json()
+            
+            # Verify response
+            assert len(data["data"]) == 1
+            assert data["meta"]["count"] == 1
+            
+            # Verify vector search was called
+            mock_vector_search_service.search_recipes.assert_called_once_with(
+                query="Italian pasta",
+                limit=20
+            )
+        finally:
+            app.dependency_overrides.clear()

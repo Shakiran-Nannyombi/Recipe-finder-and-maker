@@ -69,7 +69,7 @@
   - [x] 4.1.5 Add caching for embeddings
 
 - [-] 4.2 Create search endpoint
-  - [x] 4.2.1 Define SearchRequest Pydantic model
+  - [-] 4.2.1 Define SearchRequest Pydantic model
   - [x] 4.2.2 Create POST /api/recipes/search route
   - [x] 4.2.3 Validate input with Pydantic
   - [x] 4.2.4 Call VectorSearchService with Pinecone
@@ -83,24 +83,24 @@
 
 ## 5. Backend - Inventory Management
 
-- [ ] 5.1 Create inventory service
-  - [ ] 5.1.1 Extend SupabaseService for inventory operations
-  - [ ] 5.1.2 Implement save_inventory method
-  - [ ] 5.1.3 Implement get_inventory method
-  - [ ] 5.1.4 Implement add_item and remove_item methods
+- [x] 5.1 Create inventory service
+  - [x] 5.1.1 Extend SupabaseService for inventory operations
+  - [x] 5.1.2 Implement save_inventory method
+  - [x] 5.1.3 Implement get_inventory method
+  - [x] 5.1.4 Implement add_item and remove_item methods
 
-- [ ] 5.2 Create inventory endpoints
-  - [ ] 5.2.1 Create GET /api/inventory route
-  - [ ] 5.2.2 Create POST /api/inventory/items route
-  - [ ] 5.2.3 CREATE DELETE /api/inventory/items/{ingredient_name} route
-  - [ ] 5.2.4 Validate inputs with Pydantic models
-  - [ ] 5.2.5 Return standardized response format
+- [x] 5.2 Create inventory endpoints
+  - [x] 5.2.1 Create GET /api/inventory route
+  - [x] 5.2.2 Create POST /api/inventory/items route
+  - [x] 5.2.3 CREATE DELETE /api/inventory/items/{ingredient_name} route
+  - [x] 5.2.4 Validate inputs with Pydantic models
+  - [x] 5.2.5 Return standardized response format
 
-- [ ] 5.3 Create recipe matching endpoint
-  - [ ] 5.3.1 Create POST /api/recipes/match-inventory route
-  - [ ] 5.3.2 Implement matching algorithm (exact and partial matches)
-  - [ ] 5.3.3 Return matched recipes with missing ingredients
-  - [ ] 5.3.4 Add tests for matching logic
+- [x] 5.3 Create recipe matching endpoint
+  - [x] 5.3.1 Create POST /api/recipes/match-inventory route
+  - [x] 5.3.2 Implement matching algorithm (exact and partial matches)
+  - [x] 5.3.3 Return matched recipes with missing ingredients
+  - [x] 5.3.4 Add tests for matching logic
 
 ## 6. Frontend - Recipe Generator UI
 

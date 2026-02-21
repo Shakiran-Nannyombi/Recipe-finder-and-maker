@@ -472,3 +472,326 @@ class TestGetInventory:
         
         with pytest.raises(Exception, match="Error retrieving inventory from Supabase: Database error"):
             await supabase_service.get_inventory("user-123")
+
+
+class TestAddItem:
+    """Tests for add_item method."""
+    
+    @pytest.mark.asyncio
+    async def test_add_item_to_new_inventory(self, supabase_service, mock_supabase_client):
+        """Test adding item when inventory doesn't exist."""
+        # Mock get_inventory to return None (no existing inventory)
+        mock_get_response = Mock()
+        mock_get_response.data = []
+        
+        # Mock save_inventory to succeed
+        mock_save_response = Mock()
+        mock_save_response.data = [{"user_id": "user-123"}]
+        
+        mock_table = Mock()
+        mock_select = Mock()
+        mock_select.eq.return_value.execute.return_value = mock_get_response
+        mock_table.select.return_value = mock_select
+        mock_table.upsert.return_value.execute.return_value = mock_save_response
+        mock_supabase_client.table.return_value = mock_table
+        
+        result = await supabase_service.add_item("user-123", "tomatoes", "5")
+        
+        assert result.user_id == "user-123"
+        assert len(result.items) == 1
+        assert result.items[0].ingredient_name == "tomatoes"
+        assert result.items[0].quantity == "5"
+    
+    @pytest.mark.asyncio
+    async def test_add_item_to_existing_inventory(self, supabase_service, mock_supabase_client):
+        """Test adding new item to existing inventory."""
+        # Mock get_inventory to return existing inventory
+        mock_get_response = Mock()
+        mock_get_response.data = [{
+            "user_id": "user-123",
+            "items": [
+                {
+                    "ingredient_name": "onions",
+                    "quantity": "3",
+                    "added_at": "2024-01-15T12:00:00"
+                }
+            ],
+            "updated_at": "2024-01-15T12:00:00"
+        }]
+        
+        # Mock save_inventory to succeed
+        mock_save_response = Mock()
+        mock_save_response.data = [{"user_id": "user-123"}]
+        
+        mock_table = Mock()
+        mock_select = Mock()
+        mock_select.eq.return_value.execute.return_value = mock_get_response
+        mock_table.select.return_value = mock_select
+        mock_table.upsert.return_value.execute.return_value = mock_save_response
+        mock_supabase_client.table.return_value = mock_table
+        
+        result = await supabase_service.add_item("user-123", "tomatoes", "5")
+        
+        assert len(result.items) == 2
+        assert any(item.ingredient_name == "onions" for item in result.items)
+        assert any(item.ingredient_name == "tomatoes" for item in result.items)
+    
+    @pytest.mark.asyncio
+    async def test_add_item_update_existing(self, supabase_service, mock_supabase_client):
+        """Test updating quantity of existing item."""
+        # Mock get_inventory to return inventory with existing item
+        mock_get_response = Mock()
+        mock_get_response.data = [{
+            "user_id": "user-123",
+            "items": [
+                {
+                    "ingredient_name": "tomatoes",
+                    "quantity": "3",
+                    "added_at": "2024-01-15T12:00:00"
+                }
+            ],
+            "updated_at": "2024-01-15T12:00:00"
+        }]
+        
+        # Mock save_inventory to succeed
+        mock_save_response = Mock()
+        mock_save_response.data = [{"user_id": "user-123"}]
+        
+        mock_table = Mock()
+        mock_select = Mock()
+        mock_select.eq.return_value.execute.return_value = mock_get_response
+        mock_table.select.return_value = mock_select
+        mock_table.upsert.return_value.execute.return_value = mock_save_response
+        mock_supabase_client.table.return_value = mock_table
+        
+        result = await supabase_service.add_item("user-123", "tomatoes", "5")
+        
+        assert len(result.items) == 1
+        assert result.items[0].ingredient_name == "tomatoes"
+        assert result.items[0].quantity == "5"
+    
+    @pytest.mark.asyncio
+    async def test_add_item_case_insensitive(self, supabase_service, mock_supabase_client):
+        """Test that item matching is case-insensitive."""
+        # Mock get_inventory to return inventory with existing item
+        mock_get_response = Mock()
+        mock_get_response.data = [{
+            "user_id": "user-123",
+            "items": [
+                {
+                    "ingredient_name": "Tomatoes",
+                    "quantity": "3",
+                    "added_at": "2024-01-15T12:00:00"
+                }
+            ],
+            "updated_at": "2024-01-15T12:00:00"
+        }]
+        
+        # Mock save_inventory to succeed
+        mock_save_response = Mock()
+        mock_save_response.data = [{"user_id": "user-123"}]
+        
+        mock_table = Mock()
+        mock_select = Mock()
+        mock_select.eq.return_value.execute.return_value = mock_get_response
+        mock_table.select.return_value = mock_select
+        mock_table.upsert.return_value.execute.return_value = mock_save_response
+        mock_supabase_client.table.return_value = mock_table
+        
+        result = await supabase_service.add_item("user-123", "tomatoes", "5")
+        
+        assert len(result.items) == 1
+        assert result.items[0].quantity == "5"
+    
+    @pytest.mark.asyncio
+    async def test_add_item_without_quantity(self, supabase_service, mock_supabase_client):
+        """Test adding item without specifying quantity."""
+        # Mock get_inventory to return None
+        mock_get_response = Mock()
+        mock_get_response.data = []
+        
+        # Mock save_inventory to succeed
+        mock_save_response = Mock()
+        mock_save_response.data = [{"user_id": "user-123"}]
+        
+        mock_table = Mock()
+        mock_select = Mock()
+        mock_select.eq.return_value.execute.return_value = mock_get_response
+        mock_table.select.return_value = mock_select
+        mock_table.upsert.return_value.execute.return_value = mock_save_response
+        mock_supabase_client.table.return_value = mock_table
+        
+        result = await supabase_service.add_item("user-123", "salt")
+        
+        assert len(result.items) == 1
+        assert result.items[0].ingredient_name == "salt"
+        assert result.items[0].quantity is None
+    
+    @pytest.mark.asyncio
+    async def test_add_item_exception(self, supabase_service, mock_supabase_client):
+        """Test add_item handles exceptions properly."""
+        mock_table = Mock()
+        mock_table.select.side_effect = Exception("Database error")
+        mock_supabase_client.table.return_value = mock_table
+        
+        with pytest.raises(Exception, match="Error adding item to inventory: Database error"):
+            await supabase_service.add_item("user-123", "tomatoes", "5")
+
+
+class TestRemoveItem:
+    """Tests for remove_item method."""
+    
+    @pytest.mark.asyncio
+    async def test_remove_item_success(self, supabase_service, mock_supabase_client):
+        """Test successful item removal."""
+        # Mock get_inventory to return inventory with items
+        mock_get_response = Mock()
+        mock_get_response.data = [{
+            "user_id": "user-123",
+            "items": [
+                {
+                    "ingredient_name": "tomatoes",
+                    "quantity": "5",
+                    "added_at": "2024-01-15T12:00:00"
+                },
+                {
+                    "ingredient_name": "onions",
+                    "quantity": "3",
+                    "added_at": "2024-01-15T12:05:00"
+                }
+            ],
+            "updated_at": "2024-01-15T12:05:00"
+        }]
+        
+        # Mock save_inventory to succeed
+        mock_save_response = Mock()
+        mock_save_response.data = [{"user_id": "user-123"}]
+        
+        mock_table = Mock()
+        mock_select = Mock()
+        mock_select.eq.return_value.execute.return_value = mock_get_response
+        mock_table.select.return_value = mock_select
+        mock_table.upsert.return_value.execute.return_value = mock_save_response
+        mock_supabase_client.table.return_value = mock_table
+        
+        result = await supabase_service.remove_item("user-123", "tomatoes")
+        
+        assert len(result.items) == 1
+        assert result.items[0].ingredient_name == "onions"
+        assert not any(item.ingredient_name == "tomatoes" for item in result.items)
+    
+    @pytest.mark.asyncio
+    async def test_remove_item_case_insensitive(self, supabase_service, mock_supabase_client):
+        """Test that item removal is case-insensitive."""
+        # Mock get_inventory to return inventory with items
+        mock_get_response = Mock()
+        mock_get_response.data = [{
+            "user_id": "user-123",
+            "items": [
+                {
+                    "ingredient_name": "Tomatoes",
+                    "quantity": "5",
+                    "added_at": "2024-01-15T12:00:00"
+                }
+            ],
+            "updated_at": "2024-01-15T12:00:00"
+        }]
+        
+        # Mock save_inventory to succeed
+        mock_save_response = Mock()
+        mock_save_response.data = [{"user_id": "user-123"}]
+        
+        mock_table = Mock()
+        mock_select = Mock()
+        mock_select.eq.return_value.execute.return_value = mock_get_response
+        mock_table.select.return_value = mock_select
+        mock_table.upsert.return_value.execute.return_value = mock_save_response
+        mock_supabase_client.table.return_value = mock_table
+        
+        result = await supabase_service.remove_item("user-123", "tomatoes")
+        
+        assert len(result.items) == 0
+    
+    @pytest.mark.asyncio
+    async def test_remove_item_inventory_not_found(self, supabase_service, mock_supabase_client):
+        """Test removal fails when inventory doesn't exist."""
+        # Mock get_inventory to return None
+        mock_get_response = Mock()
+        mock_get_response.data = []
+        
+        mock_table = Mock()
+        mock_select = Mock()
+        mock_select.eq.return_value.execute.return_value = mock_get_response
+        mock_table.select.return_value = mock_select
+        mock_supabase_client.table.return_value = mock_table
+        
+        with pytest.raises(Exception, match="Inventory not found for user user-123"):
+            await supabase_service.remove_item("user-123", "tomatoes")
+    
+    @pytest.mark.asyncio
+    async def test_remove_item_not_found(self, supabase_service, mock_supabase_client):
+        """Test removal fails when item doesn't exist in inventory."""
+        # Mock get_inventory to return inventory without the item
+        mock_get_response = Mock()
+        mock_get_response.data = [{
+            "user_id": "user-123",
+            "items": [
+                {
+                    "ingredient_name": "onions",
+                    "quantity": "3",
+                    "added_at": "2024-01-15T12:00:00"
+                }
+            ],
+            "updated_at": "2024-01-15T12:00:00"
+        }]
+        
+        mock_table = Mock()
+        mock_select = Mock()
+        mock_select.eq.return_value.execute.return_value = mock_get_response
+        mock_table.select.return_value = mock_select
+        mock_supabase_client.table.return_value = mock_table
+        
+        with pytest.raises(Exception, match="Ingredient 'tomatoes' not found in inventory"):
+            await supabase_service.remove_item("user-123", "tomatoes")
+    
+    @pytest.mark.asyncio
+    async def test_remove_last_item(self, supabase_service, mock_supabase_client):
+        """Test removing the last item from inventory."""
+        # Mock get_inventory to return inventory with one item
+        mock_get_response = Mock()
+        mock_get_response.data = [{
+            "user_id": "user-123",
+            "items": [
+                {
+                    "ingredient_name": "tomatoes",
+                    "quantity": "5",
+                    "added_at": "2024-01-15T12:00:00"
+                }
+            ],
+            "updated_at": "2024-01-15T12:00:00"
+        }]
+        
+        # Mock save_inventory to succeed
+        mock_save_response = Mock()
+        mock_save_response.data = [{"user_id": "user-123"}]
+        
+        mock_table = Mock()
+        mock_select = Mock()
+        mock_select.eq.return_value.execute.return_value = mock_get_response
+        mock_table.select.return_value = mock_select
+        mock_table.upsert.return_value.execute.return_value = mock_save_response
+        mock_supabase_client.table.return_value = mock_table
+        
+        result = await supabase_service.remove_item("user-123", "tomatoes")
+        
+        assert len(result.items) == 0
+    
+    @pytest.mark.asyncio
+    async def test_remove_item_exception(self, supabase_service, mock_supabase_client):
+        """Test remove_item handles exceptions properly."""
+        mock_table = Mock()
+        mock_table.select.side_effect = Exception("Database error")
+        mock_supabase_client.table.return_value = mock_table
+        
+        with pytest.raises(Exception, match="Error removing item from inventory: Database error"):
+            await supabase_service.remove_item("user-123", "tomatoes")
