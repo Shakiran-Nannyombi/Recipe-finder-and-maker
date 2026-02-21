@@ -1,5 +1,5 @@
 """
-LLM Service for AI-powered recipe generation using Hugging Face via LlamaIndex.
+LLM Service for AI-powered recipe generation using Hugging Face Inference API.
 """
 import json
 import os
@@ -8,12 +8,13 @@ import asyncio
 from typing import List, Optional
 from datetime import datetime
 from pydantic import ValidationError
+from huggingface_hub import InferenceClient
 
 from models.recipe import Recipe, Ingredient
 
 
 class LLMService:
-    """Service for interacting with Hugging Face models via LlamaIndex to generate recipes."""
+    """Service for interacting with Hugging Face models via Inference API to generate recipes."""
     
     def __init__(
         self, 
@@ -23,33 +24,28 @@ class LLMService:
         initial_retry_delay: float = 1.0
     ):
         """
-        Initialize LLM service with LlamaIndex and Hugging Face.
+        Initialize LLM service with Hugging Face Inference API.
         
         Args:
-            model_name: Hugging Face model name (defaults to Llama-2-7b-chat)
-            api_token: Hugging Face API token (optional, for gated models)
+            model_name: Hugging Face model name (defaults to mistralai/Mistral-7B-Instruct-v0.2)
+            api_token: Hugging Face API token (required)
             max_retries: Maximum number of retry attempts for transient failures (default: 3)
             initial_retry_delay: Initial delay in seconds for exponential backoff (default: 1.0)
         """
-        from llama_index.llms.huggingface import HuggingFaceLLM
-        
         self.model_name = model_name or os.getenv(
             "HF_MODEL_NAME", 
-            "meta-llama/Llama-2-7b-chat-hf"
+            "mistralai/Mistral-7B-Instruct-v0.2"
         )
         self.api_token = api_token or os.getenv("HF_API_TOKEN")
+        
+        if not self.api_token:
+            raise ValueError("HF_API_TOKEN is required for Hugging Face Inference API")
+        
         self.max_retries = max_retries
         self.initial_retry_delay = initial_retry_delay
         
-        # Initialize LlamaIndex with Hugging Face LLM
-        self.llm = HuggingFaceLLM(
-            model_name=self.model_name,
-            tokenizer_name=self.model_name,
-            context_window=4096,
-            max_new_tokens=2048,
-            generate_kwargs={"temperature": 0.7, "do_sample": True},
-            device_map="auto",
-        )
+        # Initialize Hugging Face Inference Client
+        self.client = InferenceClient(token=self.api_token)
     
     def _build_prompt(
         self,
@@ -205,7 +201,7 @@ class LLMService:
         timeout: int = 10
     ) -> str:
         """
-        Invoke Hugging Face model via LlamaIndex with error handling.
+        Invoke Hugging Face model via Inference API with error handling.
         
         Args:
             prompt: The prompt to send to the model
@@ -233,14 +229,16 @@ class LLMService:
             raise ValueError(f"max_tokens must be positive, got {max_tokens}")
         
         try:
-            # Invoke model via LlamaIndex
-            response = self.llm.complete(prompt)
+            # Invoke model via Hugging Face Inference API
+            response = self.client.text_generation(
+                prompt,
+                model=self.model_name,
+                max_new_tokens=max_tokens,
+                temperature=temperature,
+                return_full_text=False
+            )
             
-            # Extract text from response
-            if hasattr(response, 'text'):
-                return response.text
-            else:
-                return str(response)
+            return response
             
         except Exception as e:
             error_msg = str(e).lower()
@@ -258,7 +256,7 @@ class LLMService:
                 raise RuntimeError(
                     f"Hugging Face API rate limit exceeded: {str(e)}"
                 ) from e
-            elif "authentication" in error_msg or "unauthorized" in error_msg:
+            elif "authentication" in error_msg or "unauthorized" in error_msg or "401" in error_msg:
                 raise RuntimeError(
                     f"Hugging Face authentication failed: {str(e)}"
                 ) from e

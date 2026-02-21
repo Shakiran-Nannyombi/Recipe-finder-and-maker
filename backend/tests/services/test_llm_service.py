@@ -1,17 +1,11 @@
 """
-Unit tests for LLM Service with mocked Hugging Face/LlamaIndex calls.
+Unit tests for LLM Service with mocked Hugging Face Inference API calls.
 """
 import pytest
 import json
-import sys
 from unittest.mock import Mock, patch, MagicMock
 from datetime import datetime
 from pydantic import ValidationError
-
-# Mock llama_index modules before any imports
-sys.modules['llama_index'] = MagicMock()
-sys.modules['llama_index.llms'] = MagicMock()
-sys.modules['llama_index.llms.huggingface'] = MagicMock()
 
 from services.llm_service import LLMService
 from models.recipe import Recipe, Ingredient
@@ -20,39 +14,46 @@ from models.recipe import Recipe, Ingredient
 class TestLLMServiceInitialization:
     """Test LLMService initialization."""
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_init_with_defaults(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_init_with_defaults(self, mock_client):
         """Test initialization with default parameters."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         
-        assert service.model_name == "meta-llama/Llama-2-7b-chat-hf"
-        mock_hf_llm.assert_called_once()
+        assert service.model_name == "mistralai/Mistral-7B-Instruct-v0.2"
+        assert service.api_token == "test_token"
+        mock_client.assert_called_once_with(token="test_token")
         
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_init_with_custom_model(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_init_with_custom_model(self, mock_client):
         """Test initialization with custom model name."""
         custom_model = "meta-llama/Llama-2-13b-chat-hf"
-        service = LLMService(model_name=custom_model)
+        service = LLMService(model_name=custom_model, api_token="test_token")
         
         assert service.model_name == custom_model
-        mock_hf_llm.assert_called_once()
+        mock_client.assert_called_once_with(token="test_token")
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_init_with_api_token(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_init_with_api_token(self, mock_client):
         """Test initialization with API token."""
         token = "test_token_123"
         service = LLMService(api_token=token)
         
         assert service.api_token == token
+        mock_client.assert_called_once_with(token=token)
+    
+    def test_init_without_api_token(self):
+        """Test initialization fails without API token."""
+        with pytest.raises(ValueError, match="HF_API_TOKEN is required"):
+            LLMService()
 
 
 class TestPromptBuilder:
     """Test prompt building functionality."""
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_build_prompt_basic(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_build_prompt_basic(self, mock_client):
         """Test basic prompt building with only ingredients."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         ingredients = ["chicken", "rice", "onions"]
         
         prompt = service._build_prompt(ingredients)
@@ -63,10 +64,10 @@ class TestPromptBuilder:
         assert "professional chef" in prompt.lower()
         assert "JSON" in prompt
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_build_prompt_with_dietary_restrictions(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_build_prompt_with_dietary_restrictions(self, mock_client):
         """Test prompt building with dietary restrictions."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         ingredients = ["tofu", "vegetables"]
         dietary = ["vegan", "gluten-free"]
         
@@ -76,10 +77,10 @@ class TestPromptBuilder:
         assert "gluten-free" in prompt
         assert "Dietary Restrictions" in prompt
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_build_prompt_with_cuisine_type(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_build_prompt_with_cuisine_type(self, mock_client):
         """Test prompt building with cuisine type."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         ingredients = ["pasta", "tomatoes"]
         
         prompt = service._build_prompt(ingredients, cuisine_type="Italian")
@@ -87,10 +88,10 @@ class TestPromptBuilder:
         assert "Italian" in prompt
         assert "Cuisine Type" in prompt
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_build_prompt_with_difficulty(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_build_prompt_with_difficulty(self, mock_client):
         """Test prompt building with difficulty level."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         ingredients = ["eggs", "flour"]
         
         prompt = service._build_prompt(ingredients, difficulty="easy")
@@ -98,10 +99,10 @@ class TestPromptBuilder:
         assert "easy" in prompt
         assert "Difficulty Level" in prompt
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_build_prompt_all_parameters(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_build_prompt_all_parameters(self, mock_client):
         """Test prompt building with all parameters."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         ingredients = ["chicken", "rice"]
         dietary = ["low-carb"]
         cuisine = "Asian"
@@ -123,99 +124,96 @@ class TestPromptBuilder:
 class TestModelInvocation:
     """Test model invocation with error handling."""
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_invoke_model_success(self, mock_hf_llm):
+    async def test_invoke_model_success(self, mock_client_class):
         """Test successful model invocation."""
         # Setup mock response
-        mock_response = Mock()
-        mock_response.text = "Test response"
+        mock_client = Mock()
+        mock_client.text_generation = Mock(return_value="Test response")
+        mock_client_class.return_value = mock_client
         
-        mock_llm_instance = Mock()
-        mock_llm_instance.complete = Mock(return_value=mock_response)
-        mock_hf_llm.return_value = mock_llm_instance
-        
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         result = await service._invoke_model("Test prompt")
         
         assert result == "Test response"
-        mock_llm_instance.complete.assert_called_once_with("Test prompt")
+        mock_client.text_generation.assert_called_once()
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_invoke_model_empty_prompt(self, mock_hf_llm):
+    async def test_invoke_model_empty_prompt(self, mock_client):
         """Test model invocation with empty prompt."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         
         with pytest.raises(ValueError, match="Prompt cannot be empty"):
             await service._invoke_model("")
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_invoke_model_invalid_temperature(self, mock_hf_llm):
+    async def test_invoke_model_invalid_temperature(self, mock_client):
         """Test model invocation with invalid temperature."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         
         with pytest.raises(ValueError, match="Temperature must be between 0 and 1"):
             await service._invoke_model("Test", temperature=1.5)
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_invoke_model_invalid_max_tokens(self, mock_hf_llm):
+    async def test_invoke_model_invalid_max_tokens(self, mock_client):
         """Test model invocation with invalid max_tokens."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         
         with pytest.raises(ValueError, match="max_tokens must be positive"):
             await service._invoke_model("Test", max_tokens=-1)
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_invoke_model_timeout_error(self, mock_hf_llm):
+    async def test_invoke_model_timeout_error(self, mock_client_class):
         """Test model invocation with timeout error."""
-        mock_llm_instance = Mock()
-        mock_llm_instance.complete = Mock(side_effect=Exception("Request timed out"))
-        mock_hf_llm.return_value = mock_llm_instance
+        mock_client = Mock()
+        mock_client.text_generation = Mock(side_effect=Exception("Request timed out"))
+        mock_client_class.return_value = mock_client
         
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         
         with pytest.raises(TimeoutError, match="LLM request timed out"):
             await service._invoke_model("Test")
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_invoke_model_connection_error(self, mock_hf_llm):
+    async def test_invoke_model_connection_error(self, mock_client_class):
         """Test model invocation with connection error."""
-        mock_llm_instance = Mock()
-        mock_llm_instance.complete = Mock(side_effect=Exception("Connection failed"))
-        mock_hf_llm.return_value = mock_llm_instance
+        mock_client = Mock()
+        mock_client.text_generation = Mock(side_effect=Exception("Connection failed"))
+        mock_client_class.return_value = mock_client
         
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         
         with pytest.raises(ConnectionError, match="Network error"):
             await service._invoke_model("Test")
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_invoke_model_rate_limit_error(self, mock_hf_llm):
+    async def test_invoke_model_rate_limit_error(self, mock_client_class):
         """Test model invocation with rate limit error."""
-        mock_llm_instance = Mock()
-        mock_llm_instance.complete = Mock(side_effect=Exception("Rate limit exceeded"))
-        mock_hf_llm.return_value = mock_llm_instance
+        mock_client = Mock()
+        mock_client.text_generation = Mock(side_effect=Exception("Rate limit exceeded"))
+        mock_client_class.return_value = mock_client
         
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         
         with pytest.raises(RuntimeError, match="rate limit"):
             await service._invoke_model("Test")
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_invoke_model_auth_error(self, mock_hf_llm):
+    async def test_invoke_model_auth_error(self, mock_client_class):
         """Test model invocation with authentication error."""
-        mock_llm_instance = Mock()
-        mock_llm_instance.complete = Mock(side_effect=Exception("Authentication failed"))
-        mock_hf_llm.return_value = mock_llm_instance
+        mock_client = Mock()
+        mock_client.text_generation = Mock(side_effect=Exception("Authentication failed"))
+        mock_client_class.return_value = mock_client
         
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         
         with pytest.raises(RuntimeError, match="authentication failed"):
             await service._invoke_model("Test")
@@ -224,10 +222,10 @@ class TestModelInvocation:
 class TestResponseParsing:
     """Test response parsing functionality."""
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_parse_valid_recipe_response(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_parse_valid_recipe_response(self, mock_client):
         """Test parsing a valid recipe response."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         
         valid_response = json.dumps({
             "title": "Chicken Rice Bowl",
@@ -257,10 +255,10 @@ class TestResponseParsing:
         assert recipe.servings == 2
         assert recipe.difficulty == "easy"
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_parse_recipe_with_markdown_wrapper(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_parse_recipe_with_markdown_wrapper(self, mock_client):
         """Test parsing recipe wrapped in markdown code blocks."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         
         recipe_json = {
             "title": "Test Recipe",
@@ -278,20 +276,20 @@ class TestResponseParsing:
         
         assert recipe.title == "Test Recipe"
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_parse_recipe_invalid_json(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_parse_recipe_invalid_json(self, mock_client):
         """Test parsing invalid JSON response."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         
         invalid_response = "This is not valid JSON"
         
         with pytest.raises(ValueError, match="Failed to parse JSON"):
             service._parse_recipe_response(invalid_response)
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_parse_recipe_missing_required_fields(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_parse_recipe_missing_required_fields(self, mock_client):
         """Test parsing response with missing required fields."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         
         incomplete_response = json.dumps({
             "title": "Test Recipe",
@@ -302,10 +300,10 @@ class TestResponseParsing:
         with pytest.raises(ValueError, match="Missing required fields"):
             service._parse_recipe_response(incomplete_response)
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_parse_recipe_invalid_difficulty(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_parse_recipe_invalid_difficulty(self, mock_client):
         """Test parsing recipe with invalid difficulty level."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         
         invalid_response = json.dumps({
             "title": "Test Recipe",
@@ -320,10 +318,10 @@ class TestResponseParsing:
         with pytest.raises(ValueError, match="Invalid difficulty level"):
             service._parse_recipe_response(invalid_response)
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_parse_recipe_invalid_ingredient_format(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_parse_recipe_invalid_ingredient_format(self, mock_client):
         """Test parsing recipe with invalid ingredient format."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         
         invalid_response = json.dumps({
             "title": "Test Recipe",
@@ -338,10 +336,10 @@ class TestResponseParsing:
         with pytest.raises(ValueError, match="Invalid ingredient format"):
             service._parse_recipe_response(invalid_response)
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_parse_recipe_invalid_instructions_format(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_parse_recipe_invalid_instructions_format(self, mock_client):
         """Test parsing recipe with invalid instructions format."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         
         invalid_response = json.dumps({
             "title": "Test Recipe",
