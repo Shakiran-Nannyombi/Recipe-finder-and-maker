@@ -31,7 +31,7 @@ export function useRecipeSearch(): UseRecipeSearchReturn {
     });
 
     // Ref to store the timeout ID for debouncing
-    const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     // Cleanup timeout on unmount
     useEffect(() => {
