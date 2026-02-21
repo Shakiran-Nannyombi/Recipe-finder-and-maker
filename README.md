@@ -1,14 +1,125 @@
-# Project Setup: FlavorForge AI
+# FlavorForge AI 🍳
 
-**App Name**: FlavorForge AI
-**Description**: A high-performance AI-powered recipe discovery and maker application. It uses semantic search to find recipes and Amazon Bedrock to generate custom recipes based on available ingredients.
-**Features**:
+A high-performance AI-powered recipe discovery and generation application. Uses semantic search to find recipes and Hugging Face models to generate custom recipes based on available ingredients.
 
-* **Smart Recipe Search**: Natural language search using vector embeddings.
-* **AI Recipe Generator**: Create new recipes via Amazon Bedrock (Claude 3).
-* **Ingredient Inventory**: "What's in my fridge" filter.
-* **FastAPI Backend**: Robust, asynchronous Python API.
-* **React Frontend**: Responsive, modern UI for meal planning.
+## ✨ Features
+
+* **Smart Recipe Search**: Natural language search using Pinecone vector embeddings
+* **AI Recipe Generator**: Create custom recipes using Hugging Face models via LlamaIndex
+* **Ingredient Inventory**: Track what's in your fridge and match recipes
+* **FastAPI Backend**: Robust, asynchronous Python API
+* **React Frontend**: Responsive, modern UI for meal planning
+* **Supabase Storage**: Persistent recipe and inventory storage
+
+## 🚀 Quick Start
+
+### Backend Setup
+
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env
+# Edit .env with your API keys
+uvicorn main:app --reload
+```
+
+Visit http://localhost:8000/docs for API documentation.
+
+**📖 Detailed backend setup guide**: [backend/README.md](backend/README.md)
+
+### Frontend Setup
+
+```bash
+cd frontend
+npm install
+cp .env.example .env
+# Edit .env with your backend URL
+npm run dev
+```
+
+Visit http://localhost:5173 for the application.
+
+## 🔑 Required Services
+
+You'll need API keys from:
+1. **Supabase** - Database and storage (https://supabase.com)
+2. **Pinecone** - Vector search (https://pinecone.io)
+3. **Hugging Face** - AI models (https://huggingface.co) - Optional for gated models
+
+See [backend/README.md](backend/README.md) for detailed setup instructions.
+
+## 📁 Project Structure
+
+```
+FlavorForgeAI/
+├── backend/               # FastAPI application
+│   ├── main.py           # Application entry point
+│   ├── models/           # Pydantic data models
+│   ├── routes/           # API endpoints
+│   ├── services/         # Business logic
+│   └── tests/            # Test suite
+├── frontend/             # React application
+│   ├── src/
+│   │   ├── components/   # React components
+│   │   ├── hooks/        # Custom hooks
+│   │   ├── pages/        # Page components
+│   │   └── services/     # API client
+│   └── public/           # Static assets
+└── .kiro/                # Kiro configuration
+    ├── steering/         # Development guidelines
+    ├── hooks/            # Agent hooks
+    └── specs/            # Feature specifications
+```
+
+## 🧪 Testing
+
+### Backend Tests
+```bash
+cd backend
+pytest
+pytest --cov=. --cov-report=html
+```
+
+### Frontend Tests
+```bash
+cd frontend
+npm test
+npm run test:coverage
+```
+
+## 🐳 Docker Deployment
+
+```bash
+# Backend
+cd backend
+docker build -t flavorforge-backend .
+docker run -p 8000:8000 flavorforge-backend
+
+# Frontend
+cd frontend
+docker build -t flavorforge-frontend .
+docker run -p 5173:5173 flavorforge-frontend
+```
+
+## 📚 API Documentation
+
+Once the backend is running, interactive API documentation is available at:
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests
+5. Submit a pull request
+
+## 📄 License
+
+MIT License - see LICENSE file for details
 
 ---
 
