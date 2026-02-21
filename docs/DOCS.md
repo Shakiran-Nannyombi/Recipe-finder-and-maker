@@ -9,6 +9,7 @@ Welcome to the Recipe AI documentation! This page serves as a central hub for al
 ### Getting Started
 - **[README.md](../README.md)** - Project overview, features, and quick start
 - **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - Detailed local development setup
+- **[SUPABASE_SETUP.md](SUPABASE_SETUP.md)** - Supabase database configuration
 
 ### Development
 - **[GUIDELINES.md](GUIDELINES.md)** - Development standards and best practices

@@ -38,7 +38,6 @@ def vector_service(mock_pinecone, mock_sentence_transformer):
     mock_pc, mock_index = mock_pinecone
     service = VectorSearchService(
         pinecone_api_key="test-api-key",
-        pinecone_environment="test-env",
         index_name="recipes",
         embedding_model_name="all-MiniLM-L6-v2"
     )
@@ -53,12 +52,10 @@ class TestVectorSearchServiceInitialization:
         mock_pc, mock_index = mock_pinecone
         
         service = VectorSearchService(
-            pinecone_api_key="test-key",
-            pinecone_environment="test-env"
+            pinecone_api_key="test-key"
         )
         
         assert service.pinecone_api_key == "test-key"
-        assert service.pinecone_environment == "test-env"
         assert service.index_name == "recipes"
         assert service.embedding_model_name == "all-MiniLM-L6-v2"
         mock_pc.assert_called_once_with(api_key="test-key")
@@ -66,27 +63,16 @@ class TestVectorSearchServiceInitialization:
     def test_init_with_env_vars(self, mock_pinecone, mock_sentence_transformer, monkeypatch):
         """Test initialization with environment variables."""
         monkeypatch.setenv("PINECONE_API_KEY", "env-key")
-        monkeypatch.setenv("PINECONE_ENVIRONMENT", "env-environment")
         
         service = VectorSearchService()
         
         assert service.pinecone_api_key == "env-key"
-        assert service.pinecone_environment == "env-environment"
     
     def test_init_missing_api_key(self, mock_pinecone, mock_sentence_transformer):
         """Test initialization fails without API key."""
         with pytest.raises(ValueError, match="PINECONE_API_KEY must be provided"):
             VectorSearchService(
-                pinecone_api_key=None,
-                pinecone_environment="test-env"
-            )
-    
-    def test_init_missing_environment(self, mock_pinecone, mock_sentence_transformer):
-        """Test initialization fails without environment."""
-        with pytest.raises(ValueError, match="PINECONE_ENVIRONMENT must be provided"):
-            VectorSearchService(
-                pinecone_api_key="test-key",
-                pinecone_environment=None
+                pinecone_api_key=None
             )
     
     def test_init_pinecone_connection_failure(self, mock_sentence_transformer):
@@ -96,8 +82,7 @@ class TestVectorSearchServiceInitialization:
             
             with pytest.raises(RuntimeError, match="Failed to initialize Pinecone connection"):
                 VectorSearchService(
-                    pinecone_api_key="test-key",
-                    pinecone_environment="test-env"
+                    pinecone_api_key="test-key"
                 )
 
 

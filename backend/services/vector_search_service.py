@@ -14,7 +14,6 @@ class VectorSearchService:
     def __init__(
         self,
         pinecone_api_key: Optional[str] = None,
-        pinecone_environment: Optional[str] = None,
         index_name: str = "recipes",
         embedding_model_name: str = "all-MiniLM-L6-v2"
     ):
@@ -23,7 +22,6 @@ class VectorSearchService:
         
         Args:
             pinecone_api_key: Pinecone API key (defaults to PINECONE_API_KEY env var)
-            pinecone_environment: Pinecone environment (defaults to PINECONE_ENVIRONMENT env var)
             index_name: Name of the Pinecone index (default: "recipes")
             embedding_model_name: Sentence-transformers model name (default: "all-MiniLM-L6-v2")
             
@@ -32,7 +30,6 @@ class VectorSearchService:
             RuntimeError: If Pinecone connection fails
         """
         self.pinecone_api_key = pinecone_api_key or os.getenv("PINECONE_API_KEY")
-        self.pinecone_environment = pinecone_environment or os.getenv("PINECONE_ENVIRONMENT")
         self.index_name = index_name
         self.embedding_model_name = embedding_model_name
         
@@ -40,11 +37,8 @@ class VectorSearchService:
         if not self.pinecone_api_key:
             raise ValueError("PINECONE_API_KEY must be provided or set as environment variable")
         
-        if not self.pinecone_environment:
-            raise ValueError("PINECONE_ENVIRONMENT must be provided or set as environment variable")
-        
         try:
-            # Initialize Pinecone client
+            # Initialize Pinecone client (v5+ only needs API key)
             self.pc = Pinecone(api_key=self.pinecone_api_key)
             
             # Connect to index
