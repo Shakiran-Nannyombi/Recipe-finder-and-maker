@@ -31,7 +31,7 @@ export const AddIngredient: React.FC<AddIngredientProps> = ({ onAdd, loading = f
             // Clear form on success
             setIngredientName('');
             setQuantity('');
-        } catch (err) {
+        } catch {
             setError('Failed to add ingredient');
         } finally {
             setIsSubmitting(false);

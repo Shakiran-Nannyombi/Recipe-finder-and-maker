@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 
 from routes.recipes import router as recipes_router
 from routes.inventory import router as inventory_router
+from routes.auth import router as auth_router
 
 app = FastAPI(
     title="Recipe AI",
@@ -19,6 +20,7 @@ app = FastAPI(
 # Register routers
 app.include_router(recipes_router)
 app.include_router(inventory_router)
+app.include_router(auth_router)
 
 # Configure CORS middleware
 # In production, this should be restricted to the frontend domain only

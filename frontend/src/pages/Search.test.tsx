@@ -12,7 +12,7 @@ vi.mock('../hooks', () => ({
 
 // Mock the components
 vi.mock('../components', () => ({
-    SearchBar: ({ value, onChange, onSearch, disabled, selectedIngredients, onIngredientRemove }: any) => (
+    SearchBar: ({ value, onChange, onSearch, disabled, selectedIngredients, onIngredientRemove }: { value: string; onChange: (v: string) => void; onSearch: () => void; disabled: boolean; selectedIngredients?: string[]; onIngredientRemove?: (ing: string) => void }) => (
         <div data-testid="search-bar">
             <input
                 data-testid="search-input"
@@ -31,7 +31,7 @@ vi.mock('../components', () => ({
             ))}
         </div>
     ),
-    RecipeGrid: ({ recipes, isLoading, emptyMessage, onRecipeClick }: any) => (
+    RecipeGrid: ({ recipes, isLoading, emptyMessage, onRecipeClick }: { recipes: Recipe[]; isLoading: boolean; emptyMessage: string; onRecipeClick?: (recipe: Recipe) => void }) => (
         <div data-testid="recipe-grid">
             {isLoading && <div data-testid="loading">Loading...</div>}
             {!isLoading && recipes.length === 0 && (
@@ -138,7 +138,7 @@ describe('Search Page', () => {
 
     it('includes selected ingredients in search request', async () => {
         const user = userEvent.setup();
-        const { rerender } = render(<Search />);
+        render(<Search />);
 
         const input = screen.getByTestId('search-input');
         await user.type(input, 'pasta');
@@ -332,8 +332,7 @@ describe('Search Page', () => {
     });
 
     it('removes ingredient filter when remove button is clicked', async () => {
-        const user = userEvent.setup();
-        const { rerender } = render(<Search />);
+        render(<Search />);
 
         // We can't directly test the ingredient removal without a way to add them first
         // This test verifies the callback is passed correctly

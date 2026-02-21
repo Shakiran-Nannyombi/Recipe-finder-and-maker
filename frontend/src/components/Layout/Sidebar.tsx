@@ -1,5 +1,6 @@
 import React from 'react';
-import { Home, Sparkles, Bookmark, UtensilsCrossed, Settings, User } from 'lucide-react';
+import { Home, Sparkles, Bookmark, UtensilsCrossed, Settings, User, LogOut } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 interface SidebarProps {
     activeTab: string;
@@ -7,6 +8,8 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
+    const { user, logout } = useAuth();
+
     const navItems = [
         { id: 'dashboard', label: 'Home', icon: Home },
         { id: 'generator', label: 'Recipe AI', icon: Sparkles },
@@ -48,17 +51,28 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                 })}
             </nav>
 
-            <div className="p-6 border-t border-slate-100 dark:border-zinc-800">
+            <div className="p-6 border-t border-slate-100 dark:border-zinc-800 space-y-4">
                 <div className="flex items-center gap-3">
                     <div className="size-10 rounded-full bg-accent/20 flex items-center justify-center text-accent">
                         <User className="w-6 h-6" />
                     </div>
                     <div className="hidden md:block">
-                        <p className="text-sm font-bold text-slate-900 dark:text-white">Chef Julian</p>
+                        <p className="text-sm font-bold text-slate-900 dark:text-white truncate max-w-[120px]">
+                            {user?.name || 'Chef Guest'}
+                        </p>
                         <p className="text-xs text-slate-400">Pro Plan</p>
                     </div>
                 </div>
+
+                <button
+                    onClick={logout}
+                    className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all group"
+                >
+                    <LogOut className="w-6 h-6 transition-transform group-hover:scale-110" />
+                    <span className="font-medium hidden md:block">Logout</span>
+                </button>
             </div>
         </aside>
     );
 }
+

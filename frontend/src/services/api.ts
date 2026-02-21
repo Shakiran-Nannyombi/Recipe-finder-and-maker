@@ -103,7 +103,7 @@ class APIClient {
                     if (typeof data.detail === 'string') {
                         errorMessage = data.detail;
                     } else if (Array.isArray(data.detail)) {
-                        errorMessage = data.detail.map((err: any) => err.msg).join(', ');
+                        errorMessage = data.detail.map((err: { msg: string }) => err.msg).join(', ');
                     }
                 }
                 // Handle generic message field

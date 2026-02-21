@@ -2,7 +2,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { apiClient, APIClientError } from './api';
 
 // Mock fetch globally
-global.fetch = vi.fn();
+const fetchMock = vi.fn();
+vi.stubGlobal('fetch', fetchMock);
 
 describe('APIClient', () => {
     beforeEach(() => {
@@ -17,7 +18,7 @@ describe('APIClient', () => {
                 meta: { timestamp: '2026-02-21T10:30:00Z' },
             };
 
-            (global.fetch as any).mockResolvedValueOnce({
+            fetchMock.mockResolvedValueOnce({
                 ok: true,
                 headers: new Headers({ 'content-type': 'application/json' }),
                 json: async () => mockResponse,
@@ -27,7 +28,7 @@ describe('APIClient', () => {
 
             expect(result.data).toEqual(mockData);
             expect(result.meta.timestamp).toBe('2026-02-21T10:30:00Z');
-            expect(global.fetch).toHaveBeenCalledWith(
+            expect(fetchMock).toHaveBeenCalledWith(
                 expect.stringContaining('/api/recipes/1'),
                 expect.objectContaining({ method: 'GET' })
             );
@@ -39,7 +40,7 @@ describe('APIClient', () => {
                 meta: { timestamp: '2026-02-21T10:30:00Z' },
             };
 
-            (global.fetch as any).mockResolvedValueOnce({
+            fetchMock.mockResolvedValueOnce({
                 ok: true,
                 headers: new Headers({ 'content-type': 'application/json' }),
                 json: async () => mockResponse,
@@ -47,11 +48,11 @@ describe('APIClient', () => {
 
             await apiClient.get('/api/recipes', { limit: 10, page: 1 });
 
-            expect(global.fetch).toHaveBeenCalledWith(
+            expect(fetchMock).toHaveBeenCalledWith(
                 expect.stringContaining('limit=10'),
                 expect.any(Object)
             );
-            expect(global.fetch).toHaveBeenCalledWith(
+            expect(fetchMock).toHaveBeenCalledWith(
                 expect.stringContaining('page=1'),
                 expect.any(Object)
             );
@@ -66,7 +67,7 @@ describe('APIClient', () => {
                 meta: { timestamp: '2026-02-21T10:30:00Z' },
             };
 
-            (global.fetch as any).mockResolvedValueOnce({
+            fetchMock.mockResolvedValueOnce({
                 ok: true,
                 headers: new Headers({ 'content-type': 'application/json' }),
                 json: async () => mockResponse,
@@ -75,7 +76,7 @@ describe('APIClient', () => {
             const result = await apiClient.post('/api/recipes/generate', requestBody);
 
             expect(result.data).toEqual(mockResponse.data);
-            expect(global.fetch).toHaveBeenCalledWith(
+            expect(fetchMock).toHaveBeenCalledWith(
                 expect.stringContaining('/api/recipes/generate'),
                 expect.objectContaining({
                     method: 'POST',
@@ -95,16 +96,16 @@ describe('APIClient', () => {
                 meta: { timestamp: '2026-02-21T10:30:00Z' },
             };
 
-            (global.fetch as any).mockResolvedValueOnce({
+            fetchMock.mockResolvedValueOnce({
                 ok: true,
                 headers: new Headers({ 'content-type': 'application/json' }),
                 json: async () => mockResponse,
             });
 
-            const result = await apiClient.delete('/api/inventory/items/tomato');
+            const result = await apiClient.delete<{ deleted: boolean }>('/api/inventory/items/tomato');
 
             expect(result.data.deleted).toBe(true);
-            expect(global.fetch).toHaveBeenCalledWith(
+            expect(fetchMock).toHaveBeenCalledWith(
                 expect.stringContaining('/api/inventory/items/tomato'),
                 expect.objectContaining({ method: 'DELETE' })
             );
@@ -123,7 +124,7 @@ describe('APIClient', () => {
                 },
             };
 
-            (global.fetch as any).mockResolvedValueOnce({
+            fetchMock.mockResolvedValueOnce({
                 ok: false,
                 status: 404,
                 headers: new Headers({ 'content-type': 'application/json' }),
@@ -145,7 +146,7 @@ describe('APIClient', () => {
                 detail: 'Invalid request format',
             };
 
-            (global.fetch as any).mockResolvedValueOnce({
+            fetchMock.mockResolvedValueOnce({
                 ok: false,
                 status: 422,
                 headers: new Headers({ 'content-type': 'application/json' }),
@@ -170,7 +171,7 @@ describe('APIClient', () => {
                 ],
             };
 
-            (global.fetch as any).mockResolvedValueOnce({
+            fetchMock.mockResolvedValueOnce({
                 ok: false,
                 status: 422,
                 headers: new Headers({ 'content-type': 'application/json' }),
@@ -192,7 +193,7 @@ describe('APIClient', () => {
                 message: 'Something went wrong',
             };
 
-            (global.fetch as any).mockResolvedValueOnce({
+            fetchMock.mockResolvedValueOnce({
                 ok: false,
                 status: 500,
                 headers: new Headers({ 'content-type': 'application/json' }),
@@ -214,7 +215,7 @@ describe('APIClient', () => {
                 unknown: 'format',
             };
 
-            (global.fetch as any).mockResolvedValueOnce({
+            fetchMock.mockResolvedValueOnce({
                 ok: false,
                 status: 500,
                 headers: new Headers({ 'content-type': 'application/json' }),
@@ -232,7 +233,7 @@ describe('APIClient', () => {
         });
 
         it('should handle network errors', async () => {
-            (global.fetch as any).mockRejectedValueOnce(new Error('Network error'));
+            fetchMock.mockRejectedValueOnce(new Error('Network error'));
 
             try {
                 await apiClient.get('/api/recipes');
@@ -245,7 +246,7 @@ describe('APIClient', () => {
         });
 
         it('should handle non-JSON responses', async () => {
-            (global.fetch as any).mockResolvedValueOnce({
+            fetchMock.mockResolvedValueOnce({
                 ok: true,
                 status: 200,
                 headers: new Headers({ 'content-type': 'text/html' }),

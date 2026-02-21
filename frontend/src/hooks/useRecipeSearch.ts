@@ -42,7 +42,7 @@ export function useRecipeSearch(): UseRecipeSearchReturn {
         };
     }, []);
 
-    const search = async (request: SearchRequest) => {
+    const search = useCallback(async (request: SearchRequest) => {
         // Validate request
         if (!request.query || request.query.trim().length === 0) {
             setState(prev => ({
@@ -85,7 +85,7 @@ export function useRecipeSearch(): UseRecipeSearchReturn {
                 error: errorMessage,
             }));
         }
-    };
+    }, []);
 
     const reset = () => {
         setState({

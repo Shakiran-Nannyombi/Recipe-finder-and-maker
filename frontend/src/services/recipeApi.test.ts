@@ -47,7 +47,7 @@ describe('recipeApi', () => {
                 meta: { timestamp: '2026-02-21T10:30:00Z' },
             };
 
-            (apiClient.post as any).mockResolvedValueOnce(mockResponse);
+            vi.mocked(apiClient.post).mockResolvedValueOnce(mockResponse);
 
             const result = await recipeApi.generateRecipe(request);
 
@@ -66,7 +66,7 @@ describe('recipeApi', () => {
                 meta: { timestamp: '2026-02-21T10:30:00Z' },
             };
 
-            (apiClient.post as any).mockResolvedValueOnce(mockResponse);
+            vi.mocked(apiClient.post).mockResolvedValueOnce(mockResponse);
 
             const result = await recipeApi.generateRecipe(request);
 
@@ -87,7 +87,7 @@ describe('recipeApi', () => {
                 meta: { timestamp: '2026-02-21T10:30:00Z', total: 1 },
             };
 
-            (apiClient.post as any).mockResolvedValueOnce(mockResponse);
+            vi.mocked(apiClient.post).mockResolvedValueOnce(mockResponse);
 
             const result = await recipeApi.searchRecipes(request);
 
@@ -108,7 +108,7 @@ describe('recipeApi', () => {
                 meta: { timestamp: '2026-02-21T10:30:00Z', total: 1 },
             };
 
-            (apiClient.post as any).mockResolvedValueOnce(mockResponse);
+            vi.mocked(apiClient.post).mockResolvedValueOnce(mockResponse);
 
             const result = await recipeApi.searchRecipes(request);
 
@@ -126,7 +126,7 @@ describe('recipeApi', () => {
                 meta: { timestamp: '2026-02-21T10:30:00Z', total: 0 },
             };
 
-            (apiClient.post as any).mockResolvedValueOnce(mockResponse);
+            vi.mocked(apiClient.post).mockResolvedValueOnce(mockResponse);
 
             const result = await recipeApi.searchRecipes(request);
 
@@ -144,7 +144,7 @@ describe('recipeApi', () => {
                 meta: { timestamp: '2026-02-21T10:30:00Z' },
             };
 
-            (apiClient.get as any).mockResolvedValueOnce(mockResponse);
+            vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse);
 
             const result = await recipeApi.getRecipe(recipeId);
 
@@ -155,7 +155,7 @@ describe('recipeApi', () => {
         it('should handle recipe not found', async () => {
             const recipeId = '999';
 
-            (apiClient.get as any).mockRejectedValueOnce(
+            vi.mocked(apiClient.get).mockRejectedValueOnce(
                 new Error('Recipe not found')
             );
 
@@ -172,7 +172,7 @@ describe('recipeApi', () => {
                 meta: { timestamp: '2026-02-21T10:30:00Z' },
             };
 
-            (apiClient.get as any).mockResolvedValueOnce(mockResponse);
+            vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse);
 
             const result = await recipeApi.listRecipes();
 
@@ -189,7 +189,7 @@ describe('recipeApi', () => {
                 meta: { timestamp: '2026-02-21T10:30:00Z' },
             };
 
-            (apiClient.get as any).mockResolvedValueOnce(mockResponse);
+            vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse);
 
             const result = await recipeApi.listRecipes(20, 10);
 
@@ -206,7 +206,7 @@ describe('recipeApi', () => {
                 meta: { timestamp: '2026-02-21T10:30:00Z' },
             };
 
-            (apiClient.get as any).mockResolvedValueOnce(mockResponse);
+            vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse);
 
             const result = await recipeApi.listRecipes();
 
