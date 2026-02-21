@@ -8,7 +8,7 @@ pydantic-settings==2.1.0
 llama-index>=0.11.0
 llama-index-llms-huggingface>=0.3.5
 transformers>=4.36.2
-torch==2.9.0
+torch>=2.0.0
 accelerate>=0.25.0
 
 # Supabase
@@ -24,7 +24,7 @@ sentence-transformers==2.3.1
 pytest==7.4.4
 pytest-asyncio==0.23.3
 pytest-cov==4.1.0
-httpx==0.26.0
+httpx>=0.24.0,<0.26.0
 
 # Additional utilities
 python-dotenv==1.0.0
