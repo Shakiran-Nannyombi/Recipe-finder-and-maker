@@ -1,6 +1,6 @@
-# Project Setup: FlavorForge AI
+# Project Setup: Recipe AI
 
-**App Name**: FlavorForge AI
+**App Name**: Recipe AI
 **Description**: A high-performance AI-powered recipe discovery and maker application. It uses semantic search to find recipes and Amazon Bedrock to generate custom recipes based on available ingredients.
 **Features**:
 
@@ -146,10 +146,8 @@ Create `.kiro/specs/recipe-core/` with:
 
 ---
 
-### How to use this for your session:
+### How to use this for your project:
 
 1. **Live Action**: Copy and paste the block above into Kiro.
 2. **The Reveal**: Show the audience how Kiro immediately builds the **12+ files** needed to start.
 3. **Deployment**: Because the prompt includes the **MCP Pricing** and **App Runner** context, you can then ask Kiro: *"Now deploy the backend to AWS App Runner"* and it will know exactly which steering files to reference.
-
-**Would you like me to create the specific ASCII architecture diagram for your `design.md` file so you can copy-paste it as well?**

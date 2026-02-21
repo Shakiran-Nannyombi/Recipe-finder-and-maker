@@ -1,0 +1,13 @@
+{
+  "name": "Test Sync",
+  "version": "1.0.0",
+  "description": "Automatically generate or update tests when code files are edited",
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["backend/**/*.py", "frontend/src/**/*.tsx", "frontend/src/**/*.ts"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Review the edited file and ensure corresponding tests exist. If tests are missing or need updates, create or update them following the testing standards."
+  }
+}

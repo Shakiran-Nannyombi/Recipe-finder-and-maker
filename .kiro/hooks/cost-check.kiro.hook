@@ -1,0 +1,12 @@
+{
+  "name": "Cost Check",
+  "version": "1.0.0",
+  "description": "Estimate AWS costs using the Pricing MCP server",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Use the AWS Pricing MCP to estimate costs for: 1) App Runner instances, 2) Bedrock API calls (Claude 3), 3) DynamoDB read/write units, 4) S3 storage and requests. Provide a monthly cost breakdown."
+  }
+}

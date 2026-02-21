@@ -1,0 +1,12 @@
+{
+  "name": "Security Scan",
+  "version": "1.0.0",
+  "description": "Run security checks before deployment",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Perform a security audit: 1) Check for hardcoded credentials, 2) Verify IAM role usage, 3) Validate input sanitization with Pydantic, 4) Review CORS configuration, 5) Check for exposed secrets in environment files."
+  }
+}

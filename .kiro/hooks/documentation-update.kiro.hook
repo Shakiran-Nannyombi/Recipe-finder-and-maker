@@ -1,0 +1,13 @@
+{
+  "name": "Documentation Update",
+  "version": "1.0.0",
+  "description": "Update OpenAPI documentation when API routes are modified",
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["backend/routes/**/*.py", "backend/api/**/*.py"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Check if the API route changes require OpenAPI documentation updates. Ensure all endpoints follow the API standards with proper request/response models."
+  }
+}
