@@ -1,7 +1,7 @@
-import { Generator } from './pages';
+import { Dashboard } from './pages';
 
 function App() {
-  return <Generator />;
+  return <Dashboard />;
 }
 
 export default App;

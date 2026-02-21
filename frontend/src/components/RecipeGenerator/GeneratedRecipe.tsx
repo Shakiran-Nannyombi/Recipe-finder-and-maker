@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Recipe } from '../../types/recipe';
+import AiRecipeModal from './AiRecipeModal';
 
 interface GeneratedRecipeProps {
     recipe: Recipe;
@@ -7,6 +9,7 @@ interface GeneratedRecipeProps {
 }
 
 export default function GeneratedRecipe({ recipe, onSave, isSaving = false }: GeneratedRecipeProps) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const difficultyColors = {
         easy: 'bg-success text-white',
         medium: 'bg-warning text-white',
@@ -18,38 +21,64 @@ export default function GeneratedRecipe({ recipe, onSave, isSaving = false }: Ge
             {/* Header */}
             <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
-                    <h2 className="text-3xl font-heading font-bold text-text-primary mb-2">
-                        {recipe.title}
-                    </h2>
+                    <div className="flex items-center gap-2 mb-2">
+                        <h2 className="text-3xl font-heading font-bold text-text-primary">
+                            {recipe.title}
+                        </h2>
+                        <button
+                            onClick={() => setIsModalOpen(true)}
+                            className="text-primary hover:text-primary/80 transition-colors p-1"
+                            title="View AI Details"
+                        >
+                            <span className="material-symbols-outlined text-2xl">info</span>
+                        </button>
+                    </div>
+
                     <p className="text-text-secondary">{recipe.description}</p>
                 </div>
 
-                {onSave && (
+                <div className="flex flex-col gap-2">
+                    {onSave && (
+                        <button
+                            onClick={onSave}
+                            disabled={isSaving}
+                            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                            aria-label="Save recipe"
+                        >
+                            {isSaving ? (
+                                <>
+                                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                    </svg>
+                                    Saving...
+                                </>
+                            ) : (
+                                <>
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Save Recipe
+                                </>
+                            )}
+                        </button>
+                    )}
                     <button
-                        onClick={onSave}
-                        disabled={isSaving}
-                        className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                        aria-label="Save recipe"
+                        onClick={() => setIsModalOpen(true)}
+                        className="btn-outline py-2 text-sm flex items-center justify-center gap-2"
                     >
-                        {isSaving ? (
-                            <>
-                                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                                </svg>
-                                Saving...
-                            </>
-                        ) : (
-                            <>
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                                Save Recipe
-                            </>
-                        )}
+                        <span className="material-symbols-outlined text-sm">auto_awesome</span>
+                        AI Insights
                     </button>
-                )}
+                </div>
             </div>
+
+            {/* Modal */}
+            <AiRecipeModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                recipe={recipe}
+            />
 
             {/* Meta Information */}
             <div className="flex flex-wrap gap-4 text-sm">

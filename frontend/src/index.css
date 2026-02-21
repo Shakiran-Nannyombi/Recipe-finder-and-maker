@@ -69,4 +69,19 @@
             transform: translateY(0);
         }
     }
+
+    /* Modal Scrollbar */
+    .modal-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    .modal-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .modal-scrollbar::-webkit-scrollbar-thumb {
+        background: #e5e7eb;
+        border-radius: 10px;
+    }
+    .dark .modal-scrollbar::-webkit-scrollbar-thumb {
+        background: #3f3f3f;
+    }
 }
