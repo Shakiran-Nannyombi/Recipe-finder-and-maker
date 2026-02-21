@@ -114,25 +114,18 @@ npm run test:coverage
 ```
 
 **Testing Guidelines:**
-- [GUIDELINES.md#testing-standards](GUIDELINES.md#testing-standards)
+- [GUIDELINES.md](GUIDELINES.md) - Testing standards
 
 ---
 
-### 🐛 Troubleshooting
-
-**Deployment Issues:**
-- [DEPLOYMENT_FIXES.md](DEPLOYMENT_FIXES.md) - Common deployment problems and solutions
-
-**Build Errors:**
-- Frontend TypeScript errors: See [DEPLOYMENT_FIXES.md#frontend-typescript-configuration](DEPLOYMENT_FIXES.md)
-- Backend Python errors: See [DEPLOYMENT_FIXES.md#backend-python-compatibility](DEPLOYMENT_FIXES.md)
+### Troubleshooting
 
 **Runtime Issues:**
-- Check [DEPLOYMENT.md#troubleshooting](DEPLOYMENT.md#troubleshooting)
+- Check [DEPLOYMENT.md](DEPLOYMENT.md) - Troubleshooting section
 
 ---
 
-### 📊 Project Status
+### Project Status
 
 **Live Deployments:**
 - Frontend: https://recipeaiug.vercel.app/
@@ -143,28 +136,28 @@ npm run test:coverage
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Want to contribute? Great! Here's how:
 
 1. **Read the Guidelines**: Start with [GUIDELINES.md](GUIDELINES.md)
 2. **Set Up Locally**: Follow [SETUP_GUIDE.md](SETUP_GUIDE.md)
-3. **Make Changes**: Follow coding standards in [GUIDELINES.md#code-conventions](GUIDELINES.md#code-conventions)
-4. **Test Your Code**: Run tests as described in [GUIDELINES.md#testing-standards](GUIDELINES.md#testing-standards)
-5. **Commit**: Use format from [COMMIT_INSTRUCTIONS.md](COMMIT_INSTRUCTIONS.md)
-6. **Submit PR**: Follow [GUIDELINES.md#pull-request-process](GUIDELINES.md#pull-request-process)
+3. **Make Changes**: Follow coding standards in [GUIDELINES.md](GUIDELINES.md)
+4. **Test Your Code**: Run tests as described in [GUIDELINES.md](GUIDELINES.md)
+5. **Commit**: Use proper commit format
+6. **Submit PR**: Follow pull request process
 
 ---
 
-## 📞 Support
+## Support
 
 - **Issues**: Open an issue on GitHub
 - **Questions**: Check existing documentation first
-- **Deployment Help**: See [DEPLOYMENT_FIXES.md](DEPLOYMENT_FIXES.md)
+- **Deployment Help**: See [DEPLOYMENT.md](DEPLOYMENT.md)
 
 ---
 
-## 📝 Documentation Maintenance
+## Documentation Maintenance
 
 This documentation is maintained alongside the codebase. When making changes:
 
@@ -180,4 +173,4 @@ This documentation is maintained alongside the codebase. When making changes:
 
 ---
 
-[⬆️ Back to Top](#recipe-ai---documentation-hub-)
+[Back to Top](#recipe-ai---documentation-hub)

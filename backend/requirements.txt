@@ -5,11 +5,11 @@ pydantic==2.5.3
 pydantic-settings==2.1.0
 
 # LlamaIndex and Hugging Face
-llama-index==0.10.68
-llama-index-llms-huggingface==0.3.5
-transformers==4.36.2
+llama-index>=0.11.0
+llama-index-llms-huggingface>=0.3.5
+transformers>=4.36.2
 torch==2.9.0
-accelerate==0.25.0
+accelerate>=0.25.0
 
 # Supabase
 supabase==2.3.4
