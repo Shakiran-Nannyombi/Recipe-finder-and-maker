@@ -11,6 +11,15 @@ transformers==4.36.2
 torch==2.1.2
 accelerate==0.25.0
 
+# Supabase
+supabase==2.3.4
+
+# Pinecone
+pinecone-client==3.0.2
+
+# Embeddings
+sentence-transformers==2.3.1
+
 # Testing
 pytest==7.4.4
 pytest-asyncio==0.23.3

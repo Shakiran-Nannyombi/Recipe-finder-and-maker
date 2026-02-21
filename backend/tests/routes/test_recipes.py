@@ -382,3 +382,356 @@ class TestRecipeGeneration:
                 assert data["data"]["difficulty"] == difficulty
         finally:
             app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def mock_supabase_service():
+    """Fixture providing a mocked Supabase service."""
+    service = MagicMock()
+    service.get_recipe = AsyncMock()
+    service.list_recipes = AsyncMock()
+    return service
+
+
+class TestRecipeRetrieval:
+    """Test suite for GET /api/recipes/{recipe_id} endpoint."""
+    
+    def test_get_recipe_success(self, mock_supabase_service, mock_recipe):
+        """Test successful recipe retrieval by ID."""
+        from routes.recipes import get_supabase_service
+        
+        # Mock the Supabase service to return a recipe
+        mock_supabase_service.get_recipe.return_value = mock_recipe
+        
+        # Override dependency
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request
+            response = client.get("/api/recipes/test-recipe-123")
+            
+            # Assert response
+            assert response.status_code == 200
+            data = response.json()
+            
+            # Verify response structure
+            assert "data" in data
+            assert "meta" in data
+            assert "timestamp" in data["meta"]
+            
+            # Verify recipe data
+            recipe_data = data["data"]
+            assert recipe_data["id"] == "test-recipe-123"
+            assert recipe_data["title"] == "Delicious Pasta Carbonara"
+            assert recipe_data["difficulty"] == "medium"
+            
+            # Verify Supabase service was called correctly
+            mock_supabase_service.get_recipe.assert_called_once_with("test-recipe-123")
+        finally:
+            # Clean up dependency override
+            app.dependency_overrides.clear()
+    
+    def test_get_recipe_not_found(self, mock_supabase_service):
+        """Test recipe retrieval when recipe doesn't exist."""
+        from routes.recipes import get_supabase_service
+        
+        # Mock the Supabase service to return None
+        mock_supabase_service.get_recipe.return_value = None
+        
+        # Override dependency
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request
+            response = client.get("/api/recipes/nonexistent-recipe")
+            
+            # Assert 404 response
+            assert response.status_code == 404
+            data = response.json()
+            assert "not found" in data["detail"].lower()
+            assert "nonexistent-recipe" in data["detail"]
+            
+            # Verify Supabase service was called
+            mock_supabase_service.get_recipe.assert_called_once_with("nonexistent-recipe")
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_get_recipe_server_error(self, mock_supabase_service):
+        """Test handling of server errors during recipe retrieval."""
+        from routes.recipes import get_supabase_service
+        
+        # Mock the Supabase service to raise an exception
+        mock_supabase_service.get_recipe.side_effect = Exception("Database connection failed")
+        
+        # Override dependency
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request
+            response = client.get("/api/recipes/test-recipe-123")
+            
+            # Assert 500 response
+            assert response.status_code == 500
+            data = response.json()
+            assert "Error retrieving recipe" in data["detail"]
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_get_recipe_response_format(self, mock_supabase_service, mock_recipe):
+        """Test that response follows API standards format."""
+        from routes.recipes import get_supabase_service
+        
+        mock_supabase_service.get_recipe.return_value = mock_recipe
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            response = client.get("/api/recipes/test-recipe-123")
+            
+            assert response.status_code == 200
+            data = response.json()
+            
+            # Verify standardized response format
+            assert set(data.keys()) == {"data", "meta"}
+            assert "timestamp" in data["meta"]
+            
+            # Verify timestamp is ISO-8601 format
+            timestamp = data["meta"]["timestamp"]
+            assert "T" in timestamp
+            assert timestamp.endswith("Z") or "+" in timestamp or "-" in timestamp[-6:]
+        finally:
+            app.dependency_overrides.clear()
+
+
+class TestRecipeList:
+    """Test suite for GET /api/recipes endpoint."""
+    
+    def test_list_recipes_default_pagination(self, mock_supabase_service, mock_recipe):
+        """Test listing recipes with default pagination parameters."""
+        from routes.recipes import get_supabase_service
+        
+        # Create multiple mock recipes
+        recipes = [
+            Recipe(**{**mock_recipe.model_dump(), "id": f"recipe-{i}", "title": f"Recipe {i}"})
+            for i in range(5)
+        ]
+        mock_supabase_service.list_recipes.return_value = recipes
+        
+        # Override dependency
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request without query params
+            response = client.get("/api/recipes")
+            
+            # Assert response
+            assert response.status_code == 200
+            data = response.json()
+            
+            # Verify response structure
+            assert "data" in data
+            assert "meta" in data
+            assert "timestamp" in data["meta"]
+            assert "limit" in data["meta"]
+            assert "offset" in data["meta"]
+            assert "count" in data["meta"]
+            
+            # Verify default pagination
+            assert data["meta"]["limit"] == 10
+            assert data["meta"]["offset"] == 0
+            assert data["meta"]["count"] == 5
+            
+            # Verify recipe data
+            assert len(data["data"]) == 5
+            assert data["data"][0]["id"] == "recipe-0"
+            
+            # Verify Supabase service was called with defaults
+            mock_supabase_service.list_recipes.assert_called_once_with(limit=10, offset=0)
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_list_recipes_custom_pagination(self, mock_supabase_service, mock_recipe):
+        """Test listing recipes with custom pagination parameters."""
+        from routes.recipes import get_supabase_service
+        
+        # Create mock recipes
+        recipes = [
+            Recipe(**{**mock_recipe.model_dump(), "id": f"recipe-{i}", "title": f"Recipe {i}"})
+            for i in range(20, 25)
+        ]
+        mock_supabase_service.list_recipes.return_value = recipes
+        
+        # Override dependency
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request with custom pagination
+            response = client.get("/api/recipes?limit=5&offset=20")
+            
+            # Assert response
+            assert response.status_code == 200
+            data = response.json()
+            
+            # Verify custom pagination
+            assert data["meta"]["limit"] == 5
+            assert data["meta"]["offset"] == 20
+            assert data["meta"]["count"] == 5
+            
+            # Verify Supabase service was called with custom params
+            mock_supabase_service.list_recipes.assert_called_once_with(limit=5, offset=20)
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_list_recipes_empty_result(self, mock_supabase_service):
+        """Test listing recipes when no recipes exist."""
+        from routes.recipes import get_supabase_service
+        
+        # Mock empty list
+        mock_supabase_service.list_recipes.return_value = []
+        
+        # Override dependency
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request
+            response = client.get("/api/recipes")
+            
+            # Assert response
+            assert response.status_code == 200
+            data = response.json()
+            
+            # Verify empty data
+            assert data["data"] == []
+            assert data["meta"]["count"] == 0
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_list_recipes_limit_validation(self, mock_supabase_service):
+        """Test that limit parameter is validated (1-50)."""
+        from routes.recipes import get_supabase_service
+        
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Test limit too low
+            response = client.get("/api/recipes?limit=0")
+            assert response.status_code == 422  # Validation error
+            
+            # Test limit too high
+            response = client.get("/api/recipes?limit=100")
+            assert response.status_code == 422  # Validation error
+            
+            # Test valid limits
+            mock_supabase_service.list_recipes.return_value = []
+            
+            response = client.get("/api/recipes?limit=1")
+            assert response.status_code == 200
+            
+            response = client.get("/api/recipes?limit=50")
+            assert response.status_code == 200
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_list_recipes_offset_validation(self, mock_supabase_service):
+        """Test that offset parameter is validated (>= 0)."""
+        from routes.recipes import get_supabase_service
+        
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Test negative offset
+            response = client.get("/api/recipes?offset=-1")
+            assert response.status_code == 422  # Validation error
+            
+            # Test valid offset
+            mock_supabase_service.list_recipes.return_value = []
+            response = client.get("/api/recipes?offset=0")
+            assert response.status_code == 200
+            
+            response = client.get("/api/recipes?offset=100")
+            assert response.status_code == 200
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_list_recipes_server_error(self, mock_supabase_service):
+        """Test handling of server errors during recipe listing."""
+        from routes.recipes import get_supabase_service
+        
+        # Mock the Supabase service to raise an exception
+        mock_supabase_service.list_recipes.side_effect = Exception("Database connection failed")
+        
+        # Override dependency
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request
+            response = client.get("/api/recipes")
+            
+            # Assert 500 response
+            assert response.status_code == 500
+            data = response.json()
+            assert "Error listing recipes" in data["detail"]
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_list_recipes_response_format(self, mock_supabase_service, mock_recipe):
+        """Test that response follows API standards format."""
+        from routes.recipes import get_supabase_service
+        
+        recipes = [mock_recipe]
+        mock_supabase_service.list_recipes.return_value = recipes
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            response = client.get("/api/recipes")
+            
+            assert response.status_code == 200
+            data = response.json()
+            
+            # Verify standardized response format
+            assert set(data.keys()) == {"data", "meta"}
+            assert "timestamp" in data["meta"]
+            assert "limit" in data["meta"]
+            assert "offset" in data["meta"]
+            assert "count" in data["meta"]
+            
+            # Verify timestamp is ISO-8601 format
+            timestamp = data["meta"]["timestamp"]
+            assert "T" in timestamp
+            assert timestamp.endswith("Z") or "+" in timestamp or "-" in timestamp[-6:]
+            
+            # Verify data is a list
+            assert isinstance(data["data"], list)
+        finally:
+            app.dependency_overrides.clear()
+    
+    def test_list_recipes_max_limit(self, mock_supabase_service, mock_recipe):
+        """Test listing recipes with maximum allowed limit."""
+        from routes.recipes import get_supabase_service
+        
+        # Create 50 mock recipes
+        recipes = [
+            Recipe(**{**mock_recipe.model_dump(), "id": f"recipe-{i}", "title": f"Recipe {i}"})
+            for i in range(50)
+        ]
+        mock_supabase_service.list_recipes.return_value = recipes
+        
+        # Override dependency
+        app.dependency_overrides[get_supabase_service] = lambda: mock_supabase_service
+        
+        try:
+            # Make request with max limit
+            response = client.get("/api/recipes?limit=50")
+            
+            # Assert response
+            assert response.status_code == 200
+            data = response.json()
+            
+            # Verify max limit
+            assert data["meta"]["limit"] == 50
+            assert data["meta"]["count"] == 50
+            assert len(data["data"]) == 50
+            
+            # Verify Supabase service was called with max limit
+            mock_supabase_service.list_recipes.assert_called_once_with(limit=50, offset=0)
+        finally:
+            app.dependency_overrides.clear()

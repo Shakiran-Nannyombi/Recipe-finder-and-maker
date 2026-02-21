@@ -38,53 +38,53 @@
   - [x] 2.3.3 Test response parsing
   - [x] 2.3.4 Test error handling
 
-## 3. Backend - Use Superbase for my storage change tasks
+## 3. Backend - Supabase Storage
 
-- [ ] 3.1 Create DynamoDB service
-  - [ ] 3.1.1 Implement DynamoDBService class
-  - [ ] 3.1.2 Create save_recipe method
-  - [ ] 3.1.3 Create get_recipe method
-  - [ ] 3.1.4 Create list_recipes method with pagination
-  - [ ] 3.1.5 Add error handling for DynamoDB operations
+- [x] 3.1 Create Supabase service
+  - [x] 3.1.1 Implement SupabaseService class
+  - [x] 3.1.2 Create save_recipe method
+  - [x] 3.1.3 Create get_recipe method
+  - [x] 3.1.4 Create list_recipes method with pagination
+  - [x] 3.1.5 Add error handling for Supabase operations
 
-- [ ] 3.2 Create recipe storage endpoints
-  - [ ] 3.2.1 Create GET /api/recipes/{recipe_id} route
-  - [ ] 3.2.2 Create GET /api/recipes route with pagination
-  - [ ] 3.2.3 Integrate with DynamoDBService
-  - [ ] 3.2.4 Return standardized response format
+- [x] 3.2 Create recipe storage endpoints
+  - [x] 3.2.1 Create GET /api/recipes/{recipe_id} route
+  - [x] 3.2.2 Create GET /api/recipes route with pagination
+  - [x] 3.2.3 Integrate with SupabaseService
+  - [x] 3.2.4 Return standardized response format
 
-- [ ] 3.3 Write tests for DynamoDB service
-  - [ ] 3.3.1 Use moto for DynamoDB mocking
-  - [ ] 3.3.2 Test recipe CRUD operations
-  - [ ] 3.3.3 Test pagination
-  - [ ] 3.3.4 Test error scenarios
+- [x] 3.3 Write tests for Supabase service
+  - [x] 3.3.1 Mock Supabase client operations
+  - [x] 3.3.2 Test recipe CRUD operations
+  - [x] 3.3.3 Test pagination
+  - [x] 3.3.4 Test error scenarios
 
-## 4. Backend - Vector Search
+## 4. Backend - Pinecone Vector Search
 
-- [ ] 4.1 Implement vector search service
-  - [ ] 4.1.1 Create VectorSearchService class
-  - [ ] 4.1.2 Integrate embeddings model (sentence-transformers or Bedrock)
-  - [ ] 4.1.3 Implement embedding generation
-  - [ ] 4.1.4 Implement cosine similarity search
-  - [ ] 4.1.5 Add caching for embeddings
+- [-] 4.1 Implement Pinecone vector search service
+  - [x] 4.1.1 Create VectorSearchService class with Pinecone
+  - [x] 4.1.2 Integrate sentence-transformers for embeddings
+  - [x] 4.1.3 Implement embedding generation
+  - [x] 4.1.4 Implement Pinecone similarity search
+  - [x] 4.1.5 Add caching for embeddings
 
-- [ ] 4.2 Create search endpoint
-  - [ ] 4.2.1 Define SearchRequest Pydantic model
-  - [ ] 4.2.2 Create POST /api/recipes/search route
-  - [ ] 4.2.3 Validate input with Pydantic
-  - [ ] 4.2.4 Call VectorSearchService
-  - [ ] 4.2.5 Return ranked results with standardized format
+- [~] 4.2 Create search endpoint
+  - [~] 4.2.1 Define SearchRequest Pydantic model
+  - [~] 4.2.2 Create POST /api/recipes/search route
+  - [~] 4.2.3 Validate input with Pydantic
+  - [~] 4.2.4 Call VectorSearchService with Pinecone
+  - [~] 4.2.5 Return ranked results with standardized format
 
-- [ ] 4.3 Write tests for vector search
-  - [ ] 4.3.1 Test embedding generation
-  - [ ] 4.3.2 Test similarity calculation
-  - [ ] 4.3.3 Test search ranking
-  - [ ] 4.3.4 Test edge cases (empty query, no results)
+- [~] 4.3 Write tests for Pinecone vector search
+  - [~] 4.3.1 Mock Pinecone client operations
+  - [~] 4.3.2 Test embedding generation
+  - [~] 4.3.3 Test Pinecone search queries
+  - [~] 4.3.4 Test edge cases (empty query, no results)
 
 ## 5. Backend - Inventory Management
 
 - [ ] 5.1 Create inventory service
-  - [ ] 5.1.1 Extend DynamoDBService for inventory operations
+  - [ ] 5.1.1 Extend SupabaseService for inventory operations
   - [ ] 5.1.2 Implement save_inventory method
   - [ ] 5.1.3 Implement get_inventory method
   - [ ] 5.1.4 Implement add_item and remove_item methods
@@ -92,7 +92,7 @@
 - [ ] 5.2 Create inventory endpoints
   - [ ] 5.2.1 Create GET /api/inventory route
   - [ ] 5.2.2 Create POST /api/inventory/items route
-  - [ ] 5.2.3 Create DELETE /api/inventory/items/{ingredient_name} route
+  - [ ] 5.2.3 CREATE DELETE /api/inventory/items/{ingredient_name} route
   - [ ] 5.2.4 Validate inputs with Pydantic models
   - [ ] 5.2.5 Return standardized response format
 
@@ -206,7 +206,7 @@
   - [ ] 9.1.1 Write tests for all service classes
   - [ ] 9.1.2 Write tests for all API endpoints
   - [ ] 9.1.3 Achieve 80%+ code coverage
-  - [ ] 9.1.4 Mock all LLM service calls
+  - [ ] 9.1.4 Mock all LLM, Supabase, and Pinecone calls
 
 - [ ] 9.2 Frontend unit tests
   - [ ] 9.2.1 Write tests for all components
@@ -229,21 +229,21 @@
 
 - [ ] 10.2 Prepare for AWS App Runner
   - [ ] 10.2.1 Create apprunner.yaml configuration
-  - [ ] 10.2.2 Configure IAM roles for DynamoDB, S3
-  - [ ] 10.2.3 Set up environment variables (Hugging Face API token if needed)
-  - [ ] 10.2.4 Configure auto-scaling settings
+  - [ ] 10.2.2 Set up environment variables (Supabase, Pinecone, Hugging Face)
+  - [ ] 10.2.3 Configure auto-scaling settings
+  - [ ] 10.2.4 Set up health checks
 
-- [ ] 10.3 Set up DynamoDB tables
-  - [ ] 10.3.1 Create recipes table with GSI for search
+- [ ] 10.3 Set up Supabase database
+  - [ ] 10.3.1 Create recipes table with indexes
   - [ ] 10.3.2 Create inventory table
-  - [ ] 10.3.3 Configure on-demand capacity
-  - [ ] 10.3.4 Set up backup policies
+  - [ ] 10.3.3 Configure Row Level Security (RLS)
+  - [ ] 10.3.4 Set up database backups
 
-- [ ] 10.4 Set up S3 bucket
-  - [ ] 10.4.1 Create S3 bucket for recipe images
-  - [ ] 10.4.2 Configure bucket policies
-  - [ ] 10.4.3 Enable CORS for frontend access
-  - [ ] 10.4.4 Set up lifecycle policies
+- [ ] 10.4 Set up Pinecone index
+  - [ ] 10.4.1 Create Pinecone index for recipe embeddings
+  - [ ] 10.4.2 Configure index dimensions and metric
+  - [ ] 10.4.3 Set up index metadata filtering
+  - [ ] 10.4.4 Test index performance
 
 - [ ] 10.5 Deploy to App Runner
   - [ ] 10.5.1 Deploy backend service

@@ -3,7 +3,7 @@ Tests for Pydantic models in FlavorForge AI.
 """
 import pytest
 from pydantic import ValidationError
-from backend.models import RecipeGenerationRequest, Recipe, Ingredient
+from models import RecipeGenerationRequest, Recipe, Ingredient
 
 
 class TestRecipeGenerationRequest:

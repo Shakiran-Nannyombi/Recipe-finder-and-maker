@@ -31,8 +31,8 @@
              │                 │                     │
              │                 │                     │
     ┌────────▼────────┐  ┌─────▼──────┐    ┌───────▼────────┐
-    │  Hugging Face   │  │  Vector DB │    │   DynamoDB     │
-    │  via LlamaIndex │  │  (Embedded)│    │   + S3         │
+    │  Hugging Face   │  │  Pinecone  │    │   Supabase     │
+    │  via LlamaIndex │  │  (Vectors) │    │   (Storage)    │
     └─────────────────┘  └────────────┘    └────────────────┘
 ```
 
@@ -170,7 +170,10 @@ class LLMService:
 ### Vector Search Service
 ```python
 class VectorSearchService:
-    def __init__(self):
+    def __init__(self, pinecone_api_key: str, pinecone_environment: str):
+        from pinecone import Pinecone
+        self.pc = Pinecone(api_key=pinecone_api_key)
+        self.index = self.pc.Index("recipes")
         self.embeddings_model = self._load_embeddings_model()
     
     async def search_recipes(
@@ -178,33 +181,37 @@ class VectorSearchService:
         query: str, 
         limit: int = 10
     ) -> List[Recipe]:
-        """Semantic search using vector embeddings"""
+        """Semantic search using Pinecone vector embeddings"""
         query_embedding = await self._get_embedding(query)
         results = await self._similarity_search(query_embedding, limit)
         return results
     
     async def _get_embedding(self, text: str) -> List[float]:
-        """Generate embedding for text"""
+        """Generate embedding for text using sentence-transformers"""
         pass
     
     async def _similarity_search(self, embedding: List[float], limit: int) -> List[Recipe]:
-        """Find similar recipes using cosine similarity"""
+        """Find similar recipes using Pinecone"""
         pass
 ```
 
-### DynamoDB Service
+### Supabase Service
 ```python
-class DynamoDBService:
-    def __init__(self, table_name: str):
-        self.dynamodb = boto3.resource('dynamodb')
-        self.table = self.dynamodb.Table(table_name)
+class SupabaseService:
+    def __init__(self, supabase_url: str, supabase_key: str):
+        from supabase import create_client
+        self.client = create_client(supabase_url, supabase_key)
     
     async def save_recipe(self, recipe: Recipe) -> Recipe:
-        """Save recipe to DynamoDB"""
+        """Save recipe to Supabase"""
         pass
     
     async def get_recipe(self, recipe_id: str) -> Optional[Recipe]:
         """Retrieve recipe by ID"""
+        pass
+    
+    async def list_recipes(self, limit: int = 10, offset: int = 0) -> List[Recipe]:
+        """List recipes with pagination"""
         pass
     
     async def save_inventory(self, inventory: UserInventory) -> UserInventory:
@@ -282,12 +289,15 @@ async def api_error_handler(request: Request, exc: APIError):
 
 ## Security Implementation
 
-### IAM Role Configuration
+### Environment Configuration
 ```yaml
-# App Runner IAM Role
-Policies:
-  - DynamoDBReadWrite
-  - S3ReadWrite
+# Required Environment Variables
+SUPABASE_URL: "https://your-project.supabase.co"
+SUPABASE_KEY: "your-anon-key"
+PINECONE_API_KEY: "your-pinecone-api-key"
+PINECONE_ENVIRONMENT: "your-pinecone-environment"
+HF_MODEL_NAME: "meta-llama/Llama-2-7b-chat-hf"
+HF_API_TOKEN: "optional-for-gated-models"
 ```
 
 ### CORS Configuration
@@ -327,7 +337,7 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ### Backend Testing
 - Unit tests with pytest and FastAPI TestClient
 - Mock Hugging Face/LlamaIndex calls using custom mocks
-- Integration tests for DynamoDB operations
+- Mock Supabase and Pinecone operations in tests
 - API contract tests
 
 ### Frontend Testing
@@ -340,7 +350,7 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ### Caching Strategy
 - Cache frequently accessed recipes in memory
 - Cache embeddings to avoid recomputation
-- Use DynamoDB DAX for read-heavy operations
+- Use Supabase connection pooling for read-heavy operations
 
 ### Async Operations
 - All I/O operations are async

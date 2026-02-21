@@ -23,7 +23,7 @@
 - Generated recipe includes: title, description, ingredients with quantities, step-by-step instructions, cooking time, servings
 - Response time is under 10 seconds
 - Error handling for LLM API failures with user-friendly messages
-- Generated recipes are stored in DynamoDB for future reference
+- Generated recipes are stored in Supabase for future reference
 
 ### 1.3 Recipe Customization
 **As a** home cook  
@@ -45,7 +45,7 @@
 
 **Acceptance Criteria:**
 - User can enter free-form search queries
-- System uses vector embeddings for semantic matching
+- System uses Pinecone for vector embeddings and semantic matching
 - Search results are ranked by relevance
 - Returns top 10 most relevant recipes
 - Search response time is under 2 seconds
@@ -82,7 +82,7 @@
 **Acceptance Criteria:**
 - User can add ingredients to their inventory
 - User can remove ingredients from inventory
-- Inventory persists across sessions (stored in DynamoDB)
+- Inventory persists across sessions (stored in Supabase)
 - User can view their complete inventory list
 
 ### 3.2 Quick Recipe Match
