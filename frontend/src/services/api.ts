@@ -87,12 +87,37 @@ class APIClient {
         const data = await response.json();
 
         if (!response.ok) {
-            const errorData = data as ApiError;
-            throw new APIClientError(
-                errorData.error.status_code || response.status,
-                errorData.error.message || 'An error occurred',
-                errorData.meta.timestamp
-            );
+            // Handle different error response formats
+            let errorMessage = 'An error occurred';
+            let statusCode = response.status;
+            let timestamp: string | undefined;
+
+            // Check if it's our standard error format
+            if (data && typeof data === 'object') {
+                if (data.error && typeof data.error === 'object') {
+                    errorMessage = data.error.message || errorMessage;
+                    statusCode = data.error.status_code || statusCode;
+                }
+                // Handle FastAPI validation errors
+                else if (data.detail) {
+                    if (typeof data.detail === 'string') {
+                        errorMessage = data.detail;
+                    } else if (Array.isArray(data.detail)) {
+                        errorMessage = data.detail.map((err: any) => err.msg).join(', ');
+                    }
+                }
+                // Handle generic message field
+                else if (data.message) {
+                    errorMessage = data.message;
+                }
+
+                // Extract timestamp if available
+                if (data.meta && data.meta.timestamp) {
+                    timestamp = data.meta.timestamp;
+                }
+            }
+
+            throw new APIClientError(statusCode, errorMessage, timestamp);
         }
 
         return data as ApiResponse<T>;
@@ -127,9 +152,16 @@ class APIClient {
             }
 
             // Network or other errors
+            if (error instanceof TypeError && error.message.includes('fetch')) {
+                throw new APIClientError(
+                    0,
+                    'Unable to connect to the server. Please check your internet connection.'
+                );
+            }
+
             throw new APIClientError(
                 0,
-                error instanceof Error ? error.message : 'Network error occurred'
+                error instanceof Error ? error.message : 'An unexpected error occurred'
             );
         }
     }
