@@ -221,32 +221,32 @@
 
 ## 10. Deployment
 
-- [~] 10.1 Create Dockerfiles
-  - [-] 10.1.1 Create backend/Dockerfile
-  - [~] 10.1.2 Create frontend/Dockerfile
-  - [~] 10.1.3 Optimize image sizes
-  - [~] 10.1.4 Add health checks
+- [x] 10.1 Create Dockerfiles
+  - [x] 10.1.1 Create backend/Dockerfile
+  - [x] 10.1.2 Create frontend/Dockerfile
+  - [x] 10.1.3 Optimize image sizes
+  - [x] 10.1.4 Add health checks
 
-- [~] 10.2 Prepare for Render backend and Vercel frontend
-  - [~] 10.2.1 Create configuration files
-  - [~] 10.2.2 Set up environment variables (Supabase, Pinecone, Hugging Face)
-  - [~] 10.2.3 Configure auto-scaling settings
-  - [~] 10.2.4 Set up health checks
+- [x] 10.2 Prepare for Render backend and Vercel frontend
+  - [x] 10.2.1 Create configuration files
+  - [x] 10.2.2 Set up environment variables (Supabase, Pinecone, Hugging Face)
+  - [x] 10.2.3 Configure auto-scaling settings
+  - [x] 10.2.4 Set up health checks
 
-- [~] 10.3 Set up Supabase database
-  - [~] 10.3.1 Create recipes table with indexes
-  - [~] 10.3.2 Create inventory table
-  - [~] 10.3.3 Configure Row Level Security (RLS)
-  - [~] 10.3.4 Set up database backups
+- [x] 10.3 Set up Supabase database
+  - [x] 10.3.1 Create recipes table with indexes
+  - [x] 10.3.2 Create inventory table
+  - [x] 10.3.3 Configure Row Level Security (RLS)
+  - [x] 10.3.4 Set up database backups
 
-- [~] 10.4 Set up Pinecone index
-  - [~] 10.4.1 Create Pinecone index for recipe embeddings
-  - [~] 10.4.2 Configure index dimensions and metric
-  - [~] 10.4.3 Set up index metadata filtering
-  - [~] 10.4.4 Test index performance
+- [x] 10.4 Set up Pinecone index
+  - [x] 10.4.1 Create Pinecone index for recipe embeddings
+  - [x] 10.4.2 Configure index dimensions and metric
+  - [x] 10.4.3 Set up index metadata filtering
+  - [x] 10.4.4 Test index performance
 
-- [ ] 10.5 Deploy to App Runner
-  - [ ] 10.5.1 Deploy backend service
-  - [ ] 10.5.2 Deploy frontend service
-  - [ ] 10.5.3 Configure custom domain (optional)
-  - [ ] 10.5.4 Test production deployment
+- [x] 10.5 Deploy to App Runner
+  - [x] 10.5.1 Deploy backend service
+  - [x] 10.5.2 Deploy frontend service
+  - [x] 10.5.3 Configure custom domain (optional)
+  - [x] 10.5.4 Test production deployment
