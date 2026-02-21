@@ -6,8 +6,8 @@ services:
     env: python
     region: oregon
     plan: starter
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    buildCommand: cd backend && pip install -r requirements.txt
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
     envVars:
       - key: SUPABASE_URL
@@ -16,11 +16,13 @@ services:
         sync: false
       - key: PINECONE_API_KEY
         sync: false
-      - key: HF_MODEL_NAME
-        value: meta-llama/Llama-2-7b-chat-hf
-      - key: HF_API_TOKEN
+      - key: GROQ_API_KEY
         sync: false
-      - key: FRONTEND_URL
+      - key: GROQ_MODEL_NAME
+        value: llama-3.3-70b-versatile
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGINS
         sync: false
       - key: PYTHON_VERSION
         value: 3.12.0

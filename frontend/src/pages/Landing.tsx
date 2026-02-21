@@ -5,12 +5,16 @@ import Footer from '../components/Layout/Footer';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Player } from '@remotion/player';
+import { DemoVideo } from '../remotion/Demo';
+import { X } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Landing() {
     const navigate = useNavigate();
     const [isScrolled, setIsScrolled] = useState(false);
+    const [showVideo, setShowVideo] = useState(false);
     const container = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -40,14 +44,16 @@ export default function Landing() {
             ease: 'elastic.out(1, 0.5)'
         });
 
-        // Feature Cards
-        gsap.from('.feature-card', {
+        // Feature Cards - Ensuring visibility if ScrollTrigger fails
+        gsap.set('.feature-card', { opacity: 0, y: 60 });
+        gsap.to('.feature-card', {
             scrollTrigger: {
                 trigger: '.features-grid',
-                start: 'top 80%',
+                start: 'top 85%',
+                toggleActions: 'play none none none'
             },
-            y: 60,
-            opacity: 0,
+            y: 0,
+            opacity: 1,
             duration: 0.8,
             stagger: 0.15,
             ease: 'power2.out'
@@ -71,8 +77,8 @@ export default function Landing() {
             {/* Navigation */}
             <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-8 py-5 flex items-center justify-center ${isScrolled ? 'bg-white/80 backdrop-blur-xl shadow-lg border-b border-slate-100' : 'bg-transparent'}`}>
                 <div className="max-w-7xl w-full flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-primary rounded-xl p-1.5 shadow-lg shadow-primary/20">
+                    <div className="flex items-center gap-3 group">
+                        <div className="bg-white border border-slate-100 rounded-xl p-1.5 shadow-lg shadow-slate-200/50 group-hover:scale-110 transition-transform">
                             <img src="/RecipeAI.png" alt="Recipe AI Logo" className="w-8 h-8 object-contain" />
                         </div>
                         <span className="text-2xl font-bold text-slate-900 tracking-tight">Recipe AI</span>
@@ -106,8 +112,8 @@ export default function Landing() {
                     <div className="absolute bottom-[20%] left-[-10%] w-[500px] h-[500px] bg-accent/20 rounded-full blur-[100px]"></div>
                 </div>
 
-                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                    <div className="hero-content space-y-10">
+                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    <div className="lg:col-span-6 hero-content space-y-10 relative z-10">
                         <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-primary font-bold text-xs uppercase tracking-[0.2em]">
                             <Sparkles className="w-4 h-4 animate-pulse" />
                             Next-Gen Culinary Intelligence
@@ -122,12 +128,15 @@ export default function Landing() {
                         <div className="flex flex-col sm:flex-row items-center gap-6">
                             <button
                                 onClick={() => navigate('/signup')}
-                                className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white px-10 py-5 rounded-[2rem] font-black text-xl transition-all shadow-2xl shadow-primary/30 flex items-center justify-center gap-4 group hover:-translate-y-1"
+                                className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white px-10 py-5 rounded-[2rem] font-black text-2xl transition-all shadow-2xl shadow-primary/30 flex items-center justify-center gap-4 group hover:-translate-y-1"
                             >
                                 Ignite the Magic
                                 <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
                             </button>
-                            <button className="w-full sm:w-auto flex items-center justify-center gap-4 px-10 py-5 text-slate-900 font-bold hover:text-primary transition-all group">
+                            <button
+                                onClick={() => setShowVideo(true)}
+                                className="w-full sm:w-auto flex items-center justify-center gap-4 px-10 py-5 text-slate-900 font-bold hover:text-primary transition-all group"
+                            >
                                 <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-2xl border border-slate-100 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all">
                                     <Play className="w-6 h-6 fill-current ml-1" />
                                 </div>
@@ -137,7 +146,7 @@ export default function Landing() {
 
                         <div className="pt-10 flex items-center gap-8 border-t border-slate-200/60">
                             <div className="flex -space-x-4">
-                                {[34, 45, 67, 89].map(i => (
+                                {[34, 45, 67, 65].map(i => (
                                     <img key={i} src={`https://i.pravatar.cc/100?img=${i}`} className="w-12 h-12 rounded-full border-4 border-white object-cover shadow-lg" alt="Chef" />
                                 ))}
                             </div>
@@ -148,7 +157,7 @@ export default function Landing() {
                         </div>
                     </div>
 
-                    <div className="hero-image relative">
+                    <div className="lg:col-span-6 hero-image relative">
                         <div className="relative rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.2)] border-[12px] border-white group">
                             <img
                                 src="https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&q=80&w=1200"
@@ -191,14 +200,14 @@ export default function Landing() {
             </header>
 
             {/* Features Section */}
-            <section id="features" className="py-32 px-8 bg-white overflow-hidden">
+            <section id="features" className="py-32 px-8 bg-white overflow-visible">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center space-y-6 mb-24 max-w-3xl mx-auto">
                         <h2 className="text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-none">Supercharge Your <br /><span className="text-primary underline decoration-accent/30 underline-offset-8">Culinary Workflow</span></h2>
                         <p className="text-xl text-slate-500 font-medium italic">Professional-grade tools for the home chef.</p>
                     </div>
 
-                    <div className="features-grid grid grid-cols-1 md:grid-cols-3 gap-10">
+                    <div className="features-grid grid grid-cols-1 md:grid-cols-3 gap-10 min-h-[500px]">
                         {[
                             {
                                 icon: Zap,
@@ -214,7 +223,7 @@ export default function Landing() {
                                 desc: "Real-time expiration tracking ensures you never waste a single luxury ingredient.",
                                 color: "text-accent",
                                 bg: "bg-accent/10",
-                                img: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800"
+                                img: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&q=80&w=800"
                             },
                             {
                                 icon: Heart,
@@ -222,7 +231,7 @@ export default function Landing() {
                                 desc: "AI that evolves with your palate, learning exactly what you love over time.",
                                 color: "text-red-500",
                                 bg: "bg-red-500/10",
-                                img: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&q=80&w=800"
+                                img: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&q=80&w=800"
                             }
                         ].map((feature, i) => (
                             <div key={i} className="feature-card group relative h-[500px] rounded-[3rem] overflow-hidden border border-slate-100 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-4">
@@ -258,8 +267,8 @@ export default function Landing() {
                             <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&q=80&w=600" className="w-full h-80 object-cover rounded-[2rem] shadow-2xl hover:scale-105 transition-transform" alt="Dish 2" />
                         </div>
                         <div className="space-y-6">
-                            <img src="https://images.unsplash.com/photo-1543352658-927f947d066e?auto=format&fit=crop&q=80&w=600" className="w-full h-80 object-cover rounded-[2rem] shadow-2xl hover:scale-105 transition-transform" alt="Dish 3" />
-                            <img src="https://images.unsplash.com/photo-1466632346460-9d535a788753?auto=format&fit=crop&q=80&w=600" className="w-full h-64 object-cover rounded-[2rem] shadow-2xl hover:scale-105 transition-transform" alt="Dish 4" />
+                            <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&q=80&w=600" className="w-full h-80 object-cover rounded-[2rem] shadow-2xl hover:scale-105 transition-transform" alt="Dish 3" />
+                            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=600" className="w-full h-64 object-cover rounded-[2rem] shadow-2xl hover:scale-105 transition-transform" alt="Dish 4" />
                         </div>
                     </div>
 
@@ -289,7 +298,8 @@ export default function Landing() {
 
             {/* CTA Section */}
             <section className="py-40 px-8 text-center bg-white relative overflow-hidden">
-                <div className="max-w-5xl mx-auto rounded-[4rem] bg-slate-900 p-24 relative overflow-hidden cta-box">
+                <div className="max-w-5xl mx-auto rounded-[4rem] bg-slate-900 p-24 relative overflow-hidden cta-box border border-slate-800">
+                    <div className="absolute inset-0 opacity-30 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-repeat invert"></div>
                     <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1506368249639-73a05d6f6488?auto=format&fit=crop&q=80&w=1200')] bg-cover bg-center"></div>
                     <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-primary/20"></div>
 
@@ -313,6 +323,38 @@ export default function Landing() {
             </section>
 
             <Footer />
+
+            {/* Video Demo Modal */}
+            {showVideo && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 animate-fadeIn">
+                    <div
+                        className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl"
+                        onClick={() => setShowVideo(false)}
+                    />
+                    <div className="relative w-full max-w-5xl aspect-video bg-white rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/20 animate-scaleUp">
+                        <button
+                            onClick={() => setShowVideo(false)}
+                            className="absolute top-6 right-6 z-10 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-slate-900 transition-all"
+                        >
+                            <X className="w-6 h-6" />
+                        </button>
+
+                        <Player
+                            component={DemoVideo}
+                            durationInFrames={180}
+                            compositionWidth={1920}
+                            compositionHeight={1080}
+                            fps={30}
+                            loop
+                            autoPlay
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

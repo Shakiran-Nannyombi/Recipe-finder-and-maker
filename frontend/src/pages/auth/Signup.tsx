@@ -33,7 +33,7 @@ export default function Signup() {
     };
 
     return (
-        <div className="min-h-screen bg-white flex font-body overflow-hidden">
+        <div className="h-screen bg-white flex font-body overflow-hidden">
             {/* Left Side: Visual/Branding */}
             <div className="hidden lg:flex lg:w-1/2 relative bg-slate-900 items-center justify-center p-12 overflow-hidden">
                 <img
@@ -78,8 +78,8 @@ export default function Signup() {
             </div>
 
             {/* Right Side: Form */}
-            <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 md:p-10 lg:p-16 bg-background-light/30 overflow-y-auto">
-                <div className="w-full max-w-md space-y-6 animate-fadeIn py-4">
+            <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 md:p-8 lg:p-12 bg-background-light/30">
+                <div className="w-full max-w-md space-y-4 animate-fadeIn">
                     <div className="flex flex-col items-center lg:items-start space-y-3">
                         <img src="/RecipeAI.png" alt="Logo" className="w-10 h-10 object-contain" />
                         <div className="text-center lg:text-left">
@@ -88,7 +88,7 @@ export default function Signup() {
                         </div>
                     </div>
 
-                    <div className="bg-white p-6 md:p-8 rounded-[2rem] shadow-xl shadow-slate-200/40 border border-slate-100">
+                    <div className="bg-white p-5 md:p-7 rounded-[2rem] shadow-xl shadow-slate-200/40 border border-slate-100">
                         {error && (
                             <div className="mb-4 p-3 bg-red-50 border border-red-100 text-red-600 rounded-xl text-xs font-bold animate-shake">
                                 {error}
@@ -150,22 +150,22 @@ export default function Signup() {
                             </button>
                         </form>
 
-                        <div className="mt-6 relative text-center">
+                        <div className="mt-4 relative text-center">
                             <span className="relative z-10 bg-white px-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">Or join with</span>
                             <div className="absolute top-1/2 -translate-y-1/2 left-0 w-full h-px bg-slate-100"></div>
                         </div>
 
-                        <div className="mt-6 grid grid-cols-2 gap-3">
-                            <button className="flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-50 border border-slate-100 rounded-lg hover:bg-white hover:shadow-md transition-all font-bold text-slate-600 text-xs">
+                        <div className="mt-4 grid grid-cols-2 gap-3">
+                            <button className="flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-50 border border-slate-100 rounded-lg hover:bg-white hover:shadow-md transition-all font-bold text-slate-600 text-[10px]">
                                 <Chrome className="w-4 h-4" /> Google
                             </button>
-                            <button className="flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-50 border border-slate-100 rounded-lg hover:bg-white hover:shadow-md transition-all font-bold text-slate-600 text-xs">
+                            <button className="flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-50 border border-slate-100 rounded-lg hover:bg-white hover:shadow-md transition-all font-bold text-slate-600 text-[10px]">
                                 <Github className="w-4 h-4" /> GitHub
                             </button>
                         </div>
                     </div>
 
-                    <p className="text-center text-slate-500 font-medium text-sm">
+                    <p className="text-center text-slate-500 font-medium text-xs">
                         Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Log in here</Link>
                     </p>
                 </div>

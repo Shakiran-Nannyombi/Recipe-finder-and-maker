@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Auth Endpoints</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 250px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Recipe AI - Auth Endpoint Tester</h1>
+
+    <div class="test-section">
+        <h2>1. Test Backend Health</h2>
+        <input type="text" id="backendUrl" placeholder="Backend URL" value="https://recipe-ai-og2y.onrender.com">
+        <button onclick="testHealth()">Test Health Endpoint</button>
+        <div id="healthResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Test Signup</h2>
+        <input type="text" id="signupName" placeholder="Name" value="Test User">
+        <input type="email" id="signupEmail" placeholder="Email" value="test@example.com">
+        <input type="password" id="signupPassword" placeholder="Password" value="testpass123">
+        <button onclick="testSignup()">Test Signup</button>
+        <div id="signupResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Test Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email" value="test@example.com">
+        <input type="password" id="loginPassword" placeholder="Password" value="testpass123">
+        <button onclick="testLogin()">Test Login</button>
+        <div id="loginResult" class="result"></div>
+    </div>
+
+    <script>
+        function getBackendUrl() {
+            return document.getElementById('backendUrl').value;
+        }
+
+        function showResult(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = 'result ' + (isError ? 'error' : 'success');
+        }
+
+        async function testHealth() {
+            const url = getBackendUrl();
+            showResult('healthResult', 'Testing...');
+
+            try {
+                const response = await fetch(`${url}/health`);
+                const data = await response.json();
+                showResult('healthResult',
+                    `✓ Backend is healthy!\n\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`,
+                    false
+                );
+            } catch (error) {
+                showResult('healthResult',
+                    `✗ Backend health check failed!\n\nError: ${error.message}\n\nPossible issues:\n- Backend is not running\n- Wrong URL\n- CORS issue`,
+                    true
+                );
+            }
+        }
+
+        async function testSignup() {
+            const url = getBackendUrl();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            showResult('signupResult', 'Testing signup...');
+
+            try {
+                const response = await fetch(`${url}/api/auth/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showResult('signupResult',
+                        `✓ Signup successful!\n\nStatus: ${response.status}\nToken: ${data.access_token?.substring(0, 50)}...\n\nFull Response: ${JSON.stringify(data, null, 2)}`,
+                        false
+                    );
+                } else {
+                    showResult('signupResult',
+                        `✗ Signup failed!\n\nStatus: ${response.status}\nError: ${data.detail || JSON.stringify(data)}\n\nPossible issues:\n- User already exists\n- Supabase connection issue\n- Database table not created`,
+                        true
+                    );
+                }
+            } catch (error) {
+                showResult('signupResult',
+                    `✗ Signup request failed!\n\nError: ${error.message}\n\nPossible issues:\n- Backend is not running\n- CORS issue\n- Network error`,
+                    true
+                );
+            }
+        }
+
+        async function testLogin() {
+            const url = getBackendUrl();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            showResult('loginResult', 'Testing login...');
+
+            try {
+                const response = await fetch(`${url}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showResult('loginResult',
+                        `✓ Login successful!\n\nStatus: ${response.status}\nToken: ${data.access_token?.substring(0, 50)}...\n\nFull Response: ${JSON.stringify(data, null, 2)}`,
+                        false
+                    );
+                } else {
+                    showResult('loginResult',
+                        `✗ Login failed!\n\nStatus: ${response.status}\nError: ${data.detail || JSON.stringify(data)}\n\nPossible issues:\n- User doesn't exist (signup first)\n- Wrong password\n- Supabase connection issue`,
+                        true
+                    );
+                }
+            } catch (error) {
+                showResult('loginResult',
+                    `✗ Login request failed!\n\nError: ${error.message}\n\nPossible issues:\n- Backend is not running\n- CORS issue\n- Network error`,
+                    true
+                );
+            }
+        }
+    </script>
+</body>
+
+</html>

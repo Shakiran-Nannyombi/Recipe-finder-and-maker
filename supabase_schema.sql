@@ -42,18 +42,13 @@ CREATE INDEX IF NOT EXISTS idx_recipes_dietary_tags ON recipes USING GIN(dietary
 
 -- Inventory table
 CREATE TABLE IF NOT EXISTS inventory (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id TEXT NOT NULL DEFAULT 'default_user',
-    ingredient_name TEXT NOT NULL,
-    quantity TEXT,
-    added_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    UNIQUE(user_id, ingredient_name)
+    user_id TEXT PRIMARY KEY,
+    items JSONB NOT NULL DEFAULT '[]',
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Create indexes for inventory
 CREATE INDEX IF NOT EXISTS idx_inventory_user_id ON inventory(user_id);
-CREATE INDEX IF NOT EXISTS idx_inventory_ingredient_name ON inventory(ingredient_name);
 
 -- Row Level Security (RLS) policies
 ALTER TABLE recipes ENABLE ROW LEVEL SECURITY;

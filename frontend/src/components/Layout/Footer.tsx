@@ -1,5 +1,5 @@
-import React from 'react';
-import { Github, Twitter, Instagram } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Github, Twitter, Instagram, ArrowRight } from 'lucide-react';
 
 export default function Footer() {
     return (
@@ -8,7 +8,9 @@ export default function Footer() {
                 {/* Brand Section */}
                 <div className="space-y-4 col-span-1 md:col-span-1">
                     <div className="flex items-center gap-3">
-                        <img src="/RecipeAI.png" alt="Recipe AI Logo" className="w-8 h-8 object-contain" />
+                        <div className="bg-white border border-slate-100 rounded-lg p-1 shadow-sm">
+                            <img src="/RecipeAI.png" alt="Recipe AI Logo" className="w-6 h-6 object-contain" />
+                        </div>
                         <span className="text-xl font-bold text-slate-900 tracking-tight">Recipe AI</span>
                     </div>
                     <p className="text-slate-500 text-sm leading-relaxed">
@@ -25,8 +27,8 @@ export default function Footer() {
                 <div className="space-y-4">
                     <h4 className="text-slate-900 font-bold text-sm uppercase tracking-widest">Platform</h4>
                     <ul className="space-y-2 text-slate-500 text-sm">
-                        <li><a href="#" className="hover:text-primary transition-colors">How it Works</a></li>
-                        <li><a href="#" className="hover:text-primary transition-colors">Features</a></li>
+                        <li><Link to="/info/how-it-works" className="hover:text-primary transition-colors">How it Works</Link></li>
+                        <li><Link to="/info/features" className="hover:text-primary transition-colors">Features</Link></li>
                         <li><a href="#" className="hover:text-primary transition-colors">Pro Plan</a></li>
                         <li><a href="#" className="hover:text-primary transition-colors">AI Insights</a></li>
                     </ul>
@@ -35,7 +37,7 @@ export default function Footer() {
                 <div className="space-y-4">
                     <h4 className="text-slate-900 font-bold text-sm uppercase tracking-widest">Company</h4>
                     <ul className="space-y-2 text-slate-500 text-sm">
-                        <li><a href="#" className="hover:text-primary transition-colors">About Us</a></li>
+                        <li><Link to="/info/about-us" className="hover:text-primary transition-colors">About Us</Link></li>
                         <li><a href="#" className="hover:text-primary transition-colors">Community</a></li>
                         <li><a href="#" className="hover:text-primary transition-colors">Careers</a></li>
                         <li><a href="#" className="hover:text-primary transition-colors">Contact</a></li>
@@ -70,8 +72,3 @@ export default function Footer() {
     );
 }
 
-const ArrowRight = ({ className }: { className?: string }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-    </svg>
-);

@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Dashboard, Landing, Login, Signup } from './pages';
+import { Dashboard, Landing, Login, Signup, InfoPage } from './pages';
 import { AuthProvider } from './context/AuthProvider';
 import { useAuth } from './hooks/useAuth';
 
@@ -22,6 +22,7 @@ function App() {
         <Routes>
           {/* Public Landing Page */}
           <Route path="/" element={<Landing />} />
+          <Route path="/info/:slug" element={<InfoPage />} />
 
           {/* Auth Routes */}
           <Route
