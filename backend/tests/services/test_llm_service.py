@@ -439,176 +439,170 @@ class TestGenerateRecipe:
 class TestRetryLogic:
     """Test retry logic for transient failures."""
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_is_retryable_error_timeout(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_is_retryable_error_timeout(self, mock_client):
         """Test that TimeoutError is identified as retryable."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         error = TimeoutError("Request timed out")
         
         assert service._is_retryable_error(error) is True
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_is_retryable_error_connection(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_is_retryable_error_connection(self, mock_client):
         """Test that ConnectionError is identified as retryable."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         error = ConnectionError("Connection failed")
         
         assert service._is_retryable_error(error) is True
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_is_retryable_error_rate_limit(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_is_retryable_error_rate_limit(self, mock_client):
         """Test that rate limit errors are identified as retryable."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         error = RuntimeError("Rate limit exceeded")
         
         assert service._is_retryable_error(error) is True
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_is_retryable_error_throttle(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_is_retryable_error_throttle(self, mock_client):
         """Test that throttle errors are identified as retryable."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         error = RuntimeError("Request throttled")
         
         assert service._is_retryable_error(error) is True
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
-    def test_is_retryable_error_non_retryable(self, mock_hf_llm):
+    @patch('services.llm_service.InferenceClient')
+    def test_is_retryable_error_non_retryable(self, mock_client):
         """Test that non-retryable errors are identified correctly."""
-        service = LLMService()
+        service = LLMService(api_token="test_token")
         error = RuntimeError("Authentication failed")
         
         assert service._is_retryable_error(error) is False
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_retry_success_on_second_attempt(self, mock_hf_llm):
+    async def test_retry_success_on_second_attempt(self, mock_client_class):
         """Test successful retry after one failure."""
-        mock_response = Mock()
-        mock_response.text = "Success response"
-        
-        mock_llm_instance = Mock()
+        mock_client = Mock()
         # First call fails with timeout, second succeeds
-        mock_llm_instance.complete = Mock(
+        mock_client.text_generation = Mock(
             side_effect=[
                 Exception("Request timed out"),
-                mock_response
+                "Success response"
             ]
         )
-        mock_hf_llm.return_value = mock_llm_instance
+        mock_client_class.return_value = mock_client
         
-        service = LLMService(max_retries=3, initial_retry_delay=0.01)
+        service = LLMService(api_token="test_token", max_retries=3, initial_retry_delay=0.01)
         result = await service._invoke_model_with_retry("Test prompt")
         
         assert result == "Success response"
-        assert mock_llm_instance.complete.call_count == 2
+        assert mock_client.text_generation.call_count == 2
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_retry_success_on_third_attempt(self, mock_hf_llm):
+    async def test_retry_success_on_third_attempt(self, mock_client_class):
         """Test successful retry after two failures."""
-        mock_response = Mock()
-        mock_response.text = "Success response"
-        
-        mock_llm_instance = Mock()
+        mock_client = Mock()
         # First two calls fail, third succeeds
-        mock_llm_instance.complete = Mock(
+        mock_client.text_generation = Mock(
             side_effect=[
                 Exception("Connection failed"),
                 Exception("Request timed out"),
-                mock_response
+                "Success response"
             ]
         )
-        mock_hf_llm.return_value = mock_llm_instance
+        mock_client_class.return_value = mock_client
         
-        service = LLMService(max_retries=3, initial_retry_delay=0.01)
+        service = LLMService(api_token="test_token", max_retries=3, initial_retry_delay=0.01)
         result = await service._invoke_model_with_retry("Test prompt")
         
         assert result == "Success response"
-        assert mock_llm_instance.complete.call_count == 3
+        assert mock_client.text_generation.call_count == 3
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_retry_exhausted_timeout(self, mock_hf_llm):
+    async def test_retry_exhausted_timeout(self, mock_client_class):
         """Test that retries are exhausted after max attempts with timeout."""
-        mock_llm_instance = Mock()
-        mock_llm_instance.complete = Mock(
+        mock_client = Mock()
+        mock_client.text_generation = Mock(
             side_effect=Exception("Request timed out")
         )
-        mock_hf_llm.return_value = mock_llm_instance
+        mock_client_class.return_value = mock_client
         
-        service = LLMService(max_retries=3, initial_retry_delay=0.01)
+        service = LLMService(api_token="test_token", max_retries=3, initial_retry_delay=0.01)
         
         with pytest.raises(TimeoutError, match="timed out"):
             await service._invoke_model_with_retry("Test prompt")
         
         # Should try initial + 3 retries = 4 times
-        assert mock_llm_instance.complete.call_count == 4
+        assert mock_client.text_generation.call_count == 4
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_retry_exhausted_connection(self, mock_hf_llm):
+    async def test_retry_exhausted_connection(self, mock_client_class):
         """Test that retries are exhausted after max attempts with connection error."""
-        mock_llm_instance = Mock()
-        mock_llm_instance.complete = Mock(
+        mock_client = Mock()
+        mock_client.text_generation = Mock(
             side_effect=Exception("Connection failed")
         )
-        mock_hf_llm.return_value = mock_llm_instance
+        mock_client_class.return_value = mock_client
         
-        service = LLMService(max_retries=3, initial_retry_delay=0.01)
+        service = LLMService(api_token="test_token", max_retries=3, initial_retry_delay=0.01)
         
         with pytest.raises(ConnectionError, match="Network error"):
             await service._invoke_model_with_retry("Test prompt")
         
-        assert mock_llm_instance.complete.call_count == 4
+        assert mock_client.text_generation.call_count == 4
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_retry_exhausted_rate_limit(self, mock_hf_llm):
+    async def test_retry_exhausted_rate_limit(self, mock_client_class):
         """Test that retries are exhausted after max attempts with rate limit."""
-        mock_llm_instance = Mock()
-        mock_llm_instance.complete = Mock(
+        mock_client = Mock()
+        mock_client.text_generation = Mock(
             side_effect=Exception("Rate limit exceeded")
         )
-        mock_hf_llm.return_value = mock_llm_instance
+        mock_client_class.return_value = mock_client
         
-        service = LLMService(max_retries=3, initial_retry_delay=0.01)
+        service = LLMService(api_token="test_token", max_retries=3, initial_retry_delay=0.01)
         
         with pytest.raises(RuntimeError, match="rate limit"):
             await service._invoke_model_with_retry("Test prompt")
         
-        assert mock_llm_instance.complete.call_count == 4
+        assert mock_client.text_generation.call_count == 4
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_retry_non_retryable_error_immediate_failure(self, mock_hf_llm):
+    async def test_retry_non_retryable_error_immediate_failure(self, mock_client_class):
         """Test that non-retryable errors fail immediately without retries."""
-        mock_llm_instance = Mock()
-        mock_llm_instance.complete = Mock(
+        mock_client = Mock()
+        mock_client.text_generation = Mock(
             side_effect=Exception("Authentication failed")
         )
-        mock_hf_llm.return_value = mock_llm_instance
+        mock_client_class.return_value = mock_client
         
-        service = LLMService(max_retries=3, initial_retry_delay=0.01)
+        service = LLMService(api_token="test_token", max_retries=3, initial_retry_delay=0.01)
         
         with pytest.raises(RuntimeError, match="authentication failed"):
             await service._invoke_model_with_retry("Test prompt")
         
         # Should only try once, no retries for non-retryable errors
-        assert mock_llm_instance.complete.call_count == 1
+        assert mock_client.text_generation.call_count == 1
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_retry_exponential_backoff(self, mock_hf_llm):
+    async def test_retry_exponential_backoff(self, mock_client_class):
         """Test that exponential backoff delays are applied correctly."""
         import time
         
-        mock_llm_instance = Mock()
-        mock_llm_instance.complete = Mock(
+        mock_client = Mock()
+        mock_client.text_generation = Mock(
             side_effect=Exception("Request timed out")
         )
-        mock_hf_llm.return_value = mock_llm_instance
+        mock_client_class.return_value = mock_client
         
-        service = LLMService(max_retries=2, initial_retry_delay=0.1)
+        service = LLMService(api_token="test_token", max_retries=2, initial_retry_delay=0.1)
         
         start_time = time.time()
         
@@ -621,27 +615,27 @@ class TestRetryLogic:
         # Allow some tolerance for execution time
         assert elapsed_time >= 0.25
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_retry_custom_max_retries(self, mock_hf_llm):
+    async def test_retry_custom_max_retries(self, mock_client_class):
         """Test custom max_retries configuration."""
-        mock_llm_instance = Mock()
-        mock_llm_instance.complete = Mock(
+        mock_client = Mock()
+        mock_client.text_generation = Mock(
             side_effect=Exception("Connection failed")
         )
-        mock_hf_llm.return_value = mock_llm_instance
+        mock_client_class.return_value = mock_client
         
-        service = LLMService(max_retries=5, initial_retry_delay=0.01)
+        service = LLMService(api_token="test_token", max_retries=5, initial_retry_delay=0.01)
         
         with pytest.raises(ConnectionError):
             await service._invoke_model_with_retry("Test prompt")
         
         # Should try initial + 5 retries = 6 times
-        assert mock_llm_instance.complete.call_count == 6
+        assert mock_client.text_generation.call_count == 6
     
-    @patch('llama_index.llms.huggingface.HuggingFaceLLM')
+    @patch('services.llm_service.InferenceClient')
     @pytest.mark.asyncio
-    async def test_generate_recipe_with_retry_success(self, mock_hf_llm):
+    async def test_generate_recipe_with_retry_success(self, mock_client_class):
         """Test end-to-end recipe generation with retry logic."""
         valid_recipe_json = {
             "title": "Retry Test Recipe",
@@ -655,24 +649,96 @@ class TestRetryLogic:
             "difficulty": "easy"
         }
         
-        mock_response = Mock()
-        mock_response.text = json.dumps(valid_recipe_json)
-        
-        mock_llm_instance = Mock()
+        mock_client = Mock()
         # First call fails, second succeeds
-        mock_llm_instance.complete = Mock(
+        mock_client.text_generation = Mock(
             side_effect=[
                 Exception("Request timed out"),
-                mock_response
+                json.dumps(valid_recipe_json)
             ]
         )
-        mock_hf_llm.return_value = mock_llm_instance
+        mock_client_class.return_value = mock_client
         
-        service = LLMService(max_retries=3, initial_retry_delay=0.01)
+        service = LLMService(api_token="test_token", max_retries=3, initial_retry_delay=0.01)
         recipe = await service.generate_recipe(
             ingredients=["test ingredient"]
         )
         
         assert isinstance(recipe, Recipe)
         assert recipe.title == "Retry Test Recipe"
-        assert mock_llm_instance.complete.call_count == 2
+        assert mock_client.text_generation.call_count == 2
+
+
+class TestGenerateRecipe:
+    """Test the main generate_recipe method."""
+    
+    @patch('services.llm_service.InferenceClient')
+    @pytest.mark.asyncio
+    async def test_generate_recipe_success(self, mock_client_class):
+        """Test successful recipe generation end-to-end."""
+        # Setup mock
+        valid_recipe_json = {
+            "title": "Chicken Stir Fry",
+            "description": "Quick and easy chicken stir fry",
+            "ingredients": [
+                {"name": "chicken", "quantity": "500", "unit": "g"},
+                {"name": "vegetables", "quantity": "2", "unit": "cups"}
+            ],
+            "instructions": [
+                "Cut chicken into pieces",
+                "Stir fry with vegetables"
+            ],
+            "cooking_time_minutes": 25,
+            "servings": 4,
+            "difficulty": "easy",
+            "cuisine_type": "Asian"
+        }
+        
+        mock_client = Mock()
+        mock_client.text_generation = Mock(return_value=json.dumps(valid_recipe_json))
+        mock_client_class.return_value = mock_client
+        
+        service = LLMService(api_token="test_token")
+        recipe = await service.generate_recipe(
+            ingredients=["chicken", "vegetables"],
+            cuisine_type="Asian",
+            difficulty="easy"
+        )
+        
+        assert isinstance(recipe, Recipe)
+        assert recipe.title == "Chicken Stir Fry"
+        assert recipe.cuisine_type == "Asian"
+        assert recipe.difficulty == "easy"
+        assert len(recipe.ingredients) == 2
+        assert len(recipe.instructions) == 2
+    
+    @patch('services.llm_service.InferenceClient')
+    @pytest.mark.asyncio
+    async def test_generate_recipe_with_dietary_restrictions(self, mock_client_class):
+        """Test recipe generation with dietary restrictions."""
+        valid_recipe_json = {
+            "title": "Vegan Buddha Bowl",
+            "description": "Healthy vegan bowl",
+            "ingredients": [
+                {"name": "quinoa", "quantity": "1", "unit": "cup"},
+                {"name": "chickpeas", "quantity": "1", "unit": "can"}
+            ],
+            "instructions": ["Cook quinoa", "Add chickpeas"],
+            "cooking_time_minutes": 30,
+            "servings": 2,
+            "difficulty": "easy",
+            "dietary_tags": ["vegan", "gluten-free"]
+        }
+        
+        mock_client = Mock()
+        mock_client.text_generation = Mock(return_value=json.dumps(valid_recipe_json))
+        mock_client_class.return_value = mock_client
+        
+        service = LLMService(api_token="test_token")
+        recipe = await service.generate_recipe(
+            ingredients=["quinoa", "chickpeas"],
+            dietary_restrictions=["vegan", "gluten-free"]
+        )
+        
+        assert "vegan" in recipe.dietary_tags
+        assert "gluten-free" in recipe.dietary_tags
