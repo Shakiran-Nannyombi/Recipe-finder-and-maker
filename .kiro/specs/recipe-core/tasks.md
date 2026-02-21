@@ -2,19 +2,19 @@
 
 ## 1. Project Initialization
 
-- [ ] 1.1 Initialize FastAPI backend structure
-  - [ ] 1.1.1 Create backend/ directory with main.py
-  - [ ] 1.1.2 Set up requirements.txt with FastAPI, Pydantic v2, boto3, uvicorn
-  - [ ] 1.1.3 Create routes/, services/, and models/ directories
-  - [ ] 1.1.4 Configure CORS middleware
-  - [ ] 1.1.5 Add health check endpoint
+- [x] 1.1 Initialize FastAPI backend structure
+  - [x] 1.1.1 Create backend/ directory with main.py
+  - [x] 1.1.2 Set up requirements.txt with FastAPI, Pydantic v2, boto3, uvicorn
+  - [x] 1.1.3 Create routes/, services/, and models/ directories
+  - [x] 1.1.4 Configure CORS middleware
+  - [x] 1.1.5 Add health check endpoint
 
-- [ ] 1.2 Initialize React frontend structure
-  - [ ] 1.2.1 Create frontend/ directory with Vite + React + TypeScript
-  - [ ] 1.2.2 Set up Tailwind CSS configuration
-  - [ ] 1.2.3 Create components/, hooks/, services/, and pages/ directories
-  - [ ] 1.2.4 Configure API client with axios or fetch
-  - [ ] 1.2.5 Set up environment variables for API URL
+- [x] 1.2 Initialize React frontend structure
+  - [x] 1.2.1 Create frontend/ directory with Vite + React + TypeScript
+  - [x] 1.2.2 Set up Tailwind CSS configuration
+  - [x] 1.2.3 Create components/, hooks/, services/, and pages/ directories
+  - [x] 1.2.4 Configure API client with axios or fetch
+  - [x] 1.2.5 Set up environment variables for API URL
 
 ## 2. Backend - Bedrock Service
 
@@ -22,7 +22,7 @@
   - [ ] 2.1.1 Implement BedrockService class with boto3 client
   - [ ] 2.1.2 Create prompt builder for recipe generation
   - [ ] 2.1.3 Implement model invocation with error handling
-  - [ ] 2.1.4 Parse Claude 3 response into Recipe model
+  - [ ] 2.1.4 Parse Claude 3 response into Recipe model 
   - [ ] 2.1.5 Add retry logic for transient failures
 
 - [ ] 2.2 Create recipe generation endpoint
