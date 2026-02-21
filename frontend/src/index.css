@@ -1,3 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-bg font-body text-text-primary;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-heading;
+    }
+}
+
+@layer components {
+
+    /* Button Styles */
+    .btn-primary {
+        @apply bg-gradient-primary text-text-light px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-all duration-300 hover:scale-105;
+    }
+
+    .btn-secondary {
+        @apply bg-secondary text-text-light px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-300;
+    }
+
+    .btn-outline {
+        @apply border-2 border-primary text-primary px-6 py-3 rounded-lg font-medium hover:bg-primary hover:text-text-light transition-all duration-300;
+    }
+
+    /* Card Styles */
+    .card {
+        @apply bg-bg-card rounded-xl shadow-md p-6 hover:shadow-xl transition-shadow duration-300;
+    }
+
+    /* Input Styles */
+    .input {
+        @apply w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-primary focus:outline-none transition-colors duration-200 bg-white text-text-primary;
+    }
+
+    /* Gradient Text */
+    .text-gradient {
+        @apply bg-gradient-primary bg-clip-text text-transparent;
+    }
+}
+
+
+@layer utilities {
+
+    /* Animations */
+    .animate-fadeIn {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}

@@ -1,8 +1,8 @@
-# FlavorForge AI - Backend
+# Recipe AI - Backend
 
 AI-powered recipe generation and search API built with FastAPI, Hugging Face, Supabase, and Pinecone.
 
-## 🚀 Features
+## Features
 
 - **AI Recipe Generation**: Generate custom recipes using Hugging Face models via LlamaIndex
 - **Semantic Search**: Vector-based recipe search using Pinecone
@@ -10,7 +10,7 @@ AI-powered recipe generation and search API built with FastAPI, Hugging Face, Su
 - **Recipe Storage**: Persistent storage with Supabase (PostgreSQL)
 - **RESTful API**: FastAPI with automatic OpenAPI documentation
 
-## 📋 Prerequisites
+## Prerequisites
 
 Before you begin, ensure you have:
 
@@ -18,7 +18,7 @@ Before you begin, ensure you have:
 - pip (Python package manager)
 - Git
 
-## 🔑 Required API Keys
+## Required API Keys
 
 You'll need accounts and API keys from the following services:
 
@@ -76,7 +76,7 @@ CREATE INDEX idx_recipes_cuisine_type ON recipes(cuisine_type);
 - Create access token at: https://huggingface.co/settings/tokens
 - `HF_API_TOKEN`: Your access token (only needed for gated models like Llama)
 
-## 🛠️ Installation
+## Installation
 
 ### 1. Clone the Repository
 
@@ -134,7 +134,7 @@ HF_API_TOKEN=your-huggingface-token  # Optional
 CORS_ORIGINS=http://localhost:5173,http://localhost:3000
 ```
 
-## 🏃 Running the Application
+## Running the Application
 
 ### Development Mode
 
@@ -154,7 +154,7 @@ The API will be available at:
 uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
-## 📚 API Documentation
+## API Documentation
 
 Once the server is running, visit http://localhost:8000/docs for interactive API documentation.
 
@@ -205,7 +205,7 @@ DELETE /api/inventory/items/chicken%20breast?user_id=default_user
 POST /api/inventory/match-recipes?user_id=default_user
 ```
 
-## 🧪 Testing
+## Testing
 
 ### Run All Tests
 
@@ -226,7 +226,7 @@ pytest --cov=. --cov-report=html
 pytest tests/services/test_supabase_service.py -v
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 backend/
@@ -251,7 +251,7 @@ backend/
     └── services/
 ```
 
-## 🐳 Docker Deployment
+## Docker Deployment
 
 ### Build Docker Image
 
@@ -270,7 +270,7 @@ docker run -p 8000:8000 \
   flavorforge-backend
 ```
 
-## 🚀 AWS App Runner Deployment
+## AWS App Runner Deployment
 
 ### Prerequisites
 - AWS CLI configured
@@ -283,7 +283,7 @@ docker run -p 8000:8000 \
 3. **Set health check** to `/health`
 4. **Configure auto-scaling** (1-10 instances recommended)
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -311,7 +311,7 @@ pip install -r requirements.txt
 - Add your frontend URL to `CORS_ORIGINS` in `.env`
 - Restart the server after changing environment variables
 
-## 📝 Environment Variables Reference
+## Environment Variables Reference
 
 | Variable | Required | Description | Example |
 |----------|----------|-------------|---------|
@@ -324,7 +324,7 @@ pip install -r requirements.txt
 | `HF_API_TOKEN` | No | Hugging Face token | Only for gated models |
 | `CORS_ORIGINS` | No | Allowed CORS origins | `http://localhost:5173` |
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -332,18 +332,18 @@ pip install -r requirements.txt
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 
-## 🆘 Support
+## Support
 
 For issues and questions:
 - Open an issue on GitHub
 - Check existing documentation
 - Review API docs at `/docs` endpoint
 
-## 🔗 Related Documentation
+## Related Documentation
 
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
 - [Supabase Documentation](https://supabase.com/docs)

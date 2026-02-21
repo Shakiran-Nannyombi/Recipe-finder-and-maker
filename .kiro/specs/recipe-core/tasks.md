@@ -104,36 +104,36 @@
 
 ## 6. Frontend - Recipe Generator UI
 
-- [ ] 6.1 Create ingredient input component
-  - [ ] 6.1.1 Build IngredientInput.tsx with add/remove functionality
-  - [ ] 6.1.2 Add input validation
-  - [ ] 6.1.3 Style with Tailwind CSS
-  - [ ] 6.1.4 Add autocomplete for common ingredients
+- [x] 6.1 Create ingredient input component
+  - [x] 6.1.1 Build IngredientInput.tsx with add/remove functionality
+  - [x] 6.1.2 Add input validation
+  - [x] 6.1.3 Style with Tailwind CSS
+  - [x] 6.1.4 Add autocomplete for common ingredients
 
-- [ ] 6.2 Create preferences form
-  - [ ] 6.2.1 Build PreferencesForm.tsx with dietary restrictions
-  - [ ] 6.2.2 Add cuisine type selector
-  - [ ] 6.2.3 Add difficulty level selector
-  - [ ] 6.2.4 Style with Tailwind CSS
+- [x] 6.2 Create preferences form
+  - [x] 6.2.1 Build PreferencesForm.tsx with dietary restrictions
+  - [x] 6.2.2 Add cuisine type selector
+  - [x] 6.2.3 Add difficulty level selector
+  - [x] 6.2.4 Style with Tailwind CSS
 
-- [ ] 6.3 Create recipe display component
-  - [ ] 6.3.1 Build GeneratedRecipe.tsx to show recipe details
-  - [ ] 6.3.2 Display ingredients with quantities
-  - [ ] 6.3.3 Display step-by-step instructions
-  - [ ] 6.3.4 Add save recipe functionality
-  - [ ] 6.3.5 Style with Tailwind CSS
+- [x] 6.3 Create recipe display component
+  - [x] 6.3.1 Build GeneratedRecipe.tsx to show recipe details
+  - [x] 6.3.2 Display ingredients with quantities
+  - [x] 6.3.3 Display step-by-step instructions
+  - [x] 6.3.4 Add save recipe functionality
+  - [x] 6.3.5 Style with Tailwind CSS
 
-- [ ] 6.4 Create recipe generator hook
-  - [ ] 6.4.1 Build useRecipeGenerator.ts hook
-  - [ ] 6.4.2 Handle API calls to /api/recipes/generate
-  - [ ] 6.4.3 Manage loading and error states
-  - [ ] 6.4.4 Add success notifications
+- [x] 6.4 Create recipe generator hook
+  - [x] 6.4.1 Build useRecipeGenerator.ts hook
+  - [x] 6.4.2 Handle API calls to /api/recipes/generate
+  - [x] 6.4.3 Manage loading and error states
+  - [x] 6.4.4 Add success notifications
 
-- [ ] 6.5 Create generator page
-  - [ ] 6.5.1 Build Generator.tsx page
-  - [ ] 6.5.2 Integrate all generator components
-  - [ ] 6.5.3 Add responsive layout
-  - [ ] 6.5.4 Add loading spinner during generation
+- [x] 6.5 Create generator page
+  - [x] 6.5.1 Build Generator.tsx page
+  - [x] 6.5.2 Integrate all generator components
+  - [x] 6.5.3 Add responsive layout
+  - [x] 6.5.4 Add loading spinner during generation
 
 ## 7. Frontend - Recipe Search UI
 
