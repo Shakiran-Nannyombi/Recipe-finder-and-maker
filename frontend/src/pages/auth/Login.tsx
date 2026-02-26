@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../hooks/useAuth';
-import { Mail, Lock, ArrowRight, Github, Chrome, Sparkles } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Github, Chrome, Sparkles, UserCheck } from 'lucide-react';
 
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
-    const { login } = useAuth();
+    const { login, demoLogin } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -130,6 +130,14 @@ export default function Login() {
                                 {!isLoading && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
                             </button>
                         </form>
+
+                        <button
+                            type="button"
+                            onClick={() => { demoLogin(); navigate('/dashboard'); }}
+                            className="w-full mt-3 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold text-sm transition-all shadow-md flex items-center justify-center gap-2"
+                        >
+                            <UserCheck className="w-4 h-4" /> Demo Login (No Backend Needed)
+                        </button>
 
                         <div className="mt-4 relative text-center">
                             <span className="relative z-10 bg-white px-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">Or continue with</span>

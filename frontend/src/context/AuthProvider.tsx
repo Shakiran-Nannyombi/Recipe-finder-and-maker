@@ -43,6 +43,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         localStorage.setItem('recipe_ai_user', JSON.stringify(userData));
     };
 
+    const demoLogin = () => {
+        const demoUser: User = {
+            id: 'demo-user-001',
+            name: 'Demo Chef',
+            email: 'demo@recipeai.com',
+        };
+        const demoToken = 'demo-token-no-backend';
+        setToken(demoToken);
+        setUser(demoUser);
+        localStorage.setItem('recipe_ai_token', demoToken);
+        localStorage.setItem('recipe_ai_user', JSON.stringify(demoUser));
+    };
+
     const logout = () => {
         setToken(null);
         setUser(null);
@@ -51,7 +64,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, isAuthenticated: !!token, login, signup, logout }}>
+        <AuthContext.Provider value={{ user, token, isAuthenticated: !!token, login, signup, demoLogin, logout }}>
             {children}
         </AuthContext.Provider>
     );
