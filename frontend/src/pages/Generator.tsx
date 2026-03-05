@@ -42,14 +42,14 @@ export default function Generator() {
     const canGenerate = ingredients.length > 0 && !loading;
 
     return (
-        <div className="min-h-screen bg-bg py-8 px-4">
+        <div className="min-h-screen bg-background-light py-8 px-4 pt-20 md:pt-8">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-12">
-                    <h1 className="text-5xl font-heading font-bold text-gradient mb-4">
+                    <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">
                         AI Recipe Generator
                     </h1>
-                    <p className="text-lg text-text-secondary max-w-2xl mx-auto">
+                    <p className="text-base md:text-lg text-slate-600 max-w-2xl mx-auto">
                         Tell us what ingredients you have, and our AI will create a delicious recipe just for you!
                     </p>
                 </div>
@@ -59,8 +59,8 @@ export default function Generator() {
                     {/* Left Column - Input Section */}
                     <div className="space-y-6">
                         {/* Ingredient Input */}
-                        <div className="card">
-                            <h2 className="text-2xl font-heading font-semibold text-text-primary mb-4">
+                        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+                            <h2 className="text-xl md:text-2xl font-bold text-slate-900 mb-4">
                                 Your Ingredients
                             </h2>
                             <IngredientInput
@@ -80,7 +80,7 @@ export default function Generator() {
                         <button
                             onClick={handleGenerate}
                             disabled={!canGenerate}
-                            className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-lg py-4"
+                            className="w-full bg-gradient-to-r from-primary to-accent hover:shadow-lg hover:shadow-primary/30 text-white font-bold py-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none text-base md:text-lg"
                         >
                             {loading ? (
                                 <span className="flex items-center justify-center gap-3">

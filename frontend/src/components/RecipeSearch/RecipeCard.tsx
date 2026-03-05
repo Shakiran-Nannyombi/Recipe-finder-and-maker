@@ -1,5 +1,6 @@
 import { Recipe } from '../../types/recipe';
 import { Clock, BarChart, Heart, ArrowRight, Utensils } from 'lucide-react';
+import { useState } from 'react';
 
 interface RecipeCardProps {
     recipe: Recipe;
@@ -7,6 +8,8 @@ interface RecipeCardProps {
 }
 
 export default function RecipeCard({ recipe, onClick }: RecipeCardProps) {
+    const [isSaved, setIsSaved] = useState(false);
+
     const handleClick = () => {
         if (onClick) {
             onClick(recipe);
@@ -18,6 +21,13 @@ export default function RecipeCard({ recipe, onClick }: RecipeCardProps) {
             e.preventDefault();
             handleClick();
         }
+    };
+
+    const handleSaveToggle = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIsSaved(!isSaved);
+        // TODO: Add API call to save/unsave recipe
+        console.log(isSaved ? 'Unsaved recipe:' : 'Saved recipe:', recipe.title);
     };
 
     return (
@@ -55,14 +65,21 @@ export default function RecipeCard({ recipe, onClick }: RecipeCardProps) {
                 <h4 className="text-xl font-bold mb-2 text-slate-900 group-hover:text-primary transition-colors line-clamp-1">{recipe.title}</h4>
                 <p className="text-sm text-slate-500 line-clamp-2 mb-6 h-10">{recipe.description}</p>
 
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-3">
                     <button
-                        className="bg-primary/10 hover:bg-primary text-primary hover:text-white p-3 rounded-xl transition-all group/btn"
-                        onClick={(e) => { e.stopPropagation(); /* TODO: Save logic */ }}
+                        className={`p-3 rounded-xl transition-all group/btn ${isSaved
+                                ? 'bg-primary text-white'
+                                : 'bg-primary/10 text-primary hover:bg-primary hover:text-white'
+                            }`}
+                        onClick={handleSaveToggle}
+                        aria-label={isSaved ? 'Unsave recipe' : 'Save recipe'}
                     >
-                        <Heart className="w-5 h-5 transition-transform group-hover/btn:scale-110" />
+                        <Heart
+                            className={`w-5 h-5 transition-transform group-hover/btn:scale-110 ${isSaved ? 'fill-current' : ''
+                                }`}
+                        />
                     </button>
-                    <button className="bg-slate-900 text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-primary transition-all flex items-center gap-2">
+                    <button className="bg-slate-900 text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-primary transition-all flex items-center gap-2 flex-1 justify-center">
                         <span>View Details</span>
                         <ArrowRight className="w-4 h-4" />
                     </button>
