@@ -98,15 +98,15 @@ export default function Sidebar({ activeTab, onTabChange, isOpen, onToggle }: Si
                 </div>
 
                 {/* Mobile Logo (in sidebar) */}
-                <div className="md:hidden p-8 flex items-center justify-center gap-3 border-b border-slate-100">
-                    <img src="/RecipeAI.png" alt="Recipe AI Logo" className="w-12 h-12 object-contain" />
+                <div className="md:hidden p-4 flex items-center justify-center gap-2 border-b border-slate-100">
+                    <img src="/RecipeAI.png" alt="Recipe AI Logo" className="w-8 h-8 object-contain" />
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Recipe AI</h1>
+                        <h1 className="text-lg font-bold tracking-tight text-slate-900">Recipe AI</h1>
                         <p className="text-xs text-primary font-medium uppercase tracking-widest">Food-Tech</p>
                     </div>
                 </div>
 
-                <nav className="flex-1 px-6 md:px-4 py-4 md:mt-6 space-y-2 md:space-y-2 overflow-y-auto flex flex-col justify-center md:justify-start">
+                <nav className="flex-1 px-3 md:px-4 py-3 md:mt-6 space-y-1.5 md:space-y-2 overflow-y-auto flex flex-col justify-center md:justify-start">
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = activeTab === item.id;
@@ -114,17 +114,17 @@ export default function Sidebar({ activeTab, onTabChange, isOpen, onToggle }: Si
                             <button
                                 key={item.id}
                                 onClick={() => handleNavClick(item.id)}
-                                className={`w-full flex items-center md:gap-4 px-4 py-3 md:py-3 rounded-xl transition-all group ${isActive
+                                className={`w-full flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 rounded-xl transition-all group ${isActive
                                     ? 'bg-gradient-to-r from-primary to-primary/80 text-white shadow-lg shadow-primary/30'
                                     : 'text-slate-600 hover:bg-primary/5 hover:text-primary'
-                                    } flex-col md:flex-row gap-1 md:gap-4`}
+                                    }`}
                             >
                                 <Icon
-                                    className={`w-6 h-6 md:w-6 md:h-6 transition-transform group-hover:scale-110 ${isActive ? 'stroke-[2.5px]' : 'stroke-2'
+                                    className={`w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:scale-110 flex-shrink-0 ${isActive ? 'stroke-[2.5px]' : 'stroke-2'
                                         }`}
                                 />
                                 <span
-                                    className={`font-medium text-xs md:text-sm transition-all duration-300 ${isActive ? 'font-bold' : ''
+                                    className={`font-medium text-sm md:text-sm transition-all duration-300 ${isActive ? 'font-bold' : ''
                                         } ${!isOpen && 'md:hidden'}`}
                                 >
                                     {item.label}
@@ -134,9 +134,9 @@ export default function Sidebar({ activeTab, onTabChange, isOpen, onToggle }: Si
                     })}
                 </nav>
 
-                <div className="p-4 md:p-6 border-t border-slate-100 space-y-3">
-                    <div className="flex items-center gap-3 justify-center md:justify-start">
-                        <div className="size-10 md:size-10 rounded-full bg-accent/20 flex items-center justify-center text-accent flex-shrink-0">
+                <div className="p-3 md:p-6 border-t border-slate-100 space-y-2">
+                    <div className="flex items-center gap-3 justify-start">
+                        <div className="size-9 md:size-10 rounded-full bg-accent/20 flex items-center justify-center text-accent flex-shrink-0">
                             <User className="w-5 h-5 md:w-6 md:h-6" />
                         </div>
                         <div className={`transition-all duration-300 ${!isOpen && 'md:hidden'}`}>
@@ -149,10 +149,10 @@ export default function Sidebar({ activeTab, onTabChange, isOpen, onToggle }: Si
 
                     <button
                         onClick={logout}
-                        className="w-full flex items-center md:gap-4 px-4 py-3 md:py-3 rounded-xl text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all group flex-col md:flex-row gap-1 md:gap-4"
+                        className="w-full flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 rounded-xl text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all group"
                     >
-                        <LogOut className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:scale-110" />
-                        <span className={`font-medium text-xs md:text-sm transition-all duration-300 ${!isOpen && 'md:hidden'}`}>
+                        <LogOut className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:scale-110 flex-shrink-0" />
+                        <span className={`font-medium text-sm transition-all duration-300 ${!isOpen && 'md:hidden'}`}>
                             Logout
                         </span>
                     </button>

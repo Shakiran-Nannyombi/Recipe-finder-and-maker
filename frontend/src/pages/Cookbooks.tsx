@@ -12,6 +12,10 @@ interface Cookbook {
     difficulty: 'beginner' | 'intermediate' | 'advanced';
     cuisine_type: string;
     tags: string[];
+    website_url?: string;
+    download_url?: string;
+    created_at?: string;
+    updated_at?: string;
 }
 
 export default function Cookbooks() {
@@ -26,7 +30,9 @@ export default function Cookbooks() {
         image_url: '',
         cuisine_type: '',
         difficulty: 'beginner' as 'beginner' | 'intermediate' | 'advanced',
-        tags: ''
+        tags: '',
+        website_url: '',
+        download_url: ''
     });
     const [userCookbooks, setUserCookbooks] = useState<Cookbook[]>([]);
 
@@ -42,7 +48,9 @@ export default function Cookbooks() {
             recipes_count: 52,
             difficulty: 'intermediate',
             cuisine_type: 'Mediterranean',
-            tags: ['healthy', 'seafood', 'vegetables']
+            tags: ['healthy', 'seafood', 'vegetables'],
+            website_url: 'https://example.com/mediterranean-delights',
+            download_url: 'https://example.com/downloads/mediterranean-delights.pdf'
         },
         {
             id: '2',
@@ -54,7 +62,9 @@ export default function Cookbooks() {
             recipes_count: 68,
             difficulty: 'beginner',
             cuisine_type: 'International',
-            tags: ['vegan', 'healthy', 'quick']
+            tags: ['vegan', 'healthy', 'quick'],
+            website_url: 'https://example.com/vegan-kitchen',
+            download_url: 'https://example.com/downloads/vegan-kitchen.pdf'
         },
         {
             id: '3',
@@ -66,7 +76,9 @@ export default function Cookbooks() {
             recipes_count: 75,
             difficulty: 'advanced',
             cuisine_type: 'Asian',
-            tags: ['fusion', 'authentic', 'spicy']
+            tags: ['fusion', 'authentic', 'spicy'],
+            website_url: 'https://example.com/asian-fusion',
+            download_url: 'https://example.com/downloads/asian-fusion.pdf'
         },
         {
             id: '4',
@@ -78,7 +90,9 @@ export default function Cookbooks() {
             recipes_count: 45,
             difficulty: 'beginner',
             cuisine_type: 'American',
-            tags: ['keto', 'low-carb', 'healthy']
+            tags: ['keto', 'low-carb', 'healthy'],
+            website_url: 'https://example.com/keto-simple',
+            download_url: 'https://example.com/downloads/keto-simple.pdf'
         },
         {
             id: '5',
@@ -90,7 +104,9 @@ export default function Cookbooks() {
             recipes_count: 38,
             difficulty: 'advanced',
             cuisine_type: 'French',
-            tags: ['baking', 'desserts', 'pastry']
+            tags: ['baking', 'desserts', 'pastry'],
+            website_url: 'https://example.com/french-pastry',
+            download_url: 'https://example.com/downloads/french-pastry.pdf'
         },
         {
             id: '6',
@@ -102,7 +118,9 @@ export default function Cookbooks() {
             recipes_count: 60,
             difficulty: 'beginner',
             cuisine_type: 'American',
-            tags: ['quick', 'family-friendly', 'budget']
+            tags: ['quick', 'family-friendly', 'budget'],
+            website_url: 'https://example.com/family-meals',
+            download_url: 'https://example.com/downloads/family-meals.pdf'
         }
     ];
 
@@ -113,7 +131,10 @@ export default function Cookbooks() {
         { id: 'beginner', label: 'Beginner Friendly', icon: ChefHat }
     ];
 
-    const filteredCookbooks = cookbooks.filter(cookbook => {
+    // Combine demo and user cookbooks
+    const allCookbooks = [...demoCookbooks, ...userCookbooks];
+
+    const filteredCookbooks = allCookbooks.filter(cookbook => {
         const matchesSearch = cookbook.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             cookbook.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
             cookbook.cuisine_type.toLowerCase().includes(searchQuery.toLowerCase());
@@ -138,6 +159,8 @@ export default function Cookbooks() {
             difficulty: newCookbook.difficulty,
             cuisine_type: newCookbook.cuisine_type,
             tags: newCookbook.tags.split(',').map(t => t.trim()).filter(t => t),
+            website_url: newCookbook.website_url || undefined,
+            download_url: newCookbook.download_url || undefined,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
         };
@@ -151,14 +174,16 @@ export default function Cookbooks() {
             image_url: '',
             cuisine_type: '',
             difficulty: 'beginner',
-            tags: ''
+            tags: '',
+            website_url: '',
+            download_url: ''
         });
     };
 
     return (
-        <div className="flex-1 overflow-y-auto bg-background-light pt-16 md:pt-0">
+        <div className="flex-1 overflow-y-auto bg-slate-50 pt-16 md:pt-0">
             {/* Header Section */}
-            <div className="bg-gradient-to-br from-primary/10 via-accent/5 to-transparent px-4 md:px-8 py-8 md:py-12">
+            <div className="bg-gradient-to-br from-orange-50 to-white px-4 md:px-8 py-8 md:py-12">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
@@ -173,7 +198,7 @@ export default function Cookbooks() {
                             <span className="hidden md:inline">Add Cookbook</span>
                         </button>
                     </div>
-                    <p className="text-slate-600 text-lg mb-8">Discover curated collections of recipes from world-class chefs</p>
+                    <p className="text-slate-600 text-base md:text-lg mb-8">Discover curated collections of recipes from world-class chefs</p>
 
                     {/* Search Bar */}
                     <div className="relative max-w-2xl">
@@ -375,6 +400,26 @@ export default function Cookbooks() {
                                     placeholder="e.g., healthy, quick, vegetarian"
                                 />
                             </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Website URL</label>
+                                <input
+                                    type="url"
+                                    value={newCookbook.website_url}
+                                    onChange={(e) => setNewCookbook({ ...newCookbook, website_url: e.target.value })}
+                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                                    placeholder="https://example.com/cookbook"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Download URL</label>
+                                <input
+                                    type="url"
+                                    value={newCookbook.download_url}
+                                    onChange={(e) => setNewCookbook({ ...newCookbook, download_url: e.target.value })}
+                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                                    placeholder="https://example.com/downloads/cookbook.pdf"
+                                />
+                            </div>
                             <button
                                 onClick={handleAddCookbook}
                                 disabled={!newCookbook.title || !newCookbook.author || !newCookbook.description || !newCookbook.cuisine_type}
@@ -446,9 +491,40 @@ export default function Cookbooks() {
                                     ))}
                                 </div>
                             </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex gap-3">
+                                {selectedCookbook.download_url && (
+                                    <a
+                                        href={selectedCookbook.download_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                        </svg>
+                                        Download
+                                    </a>
+                                )}
+                                {selectedCookbook.website_url && (
+                                    <a
+                                        href={selectedCookbook.website_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex-1 border-2 border-orange-500 text-orange-500 hover:bg-orange-50 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                        </svg>
+                                        Visit Website
+                                    </a>
+                                )}
+                            </div>
+
                             <button
                                 onClick={() => setSelectedCookbook(null)}
-                                className="w-full bg-slate-900 hover:bg-primary text-white py-3 rounded-xl font-bold transition-all"
+                                className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-xl font-bold transition-all"
                             >
                                 Close
                             </button>

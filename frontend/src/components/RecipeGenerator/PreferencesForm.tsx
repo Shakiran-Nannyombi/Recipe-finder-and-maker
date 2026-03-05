@@ -77,17 +77,17 @@ export default function PreferencesForm({ preferences, onChange }: PreferencesFo
         preferences.difficulty;
 
     return (
-        <div className="card">
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="w-full flex items-center justify-between text-left"
                 aria-expanded={isExpanded}
             >
                 <div>
-                    <h3 className="text-lg font-heading font-semibold text-text-primary">
+                    <h3 className="text-lg font-semibold text-slate-900">
                         Recipe Preferences
                     </h3>
-                    <p className="text-sm text-text-secondary mt-1">
+                    <p className="text-sm text-slate-600 mt-1">
                         {hasPreferences
                             ? 'Customize your recipe generation'
                             : 'Optional - Click to customize'}
@@ -95,14 +95,14 @@ export default function PreferencesForm({ preferences, onChange }: PreferencesFo
                 </div>
                 <div className="flex items-center gap-2">
                     {hasPreferences && (
-                        <span className="bg-accent text-text-primary text-xs px-2 py-1 rounded-full">
+                        <span className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full font-medium">
                             {preferences.dietaryRestrictions.length +
                                 (preferences.cuisineType ? 1 : 0) +
                                 (preferences.difficulty ? 1 : 0)} active
                         </span>
                     )}
                     <svg
-                        className={`w-5 h-5 text-text-secondary transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''
+                        className={`w-5 h-5 text-slate-600 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''
                             }`}
                         fill="none"
                         stroke="currentColor"
@@ -117,7 +117,7 @@ export default function PreferencesForm({ preferences, onChange }: PreferencesFo
                 <div className="mt-6 space-y-6 animate-fadeIn">
                     {/* Dietary Restrictions */}
                     <div>
-                        <label className="block text-sm font-medium text-text-primary mb-3">
+                        <label className="block text-sm font-medium text-slate-900 mb-3">
                             Dietary Restrictions
                         </label>
                         <div className="flex flex-wrap gap-2">
@@ -126,8 +126,8 @@ export default function PreferencesForm({ preferences, onChange }: PreferencesFo
                                     key={option}
                                     onClick={() => handleDietaryChange(option)}
                                     className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${preferences.dietaryRestrictions.includes(option)
-                                            ? 'bg-gradient-primary text-text-light shadow-md'
-                                            : 'bg-white border-2 border-gray-200 text-text-primary hover:border-secondary'
+                                        ? 'bg-orange-500 text-white shadow-md'
+                                        : 'bg-white border-2 border-slate-200 text-slate-900 hover:border-orange-500'
                                         }`}
                                     aria-pressed={preferences.dietaryRestrictions.includes(option)}
                                 >
@@ -139,14 +139,14 @@ export default function PreferencesForm({ preferences, onChange }: PreferencesFo
 
                     {/* Cuisine Type */}
                     <div>
-                        <label htmlFor="cuisine-select" className="block text-sm font-medium text-text-primary mb-3">
+                        <label htmlFor="cuisine-select" className="block text-sm font-medium text-slate-900 mb-3">
                             Cuisine Type
                         </label>
                         <select
                             id="cuisine-select"
                             value={preferences.cuisineType}
                             onChange={(e) => handleCuisineChange(e.target.value)}
-                            className="input cursor-pointer"
+                            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-orange-500 transition-colors cursor-pointer bg-white text-slate-900"
                         >
                             {cuisineTypes.map((cuisine) => (
                                 <option key={cuisine.value} value={cuisine.value}>
@@ -158,7 +158,7 @@ export default function PreferencesForm({ preferences, onChange }: PreferencesFo
 
                     {/* Difficulty Level */}
                     <div>
-                        <label className="block text-sm font-medium text-text-primary mb-3">
+                        <label className="block text-sm font-medium text-slate-900 mb-3">
                             Difficulty Level
                         </label>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -167,16 +167,16 @@ export default function PreferencesForm({ preferences, onChange }: PreferencesFo
                                     key={level.value}
                                     onClick={() => handleDifficultyChange(level.value)}
                                     className={`p-4 rounded-lg text-left transition-all duration-200 ${preferences.difficulty === level.value
-                                            ? 'bg-gradient-primary text-text-light shadow-md'
-                                            : 'bg-white border-2 border-gray-200 hover:border-secondary'
+                                        ? 'bg-orange-500 text-white shadow-md'
+                                        : 'bg-white border-2 border-slate-200 hover:border-orange-500 text-slate-900'
                                         }`}
                                     aria-pressed={preferences.difficulty === level.value}
                                 >
                                     <div className="font-medium">{level.label}</div>
                                     {level.description && (
                                         <div className={`text-sm mt-1 ${preferences.difficulty === level.value
-                                                ? 'text-text-light/80'
-                                                : 'text-text-secondary'
+                                            ? 'text-white/80'
+                                            : 'text-slate-600'
                                             }`}>
                                             {level.description}
                                         </div>
@@ -194,7 +194,7 @@ export default function PreferencesForm({ preferences, onChange }: PreferencesFo
                                 cuisineType: '',
                                 difficulty: '',
                             })}
-                            className="text-sm text-error hover:text-error/80 transition-colors duration-200"
+                            className="text-sm text-red-500 hover:text-red-600 transition-colors duration-200"
                         >
                             Clear all preferences
                         </button>

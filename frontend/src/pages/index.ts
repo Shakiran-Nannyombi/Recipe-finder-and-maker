@@ -17,3 +17,7 @@ export { default as Contact } from './Contact';
 export { default as PrivacyPolicy } from './PrivacyPolicy';
 export { default as TermsOfService } from './TermsOfService';
 export { default as CookiePolicy } from './CookiePolicy';
+export { default as SavedRecipes } from './SavedRecipes';
+export { default as Pantry } from './Pantry';
+export { default as Settings } from './Settings';
+export { default as Profile } from './Profile';
