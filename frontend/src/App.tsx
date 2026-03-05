@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Dashboard, Landing, Login, Signup, InfoPage } from './pages';
+import { Dashboard, Landing, Login, Signup, InfoPage, Features, ProPlan, AIInsights, AboutUs, Community, Careers, Contact, PrivacyPolicy, TermsOfService, CookiePolicy } from './pages';
 import { AuthProvider } from './context/AuthProvider';
 import { useAuth } from './hooks/useAuth';
 
@@ -23,6 +23,22 @@ function App() {
           {/* Public Landing Page */}
           <Route path="/" element={<Landing />} />
           <Route path="/info/:slug" element={<InfoPage />} />
+
+          {/* Dedicated Feature Pages */}
+          <Route path="/features" element={<Features />} />
+          <Route path="/pro-plan" element={<ProPlan />} />
+          <Route path="/ai-insights" element={<AIInsights />} />
+
+          {/* Dedicated Company Pages */}
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/contact" element={<Contact />} />
+
+          {/* Legal Pages */}
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
 
           {/* Auth Routes */}
           <Route

@@ -28,19 +28,19 @@ export default function Footer() {
                     <h4 className="text-slate-900 font-bold text-sm uppercase tracking-widest">Platform</h4>
                     <ul className="space-y-2 text-slate-500 text-sm">
                         <li><Link to="/info/how-it-works" className="hover:text-primary transition-colors">How it Works</Link></li>
-                        <li><Link to="/info/features" className="hover:text-primary transition-colors">Features</Link></li>
-                        <li><a href="#" className="hover:text-primary transition-colors">Pro Plan</a></li>
-                        <li><a href="#" className="hover:text-primary transition-colors">AI Insights</a></li>
+                        <li><Link to="/features" className="hover:text-primary transition-colors">Features</Link></li>
+                        <li><Link to="/pro-plan" className="hover:text-primary transition-colors">Pro Plan</Link></li>
+                        <li><Link to="/ai-insights" className="hover:text-primary transition-colors">AI Insights</Link></li>
                     </ul>
                 </div>
 
                 <div className="space-y-4">
                     <h4 className="text-slate-900 font-bold text-sm uppercase tracking-widest">Company</h4>
                     <ul className="space-y-2 text-slate-500 text-sm">
-                        <li><Link to="/info/about-us" className="hover:text-primary transition-colors">About Us</Link></li>
-                        <li><a href="#" className="hover:text-primary transition-colors">Community</a></li>
-                        <li><a href="#" className="hover:text-primary transition-colors">Careers</a></li>
-                        <li><a href="#" className="hover:text-primary transition-colors">Contact</a></li>
+                        <li><Link to="/about-us" className="hover:text-primary transition-colors">About Us</Link></li>
+                        <li><Link to="/community" className="hover:text-primary transition-colors">Community</Link></li>
+                        <li><Link to="/careers" className="hover:text-primary transition-colors">Careers</Link></li>
+                        <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
                     </ul>
                 </div>
 
@@ -62,9 +62,9 @@ export default function Footer() {
 
             <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-4 text-slate-400 text-xs font-medium uppercase tracking-widest">
                 <div className="flex gap-6">
-                    <a href="#" className="hover:text-slate-600 transition-colors">Privacy Policy</a>
-                    <a href="#" className="hover:text-slate-600 transition-colors">Terms of Service</a>
-                    <a href="#" className="hover:text-slate-600 transition-colors">Cookie Policy</a>
+                    <Link to="/privacy-policy" className="hover:text-slate-600 transition-colors">Privacy Policy</Link>
+                    <Link to="/terms-of-service" className="hover:text-slate-600 transition-colors">Terms of Service</Link>
+                    <Link to="/cookie-policy" className="hover:text-slate-600 transition-colors">Cookie Policy</Link>
                 </div>
                 <div>© 2026 Recipe AI Corp. All rights reserved.</div>
             </div>

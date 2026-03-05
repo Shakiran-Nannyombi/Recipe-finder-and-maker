@@ -37,13 +37,13 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                             key={item.id}
                             onClick={() => onTabChange(item.id)}
                             className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all group ${isActive
-                                ? 'bg-primary/10 text-primary'
-                                : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-zinc-800'
+                                ? 'bg-gradient-to-r from-primary to-primary/80 text-white shadow-lg shadow-primary/30'
+                                : 'text-slate-600 hover:bg-primary/5 hover:text-primary'
                                 }`}
                         >
                             <Icon className={`w-6 h-6 transition-transform group-hover:scale-110 ${isActive ? 'stroke-[2.5px]' : 'stroke-2'
                                 }`} />
-                            <span className="font-medium hidden md:block">{item.label}</span>
+                            <span className={`font-medium hidden md:block ${isActive ? 'font-bold' : ''}`}>{item.label}</span>
                         </button>
                     );
                 })}

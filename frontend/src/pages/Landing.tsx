@@ -25,6 +25,26 @@ export default function Landing() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Close video modal on ESC key
+    useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && showVideo) {
+                setShowVideo(false);
+            }
+        };
+        window.addEventListener('keydown', handleEsc);
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [showVideo]);
+
+    // Smooth scroll handler
+    const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+        e.preventDefault();
+        const element = document.getElementById(targetId);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
     useGSAP(() => {
         // Hero Content
         gsap.from('.hero-content > *', {
@@ -84,9 +104,9 @@ export default function Landing() {
                         <span className="text-2xl font-bold text-slate-900 tracking-tight">Recipe AI</span>
                     </div>
                     <div className="hidden md:flex items-center gap-10 text-slate-600 font-bold text-sm uppercase tracking-widest">
-                        <a href="#features" className="hover:text-primary transition-colors">Experience</a>
-                        <a href="#how-it-works" className="hover:text-primary transition-colors">Methods</a>
-                        <a href="#stats" className="hover:text-primary transition-colors">Impact</a>
+                        <a href="#features" onClick={(e) => handleSmoothScroll(e, 'features')} className="hover:text-primary transition-colors">Experience</a>
+                        <a href="#how-it-works" onClick={(e) => handleSmoothScroll(e, 'how-it-works')} className="hover:text-primary transition-colors">Methods</a>
+                        <a href="#stats" onClick={(e) => handleSmoothScroll(e, 'stats')} className="hover:text-primary transition-colors">Impact</a>
                     </div>
                     <div className="flex items-center gap-5">
                         <button
@@ -114,10 +134,6 @@ export default function Landing() {
 
                 <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                     <div className="lg:col-span-6 hero-content space-y-10 relative z-10">
-                        <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-primary font-bold text-xs uppercase tracking-[0.2em]">
-                            <Sparkles className="w-4 h-4 animate-pulse" />
-                            Next-Gen Culinary Intelligence
-                        </div>
                         <h1 className="text-7xl md:text-8xl font-black text-slate-900 leading-[0.95] tracking-tighter">
                             Your Kitchen, <br />
                             <span className="text-primary italic">Reimagined.</span>
@@ -135,10 +151,10 @@ export default function Landing() {
                             </button>
                             <button
                                 onClick={() => setShowVideo(true)}
-                                className="w-full sm:w-auto flex items-center justify-center gap-4 px-10 py-5 text-slate-900 font-bold hover:text-primary transition-all group"
+                                className="w-full sm:w-auto flex items-center justify-center gap-4 px-10 py-5 rounded-[2rem] bg-white border-2 border-slate-200 text-slate-900 font-bold hover:border-primary hover:bg-primary/5 transition-all group shadow-lg"
                             >
-                                <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-2xl border border-slate-100 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all">
-                                    <Play className="w-6 h-6 fill-current ml-1" />
+                                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all">
+                                    <Play className="w-6 h-6 fill-primary group-hover:fill-white ml-1 transition-colors" />
                                 </div>
                                 See it in Action
                             </button>
@@ -198,6 +214,50 @@ export default function Landing() {
                     </div>
                 </div>
             </header>
+
+            {/* How It Works Section */}
+            <section id="how-it-works" className="py-32 px-8 bg-slate-50">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center space-y-6 mb-24 max-w-3xl mx-auto">
+                        <h2 className="text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-none">Our <span className="text-primary italic">Method</span></h2>
+                        <p className="text-xl text-slate-500 font-medium">Three simple steps to culinary excellence.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                        {[
+                            {
+                                step: "01",
+                                title: "Input Ingredients",
+                                desc: "Tell us what's in your kitchen. Our AI scans your inventory and identifies flavor combinations.",
+                                icon: Utensils
+                            },
+                            {
+                                step: "02",
+                                title: "AI Analysis",
+                                desc: "Our advanced algorithms analyze thousands of recipes to create the perfect dish for your ingredients.",
+                                icon: Zap
+                            },
+                            {
+                                step: "03",
+                                title: "Cook & Enjoy",
+                                desc: "Follow step-by-step instructions and create restaurant-quality meals in your own kitchen.",
+                                icon: Heart
+                            }
+                        ].map((item, i) => (
+                            <div key={i} className="relative group">
+                                <div className="absolute -top-8 -left-8 text-[120px] font-black text-primary/5 leading-none">{item.step}</div>
+                                <div className="relative bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+                                    <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary group-hover:scale-110 transition-all">
+                                        <item.icon className="w-8 h-8 text-primary group-hover:text-white transition-colors" />
+                                    </div>
+                                    <h3 className="text-2xl font-black text-slate-900 mb-4">{item.title}</h3>
+                                    <p className="text-slate-600 font-medium leading-relaxed">{item.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
 
             {/* Features Section */}
             <section id="features" className="py-32 px-8 bg-white overflow-visible">
@@ -327,31 +387,52 @@ export default function Landing() {
             {/* Video Demo Modal */}
             {showVideo && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 animate-fadeIn">
+                    {/* Backdrop with theme colors */}
                     <div
-                        className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl"
+                        className="absolute inset-0 bg-gradient-to-br from-primary/20 via-slate-900/95 to-slate-950/95 backdrop-blur-2xl"
                         onClick={() => setShowVideo(false)}
                     />
-                    <div className="relative w-full max-w-5xl aspect-video bg-white rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/20 animate-scaleUp">
-                        <button
-                            onClick={() => setShowVideo(false)}
-                            className="absolute top-6 right-6 z-10 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-slate-900 transition-all"
-                        >
-                            <X className="w-6 h-6" />
-                        </button>
 
-                        <Player
-                            component={DemoVideo}
-                            durationInFrames={180}
-                            compositionWidth={1920}
-                            compositionHeight={1080}
-                            fps={30}
-                            loop
-                            autoPlay
-                            style={{
-                                width: '100%',
-                                height: '100%',
-                            }}
-                        />
+                    {/* Modal Container with theme styling */}
+                    <div className="relative w-full max-w-6xl animate-scaleUp">
+                        {/* Decorative elements */}
+                        <div className="absolute -top-20 -left-20 w-40 h-40 bg-primary/30 rounded-full blur-3xl"></div>
+                        <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-primary/20 rounded-full blur-3xl"></div>
+
+                        {/* Video container */}
+                        <div className="relative aspect-video bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl overflow-hidden shadow-2xl border-4 border-primary/20">
+                            {/* Close button */}
+                            <button
+                                onClick={() => setShowVideo(false)}
+                                className="absolute top-6 right-6 z-10 w-14 h-14 rounded-full bg-primary/90 backdrop-blur-md border-2 border-white/20 flex items-center justify-center text-white hover:bg-primary hover:scale-110 transition-all shadow-lg"
+                            >
+                                <X className="w-7 h-7" />
+                            </button>
+
+                            {/* Title overlay */}
+                            <div className="absolute top-6 left-6 z-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-6 py-3">
+                                <h3 className="text-white font-black text-xl">Recipe AI in Action</h3>
+                            </div>
+
+                            <Player
+                                component={DemoVideo}
+                                durationInFrames={180}
+                                compositionWidth={1920}
+                                compositionHeight={1080}
+                                fps={30}
+                                loop
+                                autoPlay
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                }}
+                            />
+                        </div>
+
+                        {/* Bottom info */}
+                        <div className="mt-6 text-center">
+                            <p className="text-white/80 text-sm">Press ESC or click outside to close</p>
+                        </div>
                     </div>
                 </div>
             )}

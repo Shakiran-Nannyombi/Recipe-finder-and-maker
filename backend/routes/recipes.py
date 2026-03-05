@@ -148,7 +148,7 @@ async def get_recipe(
         )
 
 
-@router.get("")
+@router.get("/")
 async def list_recipes(
     limit: int = Query(10, ge=1, le=50, description="Maximum number of recipes to return"),
     offset: int = Query(0, ge=0, description="Number of recipes to skip"),

@@ -24,6 +24,103 @@ export default function Dashboard() {
 
     const { results, loading, search } = useRecipeSearch();
 
+    // Demo recipes to show by default
+    const demoRecipes: Recipe[] = [
+        {
+            id: 1,
+            title: 'Grilled Salmon with Lemon Butter',
+            image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&q=80',
+            readyInMinutes: 25,
+            servings: 4,
+            healthScore: 92,
+            cuisines: ['Mediterranean'],
+            dishTypes: ['main course'],
+            diets: ['gluten free', 'pescatarian'],
+            summary: 'A delicious and healthy grilled salmon with a zesty lemon butter sauce.',
+            extendedIngredients: [],
+            analyzedInstructions: [],
+            nutrition: { nutrients: [] }
+        },
+        {
+            id: 2,
+            title: 'Thai Green Curry with Vegetables',
+            image: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=800&q=80',
+            readyInMinutes: 30,
+            servings: 4,
+            healthScore: 88,
+            cuisines: ['Thai', 'Asian'],
+            dishTypes: ['main course'],
+            diets: ['vegan', 'vegetarian'],
+            summary: 'Aromatic Thai green curry packed with fresh vegetables and coconut milk.',
+            extendedIngredients: [],
+            analyzedInstructions: [],
+            nutrition: { nutrients: [] }
+        },
+        {
+            id: 3,
+            title: 'Mediterranean Quinoa Bowl',
+            image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80',
+            readyInMinutes: 20,
+            servings: 2,
+            healthScore: 95,
+            cuisines: ['Mediterranean'],
+            dishTypes: ['lunch', 'main course'],
+            diets: ['vegetarian', 'gluten free'],
+            summary: 'Nutritious quinoa bowl with fresh vegetables, feta, and olive oil.',
+            extendedIngredients: [],
+            analyzedInstructions: [],
+            nutrition: { nutrients: [] }
+        },
+        {
+            id: 4,
+            title: 'Japanese Teriyaki Chicken',
+            image: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=800&q=80',
+            readyInMinutes: 35,
+            servings: 4,
+            healthScore: 85,
+            cuisines: ['Japanese', 'Asian'],
+            dishTypes: ['main course'],
+            diets: ['gluten free'],
+            summary: 'Tender chicken glazed with homemade teriyaki sauce, served with rice.',
+            extendedIngredients: [],
+            analyzedInstructions: [],
+            nutrition: { nutrients: [] }
+        },
+        {
+            id: 5,
+            title: 'Mexican Street Tacos',
+            image: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800&q=80',
+            readyInMinutes: 20,
+            servings: 6,
+            healthScore: 78,
+            cuisines: ['Mexican'],
+            dishTypes: ['lunch', 'dinner'],
+            diets: [],
+            summary: 'Authentic street-style tacos with seasoned meat, fresh cilantro, and lime.',
+            extendedIngredients: [],
+            analyzedInstructions: [],
+            nutrition: { nutrients: [] }
+        },
+        {
+            id: 6,
+            title: 'Italian Caprese Salad',
+            image: 'https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=800&q=80',
+            readyInMinutes: 10,
+            servings: 4,
+            healthScore: 90,
+            cuisines: ['Italian'],
+            dishTypes: ['salad', 'appetizer'],
+            diets: ['vegetarian', 'gluten free'],
+            summary: 'Classic Italian salad with fresh mozzarella, tomatoes, and basil.',
+            extendedIngredients: [],
+            analyzedInstructions: [],
+            nutrition: { nutrients: [] }
+        }
+    ];
+
+    // Show demo recipes if no search results
+    const displayRecipes = results.length > 0 ? results : demoRecipes;
+
     const handleSearch = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
         if (!searchQuery.trim()) return;
